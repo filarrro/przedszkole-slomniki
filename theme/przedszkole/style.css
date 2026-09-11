@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.5.0
+Version: 0.6.8
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -637,8 +637,25 @@ a.pill:hover { filter: brightness(.93); }
    Fala jest wspolna dla wszystkich podstron (footer.php), wiec tlo pod nia
    musi odpowiadac tlu strony - takze na glownej, gdzie ostatnia sekcja
    ("Dlaczego my") stoi na tle strony. */
-.site-footer { margin-top: 0; }
+/* Pozycjonowana, bo na waskich ekranach fala (40 px) jest nizsza niz jej
+   wsuniecie i dolna krawedz zdjecia siega juz stopki - bez tego kadr,
+   ktory jest pozycjonowany, rysowalby sie na jej tle. */
+.site-footer { position: relative; margin-top: 0; }
 main + .chmurki { background: var(--wp--preset--color--base); }
+
+/* Na stronie glownej ostatnia sekcja konczy sie zdjeciem, wiec fala wchodzi
+   na jego dolna krawedz zamiast zaczynac sie pod nia. Tlo przezroczyste -
+   kremowy prostokat zakrylby zdjecie nad grzbietem fali. `position` konieczne,
+   bo kadr zdjecia jest pozycjonowany i bez tego rysowalby sie nad fala.
+
+   -49px, a nie ulamek wysokosci fali: fala jest najplytsza posrodku, wiec
+   przy mniejszym wsunieciu na szerokich ekranach przebijalo tlo strony
+   miedzy zdjeciem a grzbietem. */
+.home main + .chmurki {
+	position: relative;
+	background: transparent;
+	margin-top: -49px;
+}
 
 /* ==========================================================================
    16. Sekcja "Dlaczego my"
@@ -707,7 +724,134 @@ main + .chmurki { background: var(--wp--preset--color--base); }
 }
 
 /* ==========================================================================
-   17. Bloki Gutenberga
+   17. Sekcja "Pomagamy dzieciom rozwijac skrzydla"
+   Haslo na zdjeciu. Paski maja pelne granatowe tlo (kontrast bieli 9,2),
+   wiec tekst nie zalezy od tego, co akurat jest pod nim na fotografii.
+   ========================================================================== */
+
+/* Kadr wychodzi poza siatke tresci (1140 px) i idzie na cala szerokosc okna,
+   najwyzej do 2560 px - dalej zdjecie robi sie wieksze niz oryginal (2816 px).
+   Bez zaokraglen: dotyka krawedzi ekranu, wiec nie ma czego zaokraglac.
+
+   Jednostki `cqw` licza sie od szerokosci kadru, nie okna - dzieki temu
+   napisy trzymaja te sama proporcje do zdjecia na kazdej szerokosci,
+   takze gdy kadr przestaje rosnac na 2560 px. */
+.skrzydla__kadr {
+	container-type: inline-size;
+	position: relative;
+	max-width: 2560px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+.skrzydla__zdjecie {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* Gorna krawedz zdjecia rozplywa sie w tle sekcji wyzej - inaczej fotografia
+   zaczyna sie twarda linia w poprzek strony. Gradient w `cqw`, wiec pasmo
+   trzyma te sama proporcje co reszta kadru. `haslo` jest pozycjonowane i lezy
+   dalej w kodzie, wiec paski rysuja sie nad gradientem. */
+.skrzydla__kadr::before {
+	content: "";
+	position: absolute;
+	inset: 0 0 auto;
+	height: 9cqw;
+	background: linear-gradient(
+		to bottom,
+		var(--wp--preset--color--base),
+		color-mix(in srgb, var(--wp--preset--color--base) 35%, transparent) 55%,
+		transparent
+	);
+	pointer-events: none;
+}
+
+/* Powyzej 2560 px kadr przestaje rosnac i po bokach zostaje tlo strony.
+   Boczne krawedzie zdjecia rozplywaja sie wtedy tak samo jak gorna, zeby
+   fotografia nie konczyla sie pionowa kreska. Ponizej tej szerokosci kadr
+   dotyka krawedzi okna i gradienty nie maja czego wygaszac. */
+@media (min-width: 2560px) {
+	.skrzydla__kadr::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(
+				to right,
+				var(--wp--preset--color--base),
+				color-mix(in srgb, var(--wp--preset--color--base) 35%, transparent) 55%,
+				transparent
+			) left / 6cqw 100% no-repeat,
+			linear-gradient(
+				to left,
+				var(--wp--preset--color--base),
+				color-mix(in srgb, var(--wp--preset--color--base) 35%, transparent) 55%,
+				transparent
+			) right / 6cqw 100% no-repeat;
+		pointer-events: none;
+	}
+}
+
+/* Na szerokich ekranach pelne zdjecie mialoby ponad 1200 px wysokosci
+   i zajmowaloby caly ekran. Przycinamy dol - kadr konczy sie na linii
+   podlogi, wiec dolna krawedz czyta sie jak grunt pod dzieckiem.
+   Gora nietknieta (`object-position` 0) - tam jest glowa. */
+@media (min-width: 2000px) {
+	.skrzydla__kadr { aspect-ratio: 25 / 12; }
+	.skrzydla__zdjecie {
+		height: 100%;
+		object-fit: cover;
+		object-position: 50% 0;
+	}
+}
+
+/* Siatka zamiast pozycjonowania co do piksela: pierwszy pasek trafia
+   w lewa gorna cwiartke, drugi w prawa dolna - bez wzgledu na to,
+   jak wysoki jest kadr. */
+.skrzydla__haslo {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	align-items: center;
+	padding: 4cqw;
+}
+.skrzydla__haslo h2 {
+	display: contents;
+	margin: 0;
+}
+
+/* Napis wezszy niz 42cqw - inaczej gorny pasek dochodzi do srodka kadru
+   i zaslania twarz dziecka. */
+.skrzydla__pasek {
+	display: block;
+	width: fit-content;
+	padding: clamp(.25rem, .8cqw, 1.2rem) clamp(.6rem, 1.8cqw, 2.6rem);
+	background: var(--wp--preset--color--primary);
+	color: #fff;
+	/* Dolna granica, bo na telefonie 2,5% z 335 px to 8 px - nieczytelnie;
+	   ponizej okna 608 px napis stoi na 15 px i nie maleje dalej.
+	   Gorna, zeby na monitorze 2560 px nie urosl do 64 px. */
+	font-size: clamp(.95rem, 2.5cqw, 4.5rem);
+	font-weight: 800;
+	line-height: 1.25;
+	letter-spacing: .02em;
+	text-transform: uppercase;
+	border-radius: var(--radius);
+}
+/* Odsuniety od gornej krawedzi o 9cqw ponad padding: wyzej pasek zakrywal
+   narysowany kreda samolot (konczy sie okolo 8cqw od gory kadru). */
+.skrzydla__pasek--gora {
+	justify-self: start;
+	align-self: start;
+	margin-top: 9cqw;
+}
+.skrzydla__pasek--dol  { justify-self: end;   align-self: center; }
+
+/* ==========================================================================
+   18. Bloki Gutenberga
    Wyglad blokow, ktore personel wstawia na podstronach. Bez tego
    Gutenberg renderuje sie stylami rdzenia i rozjezdza z reszta strony.
    ========================================================================== */

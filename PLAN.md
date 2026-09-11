@@ -372,10 +372,12 @@ theme/przedszkole/
 ├── template-parts/
 │   ├── card.php              kafelek aktualności
 │   ├── chmurki.php           falista krawędź z chmurkami (SVG)
-│   └── dlaczego-my.php       sekcja „Dlaczego my" — 4 powody z ikonami SVG
+│   ├── dlaczego-my.php       sekcja „Dlaczego my" — 4 powody z ikonami SVG
+│   └── skrzydla.php          hasło „Pomagamy dzieciom rozwijać skrzydła" na zdjęciu
 └── assets/
     ├── js/nav.js             menu mobilne (~1 kB)
-    ├── img/hero.svg          ilustracja do hero (~9 kB)
+    ├── img/hero.webp         ilustracja do hero (2 szerokości)
+    ├── img/skrzydla-*.webp   zdjęcie do sekcji „rozwijać skrzydła" (1140/1920/2816)
     └── fonts/                Nunito woff2 + licencja OFL
 ```
 
@@ -407,6 +409,11 @@ theme/przedszkole/
 - [x] Komponent linku do galerii Google Photos — jako wariant stylu bloku
       „Przycisk" (`is-style-galeria`), wstawiany wzorcem (Etap 5)
 - [x] Sekcja „Dlaczego my" — cztery powody z własnymi ilustracjami SVG
+- [x] Sekcja „Pomagamy dzieciom rozwijać skrzydła" — hasło na zdjęciu, paski
+      granatu z palety, napisy skalowane jednostkami `cqw` względem kadru.
+      Kadr poza siatką treści: pełna szerokość okna, najwyżej 2560 px;
+      powyżej 2000 px przycinany od dołu (`aspect-ratio` + `object-fit`),
+      krawędzie wygaszane gradientem do koloru tła (góra zawsze, boki od 2560 px)
 - [ ] Skróty do kluczowych sekcji na stronie głównej — do ustalenia z klientem
 
 **Kryteria odbioru:** ✅ strona spójna na telefonie i desktopie, konsola czysta, brak błędów PHP.

@@ -6,7 +6,7 @@
  * w Gutenbergu — pracownicy przedszkola mogą ją zmieniać sami. Grafika,
  * chmurki i sekcja aktualności są dokładane przez motyw.
  *
- * Kolejność: powitanie → aktualności → „Dlaczego my". Fala z chmurkami ma
+ * Kolejność: powitanie → aktualności → „Dlaczego my" → hasło ze zdjęciem. Fala z chmurkami ma
  * kolor sekcji, która po niej następuje, więc zapytanie o wpisy leci przed
  * hero — bez wpisów fala pod hero prowadziłaby do nieistniejącego tła.
  *
@@ -101,6 +101,8 @@ $przedszkole_sa_wpisy = $przedszkole_aktualnosci->have_posts();
 <?php endif; ?>
 
 <?php get_template_part( 'template-parts/dlaczego-my' ); ?>
+
+<?php get_template_part( 'template-parts/skrzydla' ); ?>
 
 <?php
 get_footer();
