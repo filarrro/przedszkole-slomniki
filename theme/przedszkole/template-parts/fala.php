@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 $przedszkole_ksztalt = $args['ksztalt'] ?? 'warstwy';
 $przedszkole_kolor   = $args['kolor'] ?? 'var(--wp--preset--color--base)';
 ?>
-<div class="fala" aria-hidden="true">
+<div class="fala fala--<?php echo esc_attr( $przedszkole_ksztalt ); ?>" aria-hidden="true">
 	<svg viewBox="0 0 1200 120" preserveAspectRatio="none" focusable="false">
 		<?php if ( 'skos' === $przedszkole_ksztalt ) : ?>
 

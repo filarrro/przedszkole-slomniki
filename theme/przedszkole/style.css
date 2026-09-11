@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.9.3
+Version: 0.9.4
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -649,6 +649,9 @@ a.pill:hover { filter: brightness(.93); }
 	height: clamp(48px, 6vw, 100px);
 	transform: rotate(180deg);
 }
+/* Skos to jedna plaska krzywa - przy wysokosci warstwowej fali robil sie
+   z niej pusty zolty pas nad sekcja. */
+.fala--skos svg { height: clamp(28px, 4vw, 50px); }
 
 .chmurki { line-height: 0; }
 .chmurki svg { display: block; width: 100%; height: clamp(40px, 5vw, 72px); }
@@ -1216,7 +1219,9 @@ main + .chmurki { background: var(--wp--preset--color--base); }
 /* Zolc z tej samej rodziny co kolor Kotkow, ale mocniejsza - sekcja ma sie
    odcinac od kremowego tla strony, a nie w nim rozplywac. */
 .skroty { background: #F9E229; }
-.skroty > .wrap { padding-block: clamp(2.5rem, 6vw, 4rem); }
+/* Mniej powietrza nad naglowkiem niz pod kafelkami: grzbiet fali wchodzi
+   w sekcje i sam robi za odstep. */
+.skroty > .wrap { padding-block: clamp(1rem, 2.5vw, 1.75rem) clamp(2.5rem, 6vw, 4rem); }
 
 /* Naglowek w kolorze tekstu, nie granatowy jak reszta naglowkow: na zoltym
    tle kontrast wychodzi 11 zamiast 7, a napis nie konkuruje z tytulami
