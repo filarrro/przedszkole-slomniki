@@ -4,12 +4,15 @@
  *
  * Treść w sekcji powitalnej pochodzi ze zwykłej strony WordPressa edytowanej
  * w Gutenbergu — pracownicy przedszkola mogą ją zmieniać sami. Grafika,
- * chmurki i sekcja aktualności są dokładane przez motyw.
+ * fale i sekcja aktualności są dokładane przez motyw.
  *
- * Kolejność: powitanie → aktualności → „Dlaczego my" → „Na skróty" → hasło ze
- * zdjęciem. Fala z chmurkami ma
- * kolor sekcji, która po niej następuje, więc zapytanie o wpisy leci przed
- * hero — bez wpisów fala pod hero prowadziłaby do nieistniejącego tła.
+ * Kolejność: powitanie → aktualności → „Na skróty" → „Dlaczego my" → hasło
+ * ze zdjęciem.
+ *
+ * Fala należy do sekcji, która ją poprzedza, ale ma kolor tej, która po niej
+ * następuje. Dlatego zapytanie o wpisy leci przed hero, a kolory liczymy z góry:
+ * przy pustej stronie (bez wpisów, bez menu skrótów) fala pod hero prowadziłaby
+ * do nieistniejącego tła.
  *
  * @package Przedszkole
  */
@@ -27,7 +30,21 @@ $przedszkole_aktualnosci = new WP_Query(
 	)
 );
 
-$przedszkole_sa_wpisy = $przedszkole_aktualnosci->have_posts();
+$przedszkole_sa_wpisy  = $przedszkole_aktualnosci->have_posts();
+$przedszkole_sa_skroty = has_nav_menu( 'skroty' );
+
+$przedszkole_zolty = '#F9E229';   // Tło sekcji „Na skróty”.
+$przedszkole_mieta = '#F3F8F2';   // Górny koniec gradientu pod aktualnościami.
+$przedszkole_tlo   = 'var(--wp--preset--color--base)';
+
+// Kolor fali pod hero to tło pierwszej sekcji, która faktycznie się pojawi.
+if ( $przedszkole_sa_wpisy ) {
+	$przedszkole_kolor_pod_hero = $przedszkole_mieta;
+} elseif ( $przedszkole_sa_skroty ) {
+	$przedszkole_kolor_pod_hero = $przedszkole_zolty;
+} else {
+	$przedszkole_kolor_pod_hero = $przedszkole_tlo;
+}
 ?>
 
 <section class="hero">
@@ -64,9 +81,12 @@ $przedszkole_sa_wpisy = $przedszkole_aktualnosci->have_posts();
 
 	<?php
 	get_template_part(
-		'template-parts/chmurki',
+		'template-parts/fala',
 		null,
-		$przedszkole_sa_wpisy ? array( 'kolor' => '#F3F8F2' ) : null
+		array(
+			'ksztalt' => 'warstwy',
+			'kolor'   => $przedszkole_kolor_pod_hero,
+		)
 	);
 	?>
 </section>
@@ -97,22 +117,26 @@ $przedszkole_sa_wpisy = $przedszkole_aktualnosci->have_posts();
 			</div>
 		</div>
 
-		<?php get_template_part( 'template-parts/chmurki' ); ?>
+		<?php
+		if ( $przedszkole_sa_skroty ) {
+			get_template_part(
+				'template-parts/fala',
+				null,
+				array(
+					'ksztalt' => 'skos',
+					'kolor'   => $przedszkole_zolty,
+				)
+			);
+		} else {
+			get_template_part( 'template-parts/chmurki' );
+		}
+		?>
 	</section>
 <?php endif; ?>
 
-<?php get_template_part( 'template-parts/dlaczego-my' ); ?>
+<?php get_template_part( 'template-parts/skroty' ); ?>
 
-<?php
-/*
- * Fala nalezy do sekcji, ktora ja poprzedza, ale ma kolor tej, ktora po niej
- * nastepuje. Bez kafelkow "Na skroty" nie ma czego zapowiadac, wiec nie ma fali.
- */
-if ( has_nav_menu( 'skroty' ) ) {
-	get_template_part( 'template-parts/chmurki', null, array( 'kolor' => '#ECEAFB' ) );
-	get_template_part( 'template-parts/skroty' );
-}
-?>
+<?php get_template_part( 'template-parts/dlaczego-my' ); ?>
 
 <?php get_template_part( 'template-parts/skrzydla' ); ?>
 

@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.9.1
+Version: 0.9.2
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -634,8 +634,13 @@ a.pill:hover { filter: brightness(.93); }
 }
 
 /* ==========================================================================
-   14. Chmurki - przejscia miedzy sekcjami
+   14. Fale - przejscia miedzy sekcjami
    ========================================================================== */
+
+/* Fala wiazana z sekcja, ktora ja poprzedza, ale w kolorze tej, ktora po niej
+   nastepuje. Wyzsza niz chmurki, bo ksztalty maja wiecej rysunku do pokazania. */
+.fala { line-height: 0; }
+.fala svg { display: block; width: 100%; height: clamp(48px, 6vw, 100px); }
 
 .chmurki { line-height: 0; }
 .chmurki svg { display: block; width: 100%; height: clamp(40px, 5vw, 72px); }
@@ -1200,9 +1205,19 @@ main + .chmurki { background: var(--wp--preset--color--base); }
    z szesciu barw.
    ========================================================================== */
 
-.skroty { background: var(--wp--preset--color--primary-soft); }
+/* Zolc z tej samej rodziny co kolor Kotkow, ale mocniejsza - sekcja ma sie
+   odcinac od kremowego tla strony, a nie w nim rozplywac. */
+.skroty { background: #F9E229; }
 .skroty > .wrap { padding-block: clamp(2.5rem, 6vw, 4rem); }
-.skroty__naglowek { margin: 0 0 clamp(1.5rem, 4vw, 2.25rem); text-align: center; }
+
+/* Naglowek w kolorze tekstu, nie granatowy jak reszta naglowkow: na zoltym
+   tle kontrast wychodzi 11 zamiast 7, a napis nie konkuruje z tytulami
+   w kafelkach. */
+.skroty__naglowek {
+	margin: 0 0 clamp(1.5rem, 4vw, 2.25rem);
+	color: var(--wp--preset--color--ink);
+	text-align: center;
+}
 
 .skroty__lista {
 	display: grid;
@@ -1262,10 +1277,6 @@ main + .chmurki { background: var(--wp--preset--color--base); }
 	color: var(--wp--preset--color--ink-soft);
 }
 
-/* Kafelki leza na wlasnym tle, wiec dekoracyjne chmurki z sekcji ogolnej
-   musza byc bardziej stonowane niz na miekkim gradiencie aktualnosci. */
-.skroty.section--chmury::before,
-.skroty.section--chmury::after { opacity: .45; }
 
 /* ==========================================================================
    22. Mapa dojazdu

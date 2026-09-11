@@ -678,10 +678,20 @@ naprawdę chronione, zwraca 403 (tabela wyżej).
 - [x] Skróty do kluczowych sekcji — kafelki z menu „Na skróty"
 - [x] Kontakt / godziny otwarcia — w stopce, na każdej podstronie
 
-Kolejność sekcji: powitanie → aktualności → „Dlaczego my" → „Na skróty" → hasło
+Kolejność sekcji: powitanie → aktualności → „Na skróty" → „Dlaczego my" → hasło
 ze zdjęciem. Kafelki „Na skróty" biorą się z osobnego menu (`tools/skroty.sh`),
 więc dyrekcja zmienia ich zestaw, tytuły i opisy w Wyglądzie → Menu. Bez menu
-sekcja i poprzedzająca ją fala po prostu nie powstają.
+sekcja po prostu nie powstaje.
+
+Sekcja skrótów stoi na żółtym tle (`#F9E229`), żeby odciąć się od kremowego tła
+strony — nagłówek jest w kolorze tekstu, nie granatowy jak reszta, bo na żółtym
+daje kontrast 11 zamiast 7 i nie konkuruje z tytułami w kafelkach.
+
+Przejścia między sekcjami rysuje `template-parts/fala.php`: „warstwy" (trzy
+nakładające się fale) pod powitaniem i „skos" (asymetryczna krzywa) nad skrótami.
+Kolor jest parametrem, bo fala należy do sekcji, która ją poprzedza, ale ma kolor
+tej, która po niej następuje — i musi być rysowana wewnątrz sekcji, inaczej
+przezroczysta część pokazuje tło strony zamiast tła sekcji.
 
 ### 7.2 Strony treściowe
 - [x] `page.php` — uniwersalny szablon dla wszystkich stron Gutenberga
@@ -964,6 +974,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Galerie zostają w Google Photos | konto należy do przedszkola, więc brak ryzyka utraty; oszczędza ~35 GB i duży nakład pracy |
 | 2026-09-11 | Konta autorów grupowe, nie imienne | decyzja klienta; kompromis: współdzielone hasło, brak rozliczalności — odnotowany w MIGRACJA.md |
 | 2026-09-11 | Rok szkolny z daty publikacji, nie z kategorii | WP ma archiwa po dacie natywnie; odpada kilkadziesiąt pustych kategorii |
+| 2026-09-11 | Kształt fali jako parametr, nie osobny plik SVG | fala ma kolor sekcji, która po niej następuje — plik z wypalonym kolorem trzeba by trzymać w kilku wersjach |
 | 2026-09-11 | Kafelki „Na skróty" z menu, nie z kodu | dyrekcja zmienia zestaw i opisy w panelu; motyw dobiera tylko ikonę i kolor |
 | 2026-09-11 | Jeden `index.php` zamiast `home.php`, `archive.php` i `index.php` | trzy identyczne pliki; poprawka w jednym omijała dwa pozostałe |
 | 2026-09-11 | Autor wpisu ukryty, gdy powtarza nazwę kategorii | konta są grupowe, więc „Żabki · Żabki" w jednej linijce to szum |

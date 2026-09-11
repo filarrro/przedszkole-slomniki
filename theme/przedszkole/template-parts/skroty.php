@@ -33,7 +33,7 @@ if ( empty( $przedszkole_pozycje ) ) {
 $przedszkole_kolory = array( 'zajaczki', 'zabki', 'kotki', 'wiewiorki', 'misie', 'jezyki' );
 ?>
 
-<section class="skroty section--chmury">
+<section class="skroty">
 	<div class="wrap">
 
 		<h2 class="skroty__naglowek"><?php esc_html_e( 'Na skróty', 'przedszkole' ); ?></h2>
@@ -131,4 +131,13 @@ $przedszkole_kolory = array( 'zajaczki', 'zabki', 'kotki', 'wiewiorki', 'misie',
 		</ul>
 
 	</div>
+
+	<?php
+	/*
+	 * Fala zamykająca należy do sekcji, bo tylko wewnątrz niej widać żółte tło
+	 * nad grzbietem — poza sekcją przezroczysta część rysunku pokazywałaby tło
+	 * strony i przejście rozjechałoby się na ostrą krawędź.
+	 */
+	get_template_part( 'template-parts/chmurki', null, array( 'kolor' => 'var(--wp--preset--color--base)' ) );
+	?>
 </section>
