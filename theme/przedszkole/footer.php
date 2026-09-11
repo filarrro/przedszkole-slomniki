@@ -9,7 +9,16 @@ defined( 'ABSPATH' ) || exit;
 ?>
 </main>
 
-<?php get_template_part( 'template-parts/chmurki', null, array( 'kolor' => 'var(--wp--preset--color--primary)' ) ); ?>
+<?php
+get_template_part(
+	'template-parts/fala',
+	null,
+	array(
+		'ksztalt' => 'warstwy',
+		'kolor'   => 'var(--wp--preset--color--primary)',
+	)
+);
+?>
 
 <footer class="site-footer">
 	<div class="wrap site-footer__inner">

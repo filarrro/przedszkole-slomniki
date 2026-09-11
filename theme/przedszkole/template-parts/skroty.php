@@ -158,6 +158,13 @@ $przedszkole_kolory = array( 'zajaczki', 'zabki', 'misie', 'jezyki', 'wiewiorki'
 	 * nad grzbietem — poza sekcją przezroczysta część rysunku pokazywałaby tło
 	 * strony i przejście rozjechałoby się na ostrą krawędź.
 	 */
-	get_template_part( 'template-parts/chmurki', null, array( 'kolor' => 'var(--wp--preset--color--base)' ) );
+	get_template_part(
+		'template-parts/fala',
+		null,
+		array(
+			'ksztalt' => 'warstwy',
+			'kolor'   => 'var(--wp--preset--color--base)',
+		)
+	);
 	?>
 </section>

@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.9.5
+Version: 0.9.6
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -708,24 +708,24 @@ a.pill:hover { filter: brightness(.93); }
    Fala jest wspolna dla wszystkich podstron (footer.php), wiec tlo pod nia
    musi odpowiadac tlu strony - takze na glownej, gdzie ostatnia sekcja
    ("Dlaczego my") stoi na tle strony. */
-/* Pozycjonowana, bo na waskich ekranach fala (40 px) jest nizsza niz jej
-   wsuniecie i dolna krawedz zdjecia siega juz stopki - bez tego kadr,
-   ktory jest pozycjonowany, rysowalby sie na jej tle. */
+/* Pozycjonowana, bo na waskich ekranach fala jest nizsza niz jej wsuniecie
+   i dolna krawedz zdjecia siega juz stopki - bez tego kadr, ktory jest
+   pozycjonowany, rysowalby sie na jej tle. */
 .site-footer { position: relative; margin-top: 0; }
-main + .chmurki { background: var(--wp--preset--color--base); }
+main + .fala { background: var(--wp--preset--color--base); }
 
 /* Na stronie glownej ostatnia sekcja konczy sie zdjeciem, wiec fala wchodzi
    na jego dolna krawedz zamiast zaczynac sie pod nia. Tlo przezroczyste -
    kremowy prostokat zakrylby zdjecie nad grzbietem fali. `position` konieczne,
    bo kadr zdjecia jest pozycjonowany i bez tego rysowalby sie nad fala.
 
-   -49px, a nie ulamek wysokosci fali: fala jest najplytsza posrodku, wiec
-   przy mniejszym wsunieciu na szerokich ekranach przebijalo tlo strony
-   miedzy zdjeciem a grzbietem. */
-.home main + .chmurki {
+   Wsuniecie liczone z wysokosci fali, a nie stalą: najplytszy punkt tego
+   ksztaltu to niecale 5 px na 120 px viewBoxa, wiec zostawiamy dokladnie tyle
+   - przy mniejszym wsunieciu miedzy zdjeciem a grzbietem przebijaloby tlo. */
+.home main + .fala {
 	position: relative;
 	background: transparent;
-	margin-top: -49px;
+	margin-top: calc(4px - clamp(48px, 6vw, 100px));
 }
 
 /* ==========================================================================

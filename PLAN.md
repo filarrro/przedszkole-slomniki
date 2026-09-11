@@ -688,7 +688,8 @@ strony — nagłówek jest w kolorze tekstu, nie granatowy jak reszta, bo na ż�
 daje kontrast 11 zamiast 7 i nie konkuruje z tytułami w kafelkach.
 
 Przejścia między sekcjami rysuje `template-parts/fala.php`: „warstwy" (trzy
-nakładające się fale) pod powitaniem i „skos" (asymetryczna krzywa) nad skrótami.
+nakładające się fale) pod powitaniem, pod skrótami i nad stopką, a „skos"
+(asymetryczna krzywa) nad skrótami.
 Kolor jest parametrem, bo fala należy do sekcji, która ją poprzedza, ale ma kolor
 tej, która po niej następuje — i musi być rysowana wewnątrz sekcji, inaczej
 przezroczysta część pokazuje tło strony zamiast tła sekcji.
