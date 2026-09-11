@@ -11,6 +11,9 @@ get_header();
 ?>
 
 <div class="wrap">
+
+	<?php get_template_part( 'template-parts/sciezka' ); ?>
+
 	<?php
 	while ( have_posts() ) :
 		the_post();
@@ -39,6 +42,8 @@ get_header();
 			</div>
 
 		</article>
+
+		<?php get_template_part( 'template-parts/podstrony', null, array( 'rodzic' => get_the_ID() ) ); ?>
 		<?php
 	endwhile;
 	?>

@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.8.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.9.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
@@ -40,6 +40,7 @@ function przedszkole_setup() {
 		array(
 			'primary' => __( 'Menu główne', 'przedszkole' ),
 			'footer'  => __( 'Menu w stopce', 'przedszkole' ),
+			'skroty'  => __( 'Na skróty (strona główna)', 'przedszkole' ),
 		)
 	);
 
@@ -239,3 +240,111 @@ function przedszkole_excerpt_more( $more ) {
 	return '…';
 }
 add_filter( 'excerpt_more', 'przedszkole_excerpt_more' );
+
+/**
+ * Zmniejszanie zdjęć wgrywanych z telefonu.
+ *
+ * Treść ma 1140 px szerokości, więc 2048 px starcza nawet na ekrany o podwójnej
+ * gęstości. Aparat w telefonie robi zdjęcia po 4000 px i 6 MB — WordPress
+ * przeskaluje je przy wgrywaniu, zamiast trzymać oryginał na serwerze.
+ *
+ * @return int Próg w pikselach.
+ */
+function przedszkole_prog_duzego_obrazka() {
+	return 2048;
+}
+add_filter( 'big_image_size_threshold', 'przedszkole_prog_duzego_obrazka' );
+
+/**
+ * Miniatury w WebP.
+ *
+ * Oryginał zostaje w formacie, w jakim przyszedł — pobranie zdjęcia z biblioteki
+ * mediów daje zwykły JPEG. Zmniejszone kopie, a tych używają listy i treść, idą
+ * w WebP: ten sam obrazek waży około jednej trzeciej mniej.
+ *
+ * Warunek `imagewebp` zabezpiecza przed hostingiem bez obsługi WebP — tam
+ * filtr się nie założy, a wgrywanie zadziała po staremu.
+ *
+ * @param array $formaty Mapowanie formatu wejściowego na wyjściowy.
+ * @return array
+ */
+function przedszkole_format_miniatur( $formaty ) {
+	$formaty['image/jpeg'] = 'image/webp';
+	$formaty['image/png']  = 'image/webp';
+
+	return $formaty;
+}
+if ( function_exists( 'imagewebp' ) ) {
+	add_filter( 'image_editor_output_format', 'przedszkole_format_miniatur' );
+}
+
+/**
+ * Limit rozmiaru wgrywanego pliku.
+ *
+ * PHP na hostingu pozwala na 100 MB — tyle nie potrzebuje żadna treść
+ * przedszkola, a jeden przypadkowy plik z aparatu potrafi zapełnić przestrzeń
+ * na serwerze. 10 MB mieści zeskanowany kilkustronicowy dokument i zdjęcie
+ * w pełnej rozdzielczości, a odcina filmy i surowe pliki z aparatu.
+ *
+ * @return int Limit w bajtach.
+ */
+function przedszkole_limit_uploadu() {
+	return 10 * MB_IN_BYTES;
+}
+add_filter( 'upload_size_limit', 'przedszkole_limit_uploadu' );
+
+/**
+ * Oznaczenie odnośników prowadzących poza stronę.
+ *
+ * Strzałka przy przycisku „Zobacz zdjęcia" jest rysowana w CSS, więc czytnik
+ * ekranu jej nie przeczyta — dopisujemy zapowiedź słowami. Dokumenty PDF
+ * otwieramy w nowej karcie (plik nie zastępuje wtedy przeglądanej strony),
+ * a zgodnie z WCAG 2.1 uprzedzamy o tym przed kliknięciem: wzrokowo ikoną
+ * w CSS, a dla czytnika ekranu tekstem w odnośniku.
+ *
+ * Filtr działa na gotowym HTML-u bloku, bo treść pisze personel w edytorze —
+ * nikt nie będzie pamiętał o dopisywaniu takich adnotacji ręcznie.
+ *
+ * @param string $html  Wyrenderowany blok.
+ * @param array  $blok  Dane bloku.
+ * @return string
+ */
+function przedszkole_linki_zewnetrzne( $html, $blok ) {
+	$nazwa = $blok['blockName'] ?? '';
+
+	if ( 'core/button' === $nazwa && str_contains( $html, 'is-style-galeria' ) ) {
+		return (string) preg_replace(
+			'#(<a\b[^>]*wp-block-button__link[^>]*>)(.*?)(</a>)#s',
+			'$1$2<span class="screen-reader-text"> ' . esc_html__( '(album w serwisie Google Zdjęcia)', 'przedszkole' ) . '</span>$3',
+			$html,
+			1
+		);
+	}
+
+	if ( 'core/file' === $nazwa ) {
+		// Pierwszy odnośnik w bloku to nazwa pliku; drugi to przycisk „Pobierz”.
+		return (string) preg_replace(
+			'#<a\s+(href="[^"]*")\s*>(.*?)</a>#s',
+			'<a $1 target="_blank" rel="noopener">$2<span class="screen-reader-text"> ' . esc_html__( '(otwiera się w nowej karcie)', 'przedszkole' ) . '</span></a>',
+			$html,
+			1
+		);
+	}
+
+	return $html;
+}
+add_filter( 'render_block', 'przedszkole_linki_zewnetrzne', 10, 2 );
+
+/**
+ * Nagłówek archiwum bez przedrostka.
+ *
+ * WordPress pisze „Kategoria: Żabki”. Na stronie z sześcioma grupami
+ * wystarczy „Żabki” — słowo „Kategoria” nie mówi rodzicowi niczego,
+ * czego nie widać z kontekstu.
+ *
+ * @return string
+ */
+function przedszkole_bez_przedrostka() {
+	return '';
+}
+add_filter( 'get_the_archive_title_prefix', 'przedszkole_bez_przedrostka' );

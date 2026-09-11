@@ -6,7 +6,8 @@
  * w Gutenbergu — pracownicy przedszkola mogą ją zmieniać sami. Grafika,
  * chmurki i sekcja aktualności są dokładane przez motyw.
  *
- * Kolejność: powitanie → aktualności → „Dlaczego my" → hasło ze zdjęciem. Fala z chmurkami ma
+ * Kolejność: powitanie → aktualności → „Dlaczego my" → „Na skróty" → hasło ze
+ * zdjęciem. Fala z chmurkami ma
  * kolor sekcji, która po niej następuje, więc zapytanie o wpisy leci przed
  * hero — bez wpisów fala pod hero prowadziłaby do nieistniejącego tła.
  *
@@ -101,6 +102,17 @@ $przedszkole_sa_wpisy = $przedszkole_aktualnosci->have_posts();
 <?php endif; ?>
 
 <?php get_template_part( 'template-parts/dlaczego-my' ); ?>
+
+<?php
+/*
+ * Fala nalezy do sekcji, ktora ja poprzedza, ale ma kolor tej, ktora po niej
+ * nastepuje. Bez kafelkow "Na skroty" nie ma czego zapowiadac, wiec nie ma fali.
+ */
+if ( has_nav_menu( 'skroty' ) ) {
+	get_template_part( 'template-parts/chmurki', null, array( 'kolor' => '#ECEAFB' ) );
+	get_template_part( 'template-parts/skroty' );
+}
+?>
 
 <?php get_template_part( 'template-parts/skrzydla' ); ?>
 

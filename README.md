@@ -58,7 +58,8 @@ albo dane — nie należą do repozytorium.
 | 4. Struktura treści | ✅ strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ wzorce, warianty stylów, style bloków |
 | 6. Użytkownicy | ✅ role natywne, konta grupowe, panel odchudzony |
-| 7–8 | ⬜ |
+| 7. Frontend | ✅ widoki, skróty, podstrony, mapa, obrazy |
+| 8. SEO / wydajność / bezpieczeństwo | ⬜ |
 | 9. Wdrożenie | ⬜ |
 | 10–12 | ⬜ |
 

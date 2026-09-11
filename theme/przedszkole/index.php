@@ -1,6 +1,11 @@
 <?php
 /**
- * Listy wpisów: aktualności, kategorie, archiwa dat, autorzy.
+ * Listy wpisów: aktualności, kategorie, archiwa dat, autorzy, wyniki wyszukiwania.
+ *
+ * Jeden plik na wszystkie listy. WordPress szuka kolejno `home.php`,
+ * `category.php`, `archive.php`, a na końcu `index.php` — skoro każdy z nich
+ * miałby tę samą treść, zostaje wyłącznie ostatni. Mniej plików do utrzymania
+ * i zero ryzyka, że poprawka trafi do jednego, a ominie dwa pozostałe.
  *
  * @package Przedszkole
  */

@@ -29,6 +29,21 @@ więc ręczne zmiany w menu przepadną.
 
 Skrypt tworzy wyłącznie puste strony. Treść wchodzi w Etapie 7 i przy migracji.
 
+## `skroty.sh`
+
+Tworzy menu „Na skróty" — kafelki na stronie głównej (Etap 7). Cztery pozycje:
+Grupy, Dla rodziców, Galeria, Kontakt, każda z opisem pod tytułem.
+
+```bash
+tools/skroty.sh
+```
+
+Idempotentny: istniejącego menu nie kasuje i nie dokłada pozycji drugi raz.
+Dalsze zmiany — w Wyglądzie → Menu. Opis pod tytułem to pole „Opis" pozycji
+menu, widoczne po włączeniu w Opcjach ekranu.
+
+Bez tego menu sekcja „Na skróty" nie pojawia się na stronie głównej.
+
 ## `uzytkownicy.sh`
 
 Zakłada konta z Etapu 6: zbiorcze `przedszkole` (rola Editor — dyrekcja) i sześć

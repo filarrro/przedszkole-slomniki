@@ -20,7 +20,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
 | 6. Użytkownicy | ✅ | role natywne, konta grupowe, panel odchudzony |
-| 7. Frontend | ⬜ | |
+| 7. Frontend | ✅ | widoki gotowe; lista dokumentów czeka na PDF-y z FTP |
 | 8. SEO / wydajność / bezpieczeństwo | ⬜ | |
 | 9. Wdrożenie | ⬜ | |
 | 10–12 | ⬜ | |
@@ -34,8 +34,9 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 ### Co można robić bez tych plików
 
 - ~~Etap 6 — role i uprawnienia~~ — **zrobione**
+- ~~Etap 7 — frontend~~ — **zrobione**, poza listą dokumentów (potrzebne PDF-y)
 - Skrypt migracyjny — treść da się przenieść bez zdjęć, obrazki dołożyć później
-- Kolejne sekcje strony głównej (wymaga ustaleń z klientem, jakie treści)
+- Etap 8 — SEO, wydajność, bezpieczeństwo
 
 ### Decyzje czekające na klienta
 
@@ -672,41 +673,73 @@ naprawdę chronione, zwraca 403 (tabela wyżej).
 **Cel:** działające, wyglądające widoki na realnych treściach.
 
 ### 7.1 Strona główna
-- [ ] Sekcja powitalna
-- [ ] Najnowsze aktualności (3–4 wpisy z miniaturkami)
-- [ ] Skróty do kluczowych sekcji
-- [ ] Kontakt / godziny otwarcia
+- [x] Sekcja powitalna — treść z Gutenberga, ilustracja i chmurki z motywu
+- [x] Najnowsze aktualności (3 wpisy z miniaturkami)
+- [x] Skróty do kluczowych sekcji — kafelki z menu „Na skróty"
+- [x] Kontakt / godziny otwarcia — w stopce, na każdej podstronie
+
+Kolejność sekcji: powitanie → aktualności → „Dlaczego my" → „Na skróty" → hasło
+ze zdjęciem. Kafelki „Na skróty" biorą się z osobnego menu (`tools/skroty.sh`),
+więc dyrekcja zmienia ich zestaw, tytuły i opisy w Wyglądzie → Menu. Bez menu
+sekcja i poprzedzająca ją fala po prostu nie powstają.
 
 ### 7.2 Strony treściowe
-- [ ] `page.php` — uniwersalny szablon dla wszystkich stron Gutenberga
-- [ ] Obsługa stron zagnieżdżonych (Grupy → Motylki)
+- [x] `page.php` — uniwersalny szablon dla wszystkich stron Gutenberga
+- [x] Obsługa stron zagnieżdżonych (Grupy → Misie)
+
+Strona-rodzic („Grupy", „Dla rodziców") bywa krótka, bo treść siedzi
+w podstronach. Pod treścią wypisują się więc kafelki „W tym dziale", wyliczane
+z drzewa stron — nowa podstrona pojawia się tam sama. Strona-dziecko dostaje nad
+tytułem odnośnik powrotny do rodzica.
 
 ### 7.3 Aktualności
-- [ ] Lista wpisów: tytuł, zdjęcie wyróżniające, data, zajawka
-- [ ] Pojedynczy wpis: tytuł, treść, zdjęcie, data, autor, kategoria
-- [ ] Paginacja
-- [ ] Archiwum kategorii (jeśli używamy kategorii)
+- [x] Lista wpisów: tytuł, zdjęcie wyróżniające, data, zajawka
+- [x] Pojedynczy wpis: tytuł, treść, zdjęcie, data, autor, kategoria
+- [x] Paginacja
+- [x] Archiwum kategorii
+
+`home.php` i `archive.php` były znakiem w znak tym samym plikiem co `index.php` —
+zostaje jeden. WordPress i tak schodzi do `index.php`, gdy nie znajdzie
+szablonu bardziej szczegółowego.
+
+Autor pokazuje się tylko wtedy, gdy wnosi coś ponad etykietę kategorii. Wpis
+Żabek w kategorii „Żabki" wyświetlałby to samo słowo dwa razy w jednej linijce.
 
 ### 7.4 Galerie — linki do Google Photos
 Galerie przedszkola żyją w Google Photos (395 albumów). Nie budujemy własnego systemu galerii.
-- [ ] Czytelny komponent „Zobacz zdjęcia" prowadzący do albumu
-- [ ] Oznaczenie, że link prowadzi na zewnątrz
-- [ ] Tekst alternatywny dla linków (dziś puste — problem dostępności)
-- [ ] Natywne bloki galerii WP dostępne dla treści, które trafią bezpośrednio na stronę
-- [ ] Miniatury zamiast pełnych zdjęć na listach — **obowiązkowo**
-- [ ] `loading="lazy"` (WP robi to sam — zweryfikować)
-- [ ] Poprawne `srcset` / rozmiary obrazów
-- [ ] WebP/AVIF jeśli hosting i WP pozwalają
-- [ ] Limit rozmiaru uploadu + instrukcja dla personelu
+- [x] Czytelny komponent „Zobacz zdjęcia" prowadzący do albumu
+- [x] Oznaczenie, że link prowadzi na zewnątrz
+- [x] Tekst alternatywny dla linków — czytnik ekranu słyszy „(album w serwisie Google Zdjęcia)"
+- [x] Natywne bloki galerii WP dostępne dla treści, które trafią bezpośrednio na stronę
+- [x] Miniatury zamiast pełnych zdjęć na listach — rozmiar `przedszkole-karta` 640×427
+- [x] `loading="lazy"` — WP robi to sam, zweryfikowane w wygenerowanym HTML-u
+- [x] Poprawne `srcset` / rozmiary obrazów — zweryfikowane
+- [x] WebP — miniatury konwertowane przy wgrywaniu, oryginał zostaje w swoim formacie
+- [x] Limit rozmiaru uploadu — 10 MB; instrukcja dla personelu w Etapie 12
+
+Strzałka przy przycisku albumu jest rysowana w CSS, więc czytnik ekranu jej nie
+przeczyta — zapowiedź dopisuje filtr w `functions.php`. Ten sam filtr obsługuje
+dokumenty. Treść pisze personel w edytorze i nikt nie będzie pamiętał
+o dopisywaniu takich adnotacji ręcznie.
+
+Zdjęcia większe niż 2048 px WordPress zmniejsza przy wgrywaniu — treść ma
+1140 px szerokości, więc nawet ekran o podwójnej gęstości nie potrzebuje więcej.
 
 ### 7.5 Dokumenty
-- [ ] Strona z listą dokumentów PDF (linki do Media Library)
-- [ ] Nazwa dokumentu + ewentualne grupowanie (nagłówki sekcji w Gutenbergu)
-- [ ] Otwieranie PDF w nowej karcie
+- [x] Strona z listą dokumentów PDF (linki do Media Library) — wzorzec „Lista dokumentów"
+- [x] Nazwa dokumentu + grupowanie (nagłówki sekcji w Gutenbergu)
+- [x] Otwieranie PDF w nowej karcie
+- [ ] Realne dokumenty — **czeka na pliki z FTP**
+
+Nowa karta wbrew decyzji o albumach, które otwierają się w tej samej: plik PDF
+nie jest stroną, do której da się wrócić przyciskiem „wstecz" — przeglądarka
+albo go pobiera, albo uruchamia własną przeglądarkę plików. WCAG dopuszcza nowe
+okno pod warunkiem uprzedzenia (technika G201), więc uprzedzamy: ikoną dla
+patrzących, tekstem w odnośniku dla czytnika ekranu.
 
 ### 7.6 Kontakt
-- [ ] Dane kontaktowe, adres, godziny
-- [ ] Mapa (statyczny obraz lub osadzenie — uwaga na prywatność i wydajność)
+- [x] Dane kontaktowe, adres, godziny — wzorzec „Dane kontaktowe", dane realne
+- [x] Mapa — statyczny obrazek z OpenStreetMap ze znacznikiem przedszkola
 - [-] **Formularz kontaktowy — odrzucony** (decyzja z 11.09.2026). Zostaje
       adres e-mail i telefon. Odpada wtyczka, konfiguracja SMTP, antyspam,
       klauzula RODO przy formularzu i utrzymywanie tego wszystkiego przez
@@ -715,7 +748,16 @@ Galerie przedszkola żyją w Google Photos (395 albumów). Nie budujemy własneg
 - [-] ~~Weryfikacja, że maile dochodzą~~ — bezprzedmiotowe bez formularza
 - [-] ~~RODO przy formularzu~~ — bezprzedmiotowe bez formularza
 
-**Kryteria odbioru:** każdy widok przetestowany na realnej treści, na telefonie i desktopie.
+Mapa jest obrazkiem (43 kB na telefonie), a nie osadzoną mapą Google. Osadzenie
+ładowałoby kilkaset kilobajtów z cudzego serwera przy każdym wejściu, zakładało
+ciasteczka i wymagało klauzuli RODO. Kafelki pochodzą z OpenStreetMap na licencji
+ODbL — podpis z odnośnikiem do autorów jest warunkiem licencji i nie wolno go
+usuwać. Obok mapy stoi przycisk „Wyznacz trasę" prowadzący do nawigacji.
+
+**Kryteria odbioru:** ✅ każdy widok przetestowany na realnej treści, na telefonie
+i desktopie — strona główna, lista i pojedyncza aktualność, archiwum kategorii,
+strona-rodzic z podstronami, strona-dziecko, kontakt z mapą, galeria, 404,
+wyniki wyszukiwania.
 
 ---
 
@@ -912,6 +954,14 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Galerie zostają w Google Photos | konto należy do przedszkola, więc brak ryzyka utraty; oszczędza ~35 GB i duży nakład pracy |
 | 2026-09-11 | Konta autorów grupowe, nie imienne | decyzja klienta; kompromis: współdzielone hasło, brak rozliczalności — odnotowany w MIGRACJA.md |
 | 2026-09-11 | Rok szkolny z daty publikacji, nie z kategorii | WP ma archiwa po dacie natywnie; odpada kilkadziesiąt pustych kategorii |
+| 2026-09-11 | Kafelki „Na skróty" z menu, nie z kodu | dyrekcja zmienia zestaw i opisy w panelu; motyw dobiera tylko ikonę i kolor |
+| 2026-09-11 | Jeden `index.php` zamiast `home.php`, `archive.php` i `index.php` | trzy identyczne pliki; poprawka w jednym omijała dwa pozostałe |
+| 2026-09-11 | Autor wpisu ukryty, gdy powtarza nazwę kategorii | konta są grupowe, więc „Żabki · Żabki" w jednej linijce to szum |
+| 2026-09-11 | PDF otwiera się w nowej karcie, album w tej samej | do pliku nie wraca się przyciskiem „wstecz"; WCAG G201 dopuszcza nowe okno z uprzedzeniem, które dokładamy |
+| 2026-09-11 | Zapowiedź linku zewnętrznego dopisywana filtrem | treść pisze personel w edytorze — ręcznych adnotacji nikt nie dopilnuje |
+| 2026-09-11 | Mapa jako statyczny obrazek OpenStreetMap | osadzona mapa Google to kilkaset kB z cudzego serwera, ciasteczka i klauzula RODO; obrazek waży 43 kB i nikogo nie śledzi |
+| 2026-09-11 | Miniatury konwertowane do WebP, oryginał bez zmian | około jednej trzeciej mniej na listach; pobranie z biblioteki mediów nadal daje zwykły JPEG |
+| 2026-09-11 | Próg zmniejszania zdjęć 2048 px, limit uploadu 10 MB | treść ma 1140 px; limit odcina filmy i surowe pliki z aparatu, mieści skan dokumentu |
 | 2026-09-11 | Git wersjonuje tylko motyw | rdzeń WP i wtyczki to cudzy kod; symlink lokalnie, zwykły katalog na serwerze |
 
 ---
