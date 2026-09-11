@@ -19,7 +19,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 3. Motyw | ✅ | szkielet, szablony, identyfikacja wizualna |
 | 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
-| 6. Użytkownicy | ⬜ | |
+| 6. Użytkownicy | ✅ | role natywne, konta grupowe, panel odchudzony |
 | 7. Frontend | ⬜ | |
 | 8. SEO / wydajność / bezpieczeństwo | ⬜ | |
 | 9. Wdrożenie | ⬜ | |
@@ -33,7 +33,7 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 
 ### Co można robić bez tych plików
 
-- Etap 6 — role i uprawnienia
+- ~~Etap 6 — role i uprawnienia~~ — **zrobione**
 - Skrypt migracyjny — treść da się przenieść bez zdjęć, obrazki dołożyć później
 - Kolejne sekcje strony głównej (wymaga ustaleń z klientem, jakie treści)
 
@@ -592,12 +592,73 @@ i przyciskiem bez pomocy — sprawdzone praktycznie 2026-09-11.
 
 **Konta grupowe (z migracji):** `grupa-kotki`, `grupa-zabki`, `grupa-jezyki`, `grupa-zajaczki`, `grupa-misie`, `grupa-wiewiorki` — rola Author. Plus `przedszkole` (Editor) na treści ogólne.
 
-- [ ] Mapowanie ról na natywne role WP
-- [ ] Utworzenie kont dla realnych osób
-- [ ] Sprawdzenie, czy natywne role wystarczają
-- [ ] Jeśli nie — minimalna korekta uprawnień (kod w motywie lub lekka wtyczka typu Members). Bez ciężkich systemów uprawnień.
-- [ ] Ukrycie zbędnych elementów panelu dla ról nietechnicznych
-- [ ] Zasada: konto administratora **nie** służy do codziennej pracy
+- [x] Mapowanie ról na natywne role WP
+- [x] Sprawdzenie, czy natywne role wystarczają — **wystarczają, zero korekt**
+- [x] Utworzenie kont grupowych — `tools/uzytkownicy.sh`
+- [-] Minimalna korekta uprawnień — niepotrzebna, patrz audyt niżej
+- [x] Ukrycie zbędnych elementów panelu — `theme/przedszkole/inc/panel.php`
+- [x] Zasada: konto administratora **nie** służy do codziennej pracy —
+      wypisana na końcu `tools/uzytkownicy.sh`
+- [ ] Utworzenie kont dla realnych osób — czeka na listę od dyrekcji
+- [ ] Praktyczny test z dyrekcją
+
+### Audyt uprawnień — natywne role wystarczają
+
+Sprawdzone na żywo: logowanie na każde konto + wejście wprost po adresie,
+żeby zweryfikować realne uprawnienia, nie samo ukrycie menu.
+
+| Próba | `grupa-*` (Author) | `przedszkole` (Editor) |
+|---|---|---|
+| Lista wpisów, media | 200 | 200 |
+| Lista i edycja stron | **403** | 200 |
+| Własny wpis | 200 | 200 |
+| Wpis innej grupy | **403** | 200 |
+| Ustawienia, motywy, wtyczki, użytkownicy | **403** | **403** |
+
+Author nie ma też `manage_categories` ani `unfiltered_html` — nauczyciel
+przypisze wpis do istniejącej kategorii, ale nie założy nowej i nie wklei
+surowego HTML-a. Oba braki są tu zaletą.
+
+### Panel po sprzątaniu
+
+| Rola | Widzi w menu |
+|---|---|
+| Administrator | Kokpit, Wpisy, Media, Strony, Wygląd, Wtyczki, Użytkownicy, Narzędzia, Ustawienia |
+| Dyrektor (Editor) | Kokpit, Wpisy, Media, Strony, Profil |
+| Nauczyciel (Author) | Kokpit, Wpisy, Media, Profil |
+
+Co odjęliśmy i dlaczego:
+- **„Wydarzenia i nowości WordPressa”** — odpytuje `api.wordpress.org` przy
+  każdym wejściu na kokpit, z geolokalizacją pod listę meetupów. Strona nie
+  wykonuje zapytań na zewnątrz, więc widget odpada dla wszystkich ról
+- **„Szybki szkic”** — tworzy wpisy bez tytułu, kategorii i zdjęcia, lądujące
+  w szkicach, o których nikt nie pamięta
+- **Komentarze** — zamknięte globalnie i na wszystkich 29 treściach,
+  przedszkole ich nie przewiduje. Zostawał pusty ekran
+- **Narzędzia** dla nie-administratorów — import, eksport, kondycja i dane
+  osobowe wymagają uprawnień, których Editor i Author nie mają, więc strona
+  była pusta. Sprawdzamy uprawnienie `manage_options`, nie nazwę roli
+- **Logo „W” w górnym pasku** — prowadzi wyłącznie na wordpress.org,
+  dokumentacja i fora po angielsku
+
+`remove_menu_page()` chowa pozycję, nie blokuje adresu — `tools.php` nadal
+odpowiada 200. Nie jest to luka: strona jest dla tych ról pusta, a to, co
+naprawdę chronione, zwraca 403 (tabela wyżej).
+
+### Do rozstrzygnięcia przed wdrożeniem
+
+- **Adresy e-mail kont.** Skrypt nadaje `grupa-<nazwa>@przedszkoleslomniki.pl`.
+  Na produkcji muszą to być realne skrzynki, inaczej nie zadziała odzyskiwanie
+  hasła. Hosting pokazuje 4 użyte konta pocztowe — brakuje sześciu
+- **Galeria a rola Author.** „Galeria” to strona, więc nauczyciel jej nie
+  zredaguje. Naturalny obieg: link do albumu ląduje we wpisie grupy
+  (wzorzec „Link do albumu”), a stronę zbiorczą prowadzi dyrekcja.
+  Nie nadajemy z tego powodu uprawnień do stron
+- **Kategoria domyślna to `ogloszenia`.** Nauczyciel, który zapomni zaznaczyć
+  swoją grupę, opublikuje wpis w ogłoszeniach ogólnych. Do instrukcji dla
+  personelu (Etap 12), nie do kodu
+- **Konta imienne.** Nie wiemy, kto realnie pracuje w przedszkolu — lista od
+  dyrekcji. Konta grupowe są z migracji i pokrywają obieg treści
 
 **Kryteria odbioru:** zalogowanie się na każde konto i weryfikacja, co widać w panelu, a czego nie.
 

@@ -29,6 +29,25 @@ więc ręczne zmiany w menu przepadną.
 
 Skrypt tworzy wyłącznie puste strony. Treść wchodzi w Etapie 7 i przy migracji.
 
+## `uzytkownicy.sh`
+
+Zakłada konta z Etapu 6: zbiorcze `przedszkole` (rola Editor — dyrekcja) i sześć
+kont grupowych `grupa-misie` … `grupa-kotki` (rola Author — nauczycielki).
+
+```bash
+tools/uzytkownicy.sh
+```
+
+Idempotentny: istniejącemu kontu poprawia tylko rolę, hasła nie rusza.
+
+Hasła są losowe i **wypisywane raz, na ekranie** — nigdzie ich nie zapisujemy.
+Zgub je, a zostaje odzyskiwanie hasła z panelu, które wymaga działającej skrzynki.
+Adresy są zmyślone z nazwy konta (`grupa-misie@przedszkoleslomniki.pl`); przed
+wdrożeniem muszą to być realne skrzynki — patrz PLAN.md, Etap 6.
+
+Własnych ról nie tworzymy. Natywne Editor i Author pokrywają potrzeby przedszkola,
+uzasadnienie i audyt uprawnień są w PLAN.md.
+
 ## `migracja_tresci.py`
 
 Przenosi treści **statyczne** ze zrzutu Joomli do stron WordPressa — kadrę,
