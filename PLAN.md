@@ -404,7 +404,11 @@ theme/przedszkole/
 - [x] Fala z chmurkami przed stopką na wszystkich podstronach
 
 ### Do dokończenia
-- [ ] Wypełnienie widgetów stopki (adres, telefon, godziny)
+- [x] Wypełnienie widgetów stopki — adres, telefon, e-mail i godziny otwarcia
+      (widgety bloku `footer-kontakt` i `footer-godziny`, ustawia
+      `tools/struktura.sh`). Ikony SVG dokłada CSS przez klasy
+      `.kontakt__poz--*`, więc redaktor ich nie skasuje edytując treść.
+      Dane do potwierdzenia przez dyrekcję — patrz „Decyzje czekające na klienta"
 - [ ] Weryfikacja wyglądu edytora Gutenberg (Etap 5)
 - [x] Komponent linku do galerii Google Photos — jako wariant stylu bloku
       „Przycisk" (`is-style-galeria`), wstawiany wzorcem (Etap 5)

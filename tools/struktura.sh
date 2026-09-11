@@ -110,6 +110,28 @@ wp menu item add-post menu-w-stopce "$DOSTEPNOSC" >/dev/null
 wp menu item add-post menu-w-stopce "$PRYWATNOSC" >/dev/null
 wp menu item add-post menu-w-stopce "$KONTAKT" >/dev/null
 
+echo "== Widgety stopki =="
+
+# Dane teleadresowe z art. 9 starej strony, godziny z ramowego rozkladu dnia
+# (patrz MIGRACJA.md). Widget bloku, nie kod w szablonie - dyrekcja poprawi to
+# sama z panelu. Ikony dokleja CSS do klas .kontakt__poz--*, wiec w tresci
+# widgetu nie ma SVG, ktore uzytkownik moglby przypadkiem skasowac.
+KONTAKT_HTML='<!-- wp:html --><address><ul class="kontakt"><li class="kontakt__poz kontakt__poz--adres">ul. św. Jadwigi Królowej 4<br>32-090 Słomniki</li><li class="kontakt__poz kontakt__poz--telefon"><span class="screen-reader-text">Telefon: </span><a href="tel:+48510217005">510 217 005</a></li><li class="kontakt__poz kontakt__poz--email"><span class="screen-reader-text">E-mail: </span><a href="mailto:sekretariat@przedszkoleslomniki.pl">sekretariat@przedszkoleslomniki.pl</a></li></ul></address><!-- /wp:html -->'
+
+GODZINY_HTML='<!-- wp:html --><ul class="kontakt"><li class="kontakt__poz kontakt__poz--godziny">poniedziałek – piątek<br>6:30 – 17:00</li></ul><!-- /wp:html -->'
+
+# Czyscimy obszary przed dodaniem - inaczej kolejne uruchomienie dokleja duplikat.
+widget_bloku() {
+	local obszar="$1" tresc="$2" w
+	for w in $(wp widget list "$obszar" --format=ids); do
+		wp widget delete "$w" >/dev/null
+	done
+	wp widget add block "$obszar" --content="$tresc" >/dev/null
+}
+
+widget_bloku footer-kontakt "$KONTAKT_HTML"
+widget_bloku footer-godziny "$GODZINY_HTML"
+
 echo "== Strona glowna i strona wpisow =="
 wp option update show_on_front page >/dev/null
 wp option update page_on_front "$(wp post list --post_type=page --name=strona-glowna --field=ID)" >/dev/null
