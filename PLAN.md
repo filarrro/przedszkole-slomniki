@@ -714,8 +714,8 @@ Galerie przedszkola żyją w Google Photos (395 albumów). Nie budujemy własneg
 - [x] Miniatury zamiast pełnych zdjęć na listach — rozmiar `przedszkole-karta` 640×427
 - [x] `loading="lazy"` — WP robi to sam, zweryfikowane w wygenerowanym HTML-u
 - [x] Poprawne `srcset` / rozmiary obrazów — zweryfikowane
-- [x] WebP — miniatury konwertowane przy wgrywaniu, oryginał zostaje w swoim formacie
-- [x] Limit rozmiaru uploadu — 10 MB; instrukcja dla personelu w Etapie 12
+- [x] WebP — zdjęcie przechodzi na WebP przy wgrywaniu, w każdej wielkości
+- [x] Limit rozmiaru uploadu — 5 MB; instrukcja dla personelu w Etapie 12
 
 Strzałka przy przycisku albumu jest rysowana w CSS, więc czytnik ekranu jej nie
 przeczyta — zapowiedź dopisuje filtr w `functions.php`. Ten sam filtr obsługuje
@@ -724,6 +724,16 @@ o dopisywaniu takich adnotacji ręcznie.
 
 Zdjęcia większe niż 2048 px WordPress zmniejsza przy wgrywaniu — treść ma
 1140 px szerokości, więc nawet ekran o podwójnej gęstości nie potrzebuje więcej.
+Plik sprzed zmniejszenia, który WordPress normalnie chowa obok „na wszelki
+wypadek", jest kasowany: przy zdjęciach z telefonu to kilka megabajtów na każdą
+pozycję w bibliotece, po które nikt nie sięgnie.
+
+Konwersja na WebP dzieje się od razu przy wgrywaniu, zanim WordPress zabierze
+się za zmniejszanie i miniatury — dlatego w WebP jest każda wielkość, także ta
+pełna. Plik w formacie źródłowym znika; to samo zdjęcie w dwóch formatach
+zajmowałoby dwa razy tyle miejsca bez żadnego pożytku. Przezroczystość PNG-ów
+przechodzi bez zmian. Filtr na miniatury zostaje dla obrazków, które przyjdą
+inną drogą: migracji ze starej strony i `wp media regenerate`.
 
 ### 7.5 Dokumenty
 - [x] Strona z listą dokumentów PDF (linki do Media Library) — wzorzec „Lista dokumentów"
@@ -960,8 +970,9 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | PDF otwiera się w nowej karcie, album w tej samej | do pliku nie wraca się przyciskiem „wstecz"; WCAG G201 dopuszcza nowe okno z uprzedzeniem, które dokładamy |
 | 2026-09-11 | Zapowiedź linku zewnętrznego dopisywana filtrem | treść pisze personel w edytorze — ręcznych adnotacji nikt nie dopilnuje |
 | 2026-09-11 | Mapa jako statyczny obrazek OpenStreetMap | osadzona mapa Google to kilkaset kB z cudzego serwera, ciasteczka i klauzula RODO; obrazek waży 43 kB i nikogo nie śledzi |
-| 2026-09-11 | Miniatury konwertowane do WebP, oryginał bez zmian | około jednej trzeciej mniej na listach; pobranie z biblioteki mediów nadal daje zwykły JPEG |
-| 2026-09-11 | Próg zmniejszania zdjęć 2048 px, limit uploadu 10 MB | treść ma 1140 px; limit odcina filmy i surowe pliki z aparatu, mieści skan dokumentu |
+| 2026-09-11 | Zdjęcia przechodzą na WebP przy wgrywaniu, plik źródłowy kasowany | konwersja przed zmniejszaniem obejmuje każdą wielkość, także pełną; dwa formaty tego samego zdjęcia to podwójne miejsce bez pożytku |
+| 2026-09-11 | Plik sprzed zmniejszenia (`original_image`) nie jest przechowywany | kilka megabajtów na pozycję w bibliotece, po które nikt nie sięga |
+| 2026-09-11 | Próg zmniejszania zdjęć 2048 px, limit uploadu 5 MB | treść ma 1140 px; limit odcina filmy i surowe pliki z aparatu, mieści skan dokumentu i zdjęcie z telefonu |
 | 2026-09-11 | Git wersjonuje tylko motyw | rdzeń WP i wtyczki to cudzy kod; symlink lokalnie, zwykły katalog na serwerze |
 
 ---

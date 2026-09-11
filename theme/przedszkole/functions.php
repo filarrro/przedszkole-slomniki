@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.9.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.9.1' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
@@ -245,8 +245,8 @@ add_filter( 'excerpt_more', 'przedszkole_excerpt_more' );
  * Zmniejszanie zdjęć wgrywanych z telefonu.
  *
  * Treść ma 1140 px szerokości, więc 2048 px starcza nawet na ekrany o podwójnej
- * gęstości. Aparat w telefonie robi zdjęcia po 4000 px i 6 MB — WordPress
- * przeskaluje je przy wgrywaniu, zamiast trzymać oryginał na serwerze.
+ * gęstości. Aparat w telefonie robi zdjęcia po 4000 px — WordPress przeskaluje
+ * je przy wgrywaniu, zamiast trzymać na serwerze wielkość, której nikt nie zobaczy.
  *
  * @return int Próg w pikselach.
  */
@@ -256,14 +256,90 @@ function przedszkole_prog_duzego_obrazka() {
 add_filter( 'big_image_size_threshold', 'przedszkole_prog_duzego_obrazka' );
 
 /**
+ * Przerobienie wgranego zdjęcia na WebP.
+ *
+ * Konwersja dzieje się od razu przy wgrywaniu, zanim WordPress zabierze się za
+ * zmniejszanie i miniatury — dzięki temu w WebP jest każda wielkość, także ta
+ * pełna, a nie tylko kopie. Plik w formacie źródłowym znika: to samo zdjęcie
+ * w dwóch formatach zajmowałoby dwa razy tyle miejsca bez żadnego pożytku.
+ *
+ * Jeden filtr obsługuje obie drogi: wgranie z panelu i dołożenie z linii poleceń
+ * albo ze skryptu migracyjnego. WordPress puszcza je przez ten sam `wp_handle_upload`,
+ * różnicując tylko drugim argumentem, którego tu nie potrzebujemy.
+ *
+ * GIF-y pomijamy — animacji nie przeniesiemy, a statyczny GIF to dziś rzadkość.
+ *
+ * @param array $plik Dane wgranego pliku: ścieżka, adres i typ MIME.
+ * @return array
+ */
+function przedszkole_upload_na_webp( $plik ) {
+	if ( empty( $plik['type'] ) || ! in_array( $plik['type'], array( 'image/jpeg', 'image/png' ), true ) ) {
+		return $plik;
+	}
+
+	$edytor = wp_get_image_editor( $plik['file'] );
+
+	if ( is_wp_error( $edytor ) ) {
+		return $plik;
+	}
+
+	// Nazwa bez kolizji: „kwiaty.jpg” obok istniejącego „kwiaty.webp” dostanie „kwiaty-1.webp”.
+	$katalog = dirname( $plik['file'] );
+	$nazwa   = wp_unique_filename( $katalog, pathinfo( $plik['file'], PATHINFO_FILENAME ) . '.webp' );
+
+	$wynik = $edytor->save( $katalog . '/' . $nazwa, 'image/webp' );
+
+	if ( is_wp_error( $wynik ) ) {
+		return $plik;
+	}
+
+	wp_delete_file( $plik['file'] );
+
+	/*
+	 * Bez klucza `error` — WordPress sprawdza go przez `isset()`, więc nawet
+	 * `false` przerwałoby wgrywanie komunikatem bez treści.
+	 */
+	return array(
+		'file' => $wynik['path'],
+		'url'  => dirname( $plik['url'] ) . '/' . $wynik['file'],
+		'type' => $wynik['mime-type'],
+	);
+}
+
+/**
+ * Usunięcie nietkniętego oryginału po zmniejszeniu.
+ *
+ * Zdjęcie większe niż próg WordPress zmniejsza, ale plik sprzed zmniejszenia
+ * chowa obok „na wszelki wypadek”. Przy zdjęciach z telefonu to kilka megabajtów
+ * na każdą pozycję w bibliotece, po które nikt nigdy nie sięgnie. Kasujemy go
+ * razem z wpisem w metadanych — sam wpis bez pliku wskazywałby w pustkę.
+ *
+ * @param array $meta Metadane załącznika.
+ * @param int   $id   ID załącznika.
+ * @return array
+ */
+function przedszkole_bez_oryginalu( $meta, $id ) {
+	if ( empty( $meta['original_image'] ) ) {
+		return $meta;
+	}
+
+	$sciezka = wp_get_original_image_path( $id );
+
+	if ( $sciezka && file_exists( $sciezka ) && $sciezka !== get_attached_file( $id ) ) {
+		wp_delete_file( $sciezka );
+	}
+
+	unset( $meta['original_image'] );
+
+	return $meta;
+}
+
+/**
  * Miniatury w WebP.
  *
- * Oryginał zostaje w formacie, w jakim przyszedł — pobranie zdjęcia z biblioteki
- * mediów daje zwykły JPEG. Zmniejszone kopie, a tych używają listy i treść, idą
- * w WebP: ten sam obrazek waży około jednej trzeciej mniej.
- *
- * Warunek `imagewebp` zabezpiecza przed hostingiem bez obsługi WebP — tam
- * filtr się nie założy, a wgrywanie zadziała po staremu.
+ * Wgrane zdjęcia są już w WebP, więc ten filtr obsługuje to, co przyszło inną
+ * drogą: migrację ze starej strony i przeliczanie miniatur poleceniem
+ * `wp media regenerate`.
  *
  * @param array $formaty Mapowanie formatu wejściowego na wyjściowy.
  * @return array
@@ -274,7 +350,14 @@ function przedszkole_format_miniatur( $formaty ) {
 
 	return $formaty;
 }
+
+/*
+ * Warunek `imagewebp` zabezpiecza przed hostingiem bez obsługi WebP — tam żaden
+ * z trzech filtrów się nie założy, a wgrywanie zadziała po staremu.
+ */
 if ( function_exists( 'imagewebp' ) ) {
+	add_filter( 'wp_handle_upload', 'przedszkole_upload_na_webp' );
+	add_filter( 'wp_generate_attachment_metadata', 'przedszkole_bez_oryginalu', 10, 2 );
 	add_filter( 'image_editor_output_format', 'przedszkole_format_miniatur' );
 }
 
@@ -283,13 +366,13 @@ if ( function_exists( 'imagewebp' ) ) {
  *
  * PHP na hostingu pozwala na 100 MB — tyle nie potrzebuje żadna treść
  * przedszkola, a jeden przypadkowy plik z aparatu potrafi zapełnić przestrzeń
- * na serwerze. 10 MB mieści zeskanowany kilkustronicowy dokument i zdjęcie
- * w pełnej rozdzielczości, a odcina filmy i surowe pliki z aparatu.
+ * na serwerze. 5 MB mieści zeskanowany kilkustronicowy dokument i zdjęcie
+ * z telefonu, a odcina filmy i surowe pliki z aparatu.
  *
  * @return int Limit w bajtach.
  */
 function przedszkole_limit_uploadu() {
-	return 10 * MB_IN_BYTES;
+	return 5 * MB_IN_BYTES;
 }
 add_filter( 'upload_size_limit', 'przedszkole_limit_uploadu' );
 
