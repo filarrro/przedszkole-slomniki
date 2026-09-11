@@ -18,7 +18,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 2b. Migracja z Joomli | 🔄 | analiza gotowa, **czeka na pliki z FTP** |
 | 3. Motyw | ✅ | szkielet, szablony, identyfikacja wizualna |
 | 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
-| 5. Gutenberg | ⬜ | |
+| 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
 | 6. Użytkownicy | ⬜ | |
 | 7. Frontend | ⬜ | |
 | 8. SEO / wydajność / bezpieczeństwo | ⬜ | |
@@ -33,7 +33,6 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 
 ### Co można robić bez tych plików
 
-- Etap 5 — dostrojenie Gutenberga
 - Etap 6 — role i uprawnienia
 - Skrypt migracyjny — treść da się przenieść bez zdjęć, obrazki dołożyć później
 - Kolejne sekcje strony głównej (wymaga ustaleń z klientem, jakie treści)
@@ -229,11 +228,12 @@ przedszkole-wp/              ← repo git
 - [x] Struktura katalogów + symlink motywu
 - [x] `.gitignore` — rdzeń WP, uploads, wtyczki, zrzuty baz
 - [x] `git init` + staging
-- [ ] Pierwszy commit
+- [x] Pierwszy commit
 - [x] Ustawienia WP: język PL, Europe/Warsaw, permalinki `/%postname%/`
 - [x] Usunięcie domyślnych treści, wtyczek i zbędnych motywów
 - [x] Minimalny szkielet motywu — aktywowany
-- [ ] `WP_DEBUG` włączone (środowisko lokalne)
+- [x] `WP_DEBUG` włączone (środowisko lokalne) — wraz z `WP_DEBUG_LOG`,
+      `WP_DEBUG_DISPLAY = false` i `DISALLOW_FILE_EDIT`
 - [ ] HTTPS lokalnie: `mkcert -install` (wymaga hasła — do wykonania ręcznie)
 
 ### Stan środowiska
@@ -399,7 +399,8 @@ theme/przedszkole/
 ### Do dokończenia
 - [ ] Wypełnienie widgetów stopki (adres, telefon, godziny)
 - [ ] Weryfikacja wyglądu edytora Gutenberg (Etap 5)
-- [ ] Komponent linku do galerii Google Photos (styl gotowy, brak użycia)
+- [x] Komponent linku do galerii Google Photos — jako wariant stylu bloku
+      „Przycisk" (`is-style-galeria`), wstawiany wzorcem (Etap 5)
 - [x] Sekcja „Dlaczego my" — cztery powody z własnymi ilustracjami SVG
 - [ ] Skróty do kluczowych sekcji na stronie głównej — do ustalenia z klientem
 
@@ -469,7 +470,7 @@ Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokryc
 `ogloszenia` — aktualności ogólne, ustawiona jako kategoria domyślna.
 „Bez kategorii" usunięta.
 
-- [x] Utworzenie stron wg struktury — 22 strony
+- [x] Utworzenie stron wg struktury — 23 strony
 - [x] Ustawienie strony głównej jako statycznej + strony wpisów („Aktualności")
 - [x] Menu główne + kolejność + podstrony jako pozycje zagnieżdżone
 - [x] Menu w stopce (lokalizacja `footer` była zarejestrowana, ale pusta)
@@ -497,15 +498,68 @@ Skrypt idempotentny (nie duplikuje stron o istniejącym slugu):
 
 **Cel:** edytor ma wyglądać i działać tak, by pracownik przedszkola nie musiał znać HTML.
 
-- [ ] `theme.json` dopięty: kolory, rozmiary czcionek, szerokość treści — dostępne jako gotowe opcje w edytorze
-- [ ] Style edytora (`editor-style.css`) — podgląd w edytorze = wygląd na stronie
-- [ ] Ograniczenie palety kolorów do kolorów marki (mniej pomyłek)
-- [ ] Sprawdzenie bloków: nagłówek, akapit, lista, obraz, galeria, przycisk, cytat, kolumny, grupa, okładka, osadzenie, plik
-- [ ] Wzorce bloków (block patterns) dla powtarzalnych sekcji — szybciej niż własne bloki
-- [ ] Ewentualne ograniczenie listy dostępnych bloków (tylko jeśli edytor przytłacza użytkownika)
-- [ ] Własne bloki — **tylko jeśli standardowe naprawdę nie wystarczą**. Domyślnie: brak.
+- [x] `theme.json` dopięty: kolory, rozmiary czcionek, szerokość treści — gotowe opcje w edytorze
+- [x] Style edytora — `add_editor_style()` na `style.css` + `assets/css/editor.css`
+- [x] Paleta ograniczona do kolorów marki — `defaultPalette: false`, `custom: false`,
+      czyli bez próbnika dowolnych kolorów. Tak samo rozmiary pisma (`customFontSize: false`)
+- [x] Sprawdzenie bloków z listy: nagłówek, akapit, lista, obraz, galeria, przycisk,
+      cytat, kolumny, grupa, okładka, osadzenie, plik, tabela, separator, szczegóły
+- [x] Wzorce bloków — 5 sztuk we własnej kategorii „Przedszkole"
+- [x] Warianty stylów zamiast własnych bloków
+- [x] Odcięcie wzorców pobieranych z wordpress.org
+- [-] Ograniczenie listy dostępnych bloków — **pominięte**. Zgodnie z zapisem planu
+      robimy to dopiero, gdy edytor okaże się przytłaczający. Wróci jako decyzja
+      po szkoleniu personelu (Etap 12), na podstawie tego, co realnie sprawia trudność
+- [-] Własne bloki — **pominięte**. Warianty stylów i wzorce pokryły potrzeby
+      bez linii kodu JS do utrzymania
 
-**Kryteria odbioru:** osoba nietechniczna układa sekcję ze zdjęciem, nagłówkiem i przyciskiem bez pomocy.
+### Wzorce bloków (`patterns/`)
+
+WordPress rejestruje pliki z tego katalogu sam — nie ma listy w kodzie.
+
+| Wzorzec | Do czego |
+|---|---|
+| Link do albumu w Google Photos | najczęstszy element serwisu — na starej stronie miało go 387 z 440 artykułów |
+| Wyróżniona informacja | ogłoszenie, którego nie można przeoczyć |
+| Lista dokumentów do pobrania | strona „Dokumenty" — bloki pliku z biblioteki mediów |
+| Wizytówka grupy | nagłówek strony grupy: nauczycielki, sala, wiek dzieci |
+| Dane kontaktowe | adres, telefon, godziny w dwóch kolumnach |
+
+### Warianty stylów bloków
+
+Zamiast własnych bloków — pracownik wstawia zwykły blok i wybiera wariant z listy.
+
+| Blok | Wariant | Efekt |
+|---|---|---|
+| Przycisk | „Link do albumu" | przycisk ze strzałką oznaczającą odnośnik zewnętrzny |
+| Grupa | „Wyróżnienie" | ramka z akcentowaną krawędzią |
+
+**Album otwiera się w tej samej karcie.** Nowe okno bez uprzedzenia łamie WCAG 3.2.5,
+a przycisk „wstecz" i tak wraca na stronę.
+
+### Ustalenia techniczne
+
+**Szerokie wyrównania są wyłączone i tak zostaje.** Sprawdzone: `alignWide` = `false`.
+Motyw klasyczny nie dostaje `align-wide` z samego `theme.json` — trzeba by je włączyć
+jawnie. Nie włączamy: obsługa `alignwide` i `alignfull` wymaga przebudowy `page.php`
+i `single.php` na siatkę, a `.entry` ma twarde `max-width: 760px`. Gdyby ktoś dodał
+`add_theme_support( 'align-wide' )`, edytor zacznie oferować wyrównania, których
+front nie pokaże.
+
+**Edytor działa w iframe.** `.editor-styles-wrapper` jest tam elementem `body`,
+więc reguły `body` i zmienne z `:root` w `style.css` działają bez przepisywania.
+`editor.css` powtarza wyłącznie te reguły, które na froncie wiszą pod `.entry__content` —
+tego opakowania w edytorze nie ma.
+
+**Odstęp między blokami zrównany z `theme.json`.** Front miał 1,25 rem, edytor brał
+`blockGap` 1,5 rem — podgląd rozjeżdżał się z gotową stroną. Klasyczne szablony nie
+dostają układu `.is-layout-flow` wokół `the_content()`, więc odstęp ustawiamy w CSS.
+
+**Dwa arkusze zamiast jednego** — wbrew zasadzie z CLAUDE.md. `editor.css` wchodzi
+wyłącznie w panelu, więc front nadal pobiera jeden plik.
+
+**Kryteria odbioru:** osoba nietechniczna układa sekcję ze zdjęciem, nagłówkiem
+i przyciskiem bez pomocy. ⬜ do sprawdzenia praktycznie, przy szkoleniu.
 
 ---
 
@@ -656,7 +710,7 @@ Nie może trafić na produkcję.
 - [ ] 6 przykładowych wpisów (Wiewiórki sadzą kwiaty, Zajączki poznają kosmos,
       Wycieczka Misiów do lasu, Jesienne warsztaty Jeżyków, Dzień Rodziny u Żabek,
       Wioska indiańska u Kotków) — treść wypełniaczowa
-- [ ] 22 strony ze szkieletu (Etap 4) są **puste** — każda musi dostać realną treść
+- [ ] 23 strony ze szkieletu (Etap 4) są **puste** — każda musi dostać realną treść
       albo zniknąć przed wdrożeniem. Puste strony w menu to błąd dostępności.
 - [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
 - [ ] Konto `dev` — **usunąć**, nie przenosić na produkcję
@@ -747,6 +801,13 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Kategorie: 6 grup + Ogłoszenia | tyle ma pokrycie w 440 migrowanych artykułach; podział na Ogłoszenia/Wydarzenia wymagałby ręcznej pracy na 113 wpisach |
 | 2026-09-11 | Galerie jako zwykłe strony z linkami | właściwe albumy są w Google Photos, własny typ treści nic nie wnosi |
 | 2026-09-11 | Polityka prywatności przez natywny mechanizm WP | WP sam dokłada `rel="privacy-policy"` i pilnuje strony w Ustawieniach |
+| 2026-09-11 | Wzorce bloków zamiast własnych bloków Gutenberga | pokrywają potrzeby bez linii JS do utrzymania |
+| 2026-09-11 | Warianty stylów bloków zamiast klas wpisywanych ręcznie | pracownik wybiera z listy, nie pisze HTML-a |
+| 2026-09-11 | Wzorce z wordpress.org wyłączone | zero zapytań zewnętrznych + krótka, polska lista w edytorze |
+| 2026-09-11 | Szerokie wyrównania (`alignwide`/`alignfull`) zostają wyłączone | front ich nie obsłuży bez przebudowy szablonów na siatkę |
+| 2026-09-11 | Link do albumu otwiera się w tej samej karcie | nowe okno bez uprzedzenia łamie WCAG 3.2.5 |
+| 2026-09-11 | Lista bloków nieograniczana (na razie) | decyzja po szkoleniu, na podstawie realnych trudności personelu |
+| 2026-09-11 | `#ddev-generated` zdjęte z `wp/wp-config.php` | inaczej ddev kasował `WP_DEBUG` przy każdym starcie; dane bazy nadal z `wp-config-ddev.php` |
 | 2026-09-11 | Nie odtwarzamy struktury kategorii z Joomli | narosła organicznie: literówki, rok szkolny w roku szkolnym, puste archiwa |
 | 2026-09-11 | Migracja: lata szkolne 2023/24–2025/26 (440 wpisów) | rok szkolny to naturalna jednostka dla przedszkola |
 | 2026-09-11 | Nunito jako krój pisma | SIL OFL 1.1 — wolna licencja, dopuszczalna dla placówki publicznej; hostowana lokalnie, bez CDN |

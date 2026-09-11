@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.3.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.4.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 
@@ -91,11 +91,63 @@ add_filter( 'wp_preload_resources', 'przedszkole_preload_fontu' );
 
 /**
  * Style edytora — dzięki temu Gutenberg wygląda jak gotowa strona.
+ *
+ * Dwa pliki, wbrew zasadzie „jeden arkusz”: `style.css` niesie wygląd,
+ * a `editor.css` mapuje selektory frontu na inny układ DOM-u edytora.
+ * Kosztu na froncie nie ma — oba wchodzą wyłącznie w panelu.
  */
 function przedszkole_editor_assets() {
 	add_editor_style( 'style.css' );
+	add_editor_style( 'assets/css/editor.css' );
 }
 add_action( 'after_setup_theme', 'przedszkole_editor_assets' );
+
+/**
+ * Własna kategoria wzorców bloków.
+ *
+ * Same wzorce leżą w katalogu `patterns/` — WordPress rejestruje je sam,
+ * nie trzeba ich wyliczać w kodzie.
+ */
+function przedszkole_kategoria_wzorcow() {
+	register_block_pattern_category(
+		'przedszkole',
+		array( 'label' => __( 'Przedszkole', 'przedszkole' ) )
+	);
+}
+add_action( 'init', 'przedszkole_kategoria_wzorcow' );
+
+/**
+ * Warianty stylów dla bloków standardowych.
+ *
+ * Tańsze niż własne bloki: pracownik wstawia zwykły przycisk czy grupę
+ * i wybiera wariant z listy, a my nie utrzymujemy kodu JS.
+ */
+function przedszkole_style_blokow() {
+	register_block_style(
+		'core/button',
+		array(
+			'name'  => 'galeria',
+			'label' => __( 'Link do albumu', 'przedszkole' ),
+		)
+	);
+
+	register_block_style(
+		'core/group',
+		array(
+			'name'  => 'wyroznienie',
+			'label' => __( 'Wyróżnienie', 'przedszkole' ),
+		)
+	);
+}
+add_action( 'init', 'przedszkole_style_blokow' );
+
+/**
+ * Odcięcie wzorców pobieranych z wordpress.org.
+ *
+ * Dwa powody: strona nie odpytuje serwerów zewnętrznych, a lista wzorców
+ * w edytorze zostaje krótka i po polsku — pracownik widzi nasze, nie setki cudzych.
+ */
+add_filter( 'should_load_remote_block_patterns', '__return_false' );
 
 /**
  * Obszary widgetów w stopce.

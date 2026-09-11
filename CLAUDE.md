@@ -29,7 +29,8 @@ Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
 
 ## CSS
 
-- Wszystko w jednym `style.css` — jedno żądanie zamiast kilku
+- Wszystko w jednym `style.css` — jedno żądanie zamiast kilku.
+  Wyjątek: `assets/css/editor.css` wchodzi wyłącznie w panelu, więc frontu nie obciąża
 - Kolory i typografia z `theme.json` przez zmienne `--wp--preset--*`
 - Zmienne własne tylko na to, czego `theme.json` nie obsługuje
 - Sekcje numerowane komentarzem, żeby dało się nawigować po pliku
@@ -41,7 +42,8 @@ Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
 - jQuery i frameworków JS
 - Page builderów
 - Własnego systemu logowania
-- Własnych bloków Gutenberga bez wyraźnej potrzeby
+- Własnych bloków Gutenberga bez wyraźnej potrzeby — na razie wystarczają
+  wzorce z `patterns/` i warianty stylów (`register_block_style`)
 - Edycji plików w `wp/` — to nie nasz kod
 
 ## Dostępność
@@ -85,6 +87,15 @@ ddev exec wp --path=wp <komenda>
 
 5. Slug menu wylicza WP z nazwy, a nie ty. „Menu w stopce" → `menu-w-stopce`.
    Sprawdź `wp menu list`, zanim odwołasz się do sluga w skrypcie.
+
+6. **Wzorce bloków są cache'owane pod wersją motywu z nagłówka `style.css`.**
+   Nowy plik w `patterns/` nie pojawi się w edytorze, dopóki nie podbijesz
+   `Version:` w `style.css`. Wersja w nagłówku i stała `PRZEDSZKOLE_VERSION`
+   w `functions.php` muszą iść razem — rozjazd kosztował już jedno śledztwo.
+
+7. `wp/wp-config.php` nie ma znacznika `#ddev-generated` — zdjęliśmy go, żeby
+   ddev nie kasował `WP_DEBUG` przy każdym starcie. Nie przywracaj. Dane dostępowe
+   do bazy nadal przychodzą z `wp-config-ddev.php`, którym ddev zarządza.
 
 ## Podgląd wizualny
 

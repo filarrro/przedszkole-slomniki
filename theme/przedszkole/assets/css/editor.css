@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Style wylacznie dla edytora bloków.
+
+   `style.css` opisuje front, gdzie tresc siedzi w `.entry__content`.
+   W edytorze tego opakowania nie ma - bloki wisza bezposrednio pod
+   `.editor-styles-wrapper`. Ten plik powtarza te reguly z frontu,
+   ktore inaczej nie zadzialalyby w podgladzie.
+
+   Nie dokladamy tu wygladu. Jesli cos wyglada inaczej niz na stronie,
+   to jest blad do naprawienia, a nie miejsce na osobna stylistyke.
+
+   Edytor wpisow dziala w iframe, w ktorym `.editor-styles-wrapper` jest
+   elementem `body`. Dzieki temu reguly `body` i zmienne z `:root`
+   ze `style.css` dzialaja bez przepisywania - powtarzamy tylko to,
+   co na froncie wisi pod `.entry__content`.
+   ========================================================================== */
+
+/* Odstepy naglowkow - na froncie zapisane jako `.entry__content > h2`. */
+.editor-styles-wrapper .wp-block-heading { margin-top: 2.25rem; }
+.editor-styles-wrapper h3.wp-block-heading { margin-top: 1.75rem; }
+
+/* Listy. */
+.editor-styles-wrapper ul,
+.editor-styles-wrapper ol { padding-left: 1.4rem; }
+.editor-styles-wrapper li + li { margin-top: .4rem; }
+
+/* Blok pliku ma w edytorze dodatkowy pasek narzedzi - nie rozpychamy go. */
+.editor-styles-wrapper .wp-block-file { align-items: center; }

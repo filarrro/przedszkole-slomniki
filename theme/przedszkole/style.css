@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.2.0
+Version: 0.4.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -425,24 +425,12 @@ a.pill:hover { filter: brightness(.93); }
 .entry__meta { margin-bottom: 1.5rem; color: var(--wp--preset--color--ink-soft); font-size: .9375rem; }
 .entry__thumb { margin-bottom: 2rem; }
 .entry__thumb img { width: 100%; border-radius: var(--radius-lg); }
-.entry__content > * + * { margin-top: 1.25rem; }
+/* Rowne blockGap ze `theme.json` - inaczej podglad w edytorze ma inne
+   odstepy niz gotowa strona. Klasyczne szablony nie dostaja ukladu
+   `.is-layout-flow` wokol `the_content()`, wiec odstep ustawiamy tutaj. */
+.entry__content > * + * { margin-top: 1.5rem; }
 .entry__content h2 { margin-top: 2.25rem; }
 .entry__content h3 { margin-top: 1.75rem; }
-
-/* Link do galerii w Google Photos — wyraznie oznaczony jako zewnetrzny. */
-.gallery-link {
-	display: inline-flex;
-	align-items: center;
-	gap: .6rem;
-	padding: .8rem 1.4rem;
-	background: var(--wp--preset--color--accent);
-	color: #fff;
-	font-weight: 700;
-	text-decoration: none;
-	border-radius: 999px;
-}
-.gallery-link:hover { background: #C97812; color: #fff; }
-.gallery-link::after { content: "↗"; font-size: .9em; }
 
 /* ==========================================================================
    11. Paginacja
@@ -668,3 +656,119 @@ main + .chmurki { background: var(--wp--preset--color--base); }
 	font-size: .9375rem;
 	line-height: 1.6;
 }
+
+/* ==========================================================================
+   17. Bloki Gutenberga
+   Wyglad blokow, ktore personel wstawia na podstronach. Bez tego
+   Gutenberg renderuje sie stylami rdzenia i rozjezdza z reszta strony.
+   ========================================================================== */
+
+/* --- Naglowki i akapity w tresci --- */
+.entry__content > .wp-block-heading { margin-top: 2.25rem; }
+.entry__content > h3.wp-block-heading { margin-top: 1.75rem; }
+
+/* --- Listy --- */
+.entry__content ul,
+.entry__content ol { padding-left: 1.4rem; }
+.entry__content li + li { margin-top: .4rem; }
+
+/* --- Kolumny --- */
+.wp-block-columns { gap: 2rem; }
+.wp-block-column > * + * { margin-top: 1.25rem; }
+
+/* --- Grupa i wariant "Wyroznienie" --- */
+.wp-block-group.is-style-wyroznienie {
+	padding: 1.5rem;
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	border-left: 5px solid var(--wp--preset--color--accent);
+	border-radius: var(--radius-lg);
+}
+.wp-block-group.is-style-wyroznienie > * + * { margin-top: 1rem; }
+.wp-block-group.is-style-wyroznienie > :first-child { margin-top: 0; }
+
+/* --- Przycisk: wariant "Link do albumu" ---
+   Wariant zwyklego przycisku, a nie osobna klasa w HTML-u -
+   dzieki czemu wstawia sie go z edytora bez pisania HTML-a.
+   Album otwiera sie w tej samej karcie - nowe okno bez ostrzezenia
+   lamie WCAG 3.2.5, a przycisk "wstecz" i tak wraca na strone. */
+.wp-block-button.is-style-galeria .wp-block-button__link {
+	display: inline-flex;
+	align-items: center;
+	gap: .6rem;
+}
+.wp-block-button.is-style-galeria .wp-block-button__link::after {
+	content: "\2197";          /* strzalka w gore i w prawo - link zewnetrzny */
+	font-size: .9em;
+}
+
+/* --- Plik do pobrania --- */
+.wp-block-file {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .75rem 1rem;
+	padding: .9rem 1.1rem;
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--radius);
+}
+.wp-block-file > :first-child { font-weight: 600; }
+.wp-block-file__button {
+	background: var(--wp--preset--color--primary);
+	color: #fff;
+	border-radius: 999px;
+	padding: .4rem 1rem;
+	font-size: .9375rem;
+	font-weight: 700;
+	text-decoration: none;
+}
+.wp-block-file__button:hover { background: var(--wp--preset--color--accent); color: #fff; }
+
+/* --- Tabela --- */
+.wp-block-table table {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--wp--preset--color--surface);
+}
+.wp-block-table th,
+.wp-block-table td {
+	padding: .7rem .9rem;
+	border: 1px solid var(--wp--preset--color--border);
+	text-align: left;
+}
+.wp-block-table th { background: var(--wp--preset--color--primary-soft); }
+/* Szeroka tabela przewija sie sama, zamiast rozpychac strone. */
+.wp-block-table { overflow-x: auto; }
+
+/* --- Separator --- */
+.wp-block-separator {
+	border: 0;
+	height: 1px;
+	background: var(--wp--preset--color--border);
+	margin-block: 2.5rem;
+}
+
+/* --- Galeria i obrazy --- */
+.wp-block-gallery.has-nested-images figure.wp-block-image img { border-radius: var(--radius); }
+.wp-block-image figcaption,
+.wp-block-embed figcaption {
+	color: var(--wp--preset--color--ink-soft);
+	font-size: .9375rem;
+	text-align: center;
+}
+
+/* --- Okladka --- */
+.wp-block-cover { border-radius: var(--radius-lg); overflow: hidden; }
+
+/* --- Osadzenia (YouTube itp.) --- */
+.wp-block-embed__wrapper { border-radius: var(--radius); overflow: hidden; }
+
+/* --- Szczegoly (rozwijane pytanie i odpowiedz) --- */
+.wp-block-details {
+	padding: 1rem 1.1rem;
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--radius);
+}
+.wp-block-details summary { font-weight: 700; cursor: pointer; }
