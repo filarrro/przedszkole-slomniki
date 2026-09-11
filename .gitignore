@@ -1,0 +1,33 @@
+# ---- WordPress ----
+# Wersjonujemy wylacznie wlasny motyw (theme/). Rdzen WP, wtyczki i uploady
+# to cudzy kod lub dane - nie naleza do repozytorium.
+/wp/
+!/wp/wp-content/themes/przedszkole
+
+# ---- Zrzuty baz danych i backupy ----
+# Moga zawierac dane osobowe i hasla. Nigdy nie trafiaja do repo.
+*.sql
+*.sql.gz
+*.sql.zip
+/backup/
+/backups/
+
+# ---- Konfiguracja lokalna ----
+.ddev/.gitignore
+.ddev/*-build/
+.ddev/homeadditions/
+.ddev/providers/
+wp-config-local.php
+.env
+.env.*
+
+# ---- IDE / system ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Tymczasowy podglad wizualny motywu (tools/podglad.py)
+podglad.html
+*.podglad.html
