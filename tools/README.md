@@ -13,3 +13,18 @@ python3 tools/podglad.py /aktualnosci/ a.html # lista wpisów   -> a.html
 
 Pliki `podglad.html` i `*.podglad.html` są w `.gitignore`.
 Do normalnej pracy używaj po prostu http://przedszkole.ddev.site w swojej przeglądarce.
+
+## `struktura.sh`
+
+Odtwarza szkielet treści z Etapu 4: strony (z zagnieżdżeniem), menu główne,
+menu w stopce, kategorie, strona główna i strona wpisów.
+
+```bash
+tools/struktura.sh
+```
+
+Idempotentny w zakresie stron — strona o istniejącym slugu nie powstaje drugi raz,
+aktualizowany jest tylko rodzic i kolejność. **Menu są kasowane i budowane od nowa**,
+więc ręczne zmiany w menu przepadną.
+
+Skrypt tworzy wyłącznie puste strony. Treść wchodzi w Etapie 7 i przy migracji.

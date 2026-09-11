@@ -17,7 +17,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 2. Środowisko lokalne | ✅ | DDEV + WordPress 7.1 + PHP 8.5 |
 | 2b. Migracja z Joomli | 🔄 | analiza gotowa, **czeka na pliki z FTP** |
 | 3. Motyw | ✅ | szkielet, szablony, identyfikacja wizualna |
-| 4. Struktura treści | ⬜ | |
+| 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ⬜ | |
 | 6. Użytkownicy | ⬜ | |
 | 7. Frontend | ⬜ | |
@@ -33,7 +33,6 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 
 ### Co można robić bez tych plików
 
-- Etap 4 — struktura stron i menu
 - Etap 5 — dostrojenie Gutenberga
 - Etap 6 — role i uprawnienia
 - Skrypt migracyjny — treść da się przenieść bez zdjęć, obrazki dołożyć później
@@ -417,32 +416,76 @@ Do normalnej pracy wystarczy http://przedszkole.ddev.site w przeglądarce.
 
 **Cel:** szkielet serwisu — puste strony, menu, kategorie. Bez finalnych tekstów.
 
-### Proponowana struktura
-Bazuje na realnym menu starej strony (patrz MIGRACJA.md).
-- Strona główna
-- O przedszkolu
-- Oferta
-- Grupy
-  - Wiewiórki
-  - Żabki
-  - Zajączki
-  - Misie
-  - Kotki
-  - Jeżyki
-- Aktualności
-- Galeria
-- Dla rodziców
-- Dokumenty
-- Jadłospis
-- Kontakt
-- Deklaracja dostępności ⚖️ wymagana prawem
+### Zbudowana struktura
 
-- [ ] Utworzenie stron wg struktury
-- [ ] Ustawienie strony głównej jako statycznej + strony wpisów („Aktualności")
-- [ ] Menu główne + kolejność + podstrony jako pozycje zagnieżdżone
-- [ ] Kategorie wpisów (jeśli potrzebne, np. Ogłoszenia / Wydarzenia)
-- [ ] Decyzja: galerie jako strony czy własny typ treści (domyślnie: **strony**, prościej)
-- [ ] Decyzja: dokumenty jako strona z listą linków do Media Library (domyślnie: **tak**, prościej)
+Scalenie propozycji z realnym menu starej strony (patrz MIGRACJA.md).
+Płaska lista 13 pozycji nie mieściła się w poziomym menu — stąd zagnieżdżenie.
+
+```
+Strona główna              (statyczna, poza menu)
+O przedszkolu
+  ├── Kadra
+  └── Oferta
+Grupy
+  ├── Misie · Wiewiórki · Zajączki
+  └── Żabki · Jeżyki · Kotki
+Aktualności                (strona wpisów)
+Dla rodziców
+  ├── Dokumenty
+  ├── Jadłospis
+  ├── Ramowy rozkład dnia
+  ├── Opłaty
+  └── Kącik logopedy
+Dofinansowanie             ⚖️ wymagania zewnętrzne — musi być widoczne
+Galeria
+Kontakt
+
+— stopka —
+Deklaracja dostępności     ⚖️ wymagana prawem
+Polityka prywatności       (natywna strona prywatności WP)
+Kontakt
+```
+
+**Czego nie odtwarzamy ze starego menu.** „Projekty" (12 artykułów w 3 lata,
+rozbite na 6 podgałęzi) i „Dofinansowanie" jako gałąź z treścią — martwe.
+„Kącik Logopedy" (4 artykuły) schodzi pod „Dla rodziców" jako strona, nie sekcja.
+Liczby z analizy kategorii Joomli — patrz niżej.
+
+### Rozkład 440 migrowanych artykułów wg gałęzi Joomli
+
+| Gałąź | Artykułów |
+|---|---|
+| aktualności ogólne (`rok-szkolny-*`) | ~113 |
+| komunikaty grup (6 grup) | ~320 |
+| Projekty (wszystkie grupy razem) | 12 |
+| Kącik Logopedy | 4 |
+| Specjaliści / Kadra / Dokumenty / Dla rodziców | 10 |
+
+Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokrycia w treści.
+
+### Kategorie wpisów
+
+`misie` · `wiewiorki` · `zajaczki` · `zabki` · `jezyki` · `kotki` — kolory i etykiety w motywie (Etap 3).
+`ogloszenia` — aktualności ogólne, ustawiona jako kategoria domyślna.
+„Bez kategorii" usunięta.
+
+- [x] Utworzenie stron wg struktury — 22 strony
+- [x] Ustawienie strony głównej jako statycznej + strony wpisów („Aktualności")
+- [x] Menu główne + kolejność + podstrony jako pozycje zagnieżdżone
+- [x] Menu w stopce (lokalizacja `footer` była zarejestrowana, ale pusta)
+- [x] Kategorie wpisów: 6 grup + Ogłoszenia
+- [x] Strona polityki prywatności przez natywny mechanizm WP (`wp_page_for_privacy_policy`)
+      — WP sam dokłada `rel="privacy-policy"` do linku
+- [x] Decyzja: galerie jako **strony**, nie własny typ treści — właściwe galerie
+      i tak żyją w Google Photos, strona „Galeria" to lista linków do albumów
+- [x] Decyzja: dokumenty jako **strona z listą linków** do Media Library
+- [ ] Treść stron — puste, do wypełnienia w Etapie 7 i przy migracji
+- [ ] Praktyczny test kryterium odbioru z administratorem
+
+### Odtworzenie struktury od zera
+
+Skrypt idempotentny (nie duplikuje stron o istniejącym slugu):
+`tools/struktura.sh`
 
 **Ważne:** nie kodujemy każdej podstrony jako osobnego szablonu. Standardowy `page.php` + Gutenberg obsługuje wszystko. Osobny szablon tylko tam, gdzie naprawdę trzeba (strona główna, kontakt).
 
@@ -613,8 +656,8 @@ Nie może trafić na produkcję.
 - [ ] 6 przykładowych wpisów (Wiewiórki sadzą kwiaty, Zajączki poznają kosmos,
       Wycieczka Misiów do lasu, Jesienne warsztaty Jeżyków, Dzień Rodziny u Żabek,
       Wioska indiańska u Kotków) — treść wypełniaczowa
-- [ ] Puste strony testowe (O przedszkolu, Grupy, Dla rodziców, Dokumenty, Kontakt)
-      — zastąpić realnymi treściami albo usunąć
+- [ ] 22 strony ze szkieletu (Etap 4) są **puste** — każda musi dostać realną treść
+      albo zniknąć przed wdrożeniem. Puste strony w menu to błąd dostępności.
 - [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
 - [ ] Konto `dev` — **usunąć**, nie przenosić na produkcję
 - [ ] Baza robocza `joomla` — nie migruje na serwer, zostaje lokalnie
@@ -698,6 +741,12 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Stara strona z FTP do usunięcia | po pełnym backupie i odzyskaniu materiałów (logo, zdjęcia, teksty) |
 | 2026-09-11 | Budujemy najpierw lokalnie | szybciej, bez ryzyka dla produkcji, stara strona może stać do końca |
 | 2026-09-11 | DDEV zamiast MAMP/LocalWP | Docker już jest; pliki w repo, wbudowany wp-cli, PHP 8.5, blisko produkcji |
+| 2026-09-11 | Menu zagnieżdżone, 8 pozycji górnego poziomu | płaskie 13 pozycji nie mieści się w poziomym menu |
+| 2026-09-11 | „Projekty" nie wracają jako sekcja menu | 12 artykułów w 3 lata, rozbite na 6 podgałęzi — gałąź martwa |
+| 2026-09-11 | „Dofinansowanie" zostaje na górnym poziomie | wymagania zewnętrzne wymuszają widoczność |
+| 2026-09-11 | Kategorie: 6 grup + Ogłoszenia | tyle ma pokrycie w 440 migrowanych artykułach; podział na Ogłoszenia/Wydarzenia wymagałby ręcznej pracy na 113 wpisach |
+| 2026-09-11 | Galerie jako zwykłe strony z linkami | właściwe albumy są w Google Photos, własny typ treści nic nie wnosi |
+| 2026-09-11 | Polityka prywatności przez natywny mechanizm WP | WP sam dokłada `rel="privacy-policy"` i pilnuje strony w Ustawieniach |
 | 2026-09-11 | Nie odtwarzamy struktury kategorii z Joomli | narosła organicznie: literówki, rok szkolny w roku szkolnym, puste archiwa |
 | 2026-09-11 | Migracja: lata szkolne 2023/24–2025/26 (440 wpisów) | rok szkolny to naturalna jednostka dla przedszkola |
 | 2026-09-11 | Nunito jako krój pisma | SIL OFL 1.1 — wolna licencja, dopuszczalna dla placówki publicznej; hostowana lokalnie, bez CDN |

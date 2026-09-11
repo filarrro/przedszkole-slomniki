@@ -74,6 +74,18 @@ ddev exec wp --path=wp <komenda>
 3. Ścieżki w `wp media import` są względne wobec katalogu projektu
    w kontenerze (`/var/www/html`), nie wobec docroota.
 
+4. Pod PHP 8.5 wp-cli zalewa stderr ostrzeżeniami `Deprecated: Using null as an
+   array offset` z własnej biblioteki rysującej tabelki. Dodawaj `--format=csv`
+   — inny renderer, czysty wynik:
+   ```bash
+   ddev exec wp --path=wp post list --fields=ID,post_title --format=csv
+   ```
+   Nie tłum tego przez `2>/dev/null` w skryptach z `set -e` — razem z szumem
+   znikają prawdziwe błędy i skrypt pada bez śladu.
+
+5. Slug menu wylicza WP z nazwy, a nie ty. „Menu w stopce" → `menu-w-stopce`.
+   Sprawdź `wp menu list`, zanim odwołasz się do sluga w skrypcie.
+
 ## Podgląd wizualny
 
 Panel podglądu w aplikacji blokuje pliki podrzędne z `*.ddev.site`

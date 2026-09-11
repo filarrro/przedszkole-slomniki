@@ -55,7 +55,8 @@ albo dane — nie należą do repozytorium.
 | 2. Środowisko lokalne | ✅ DDEV + WordPress 7.1 + PHP 8.5 |
 | 2b. Migracja z Joomli | 🔄 analiza gotowa, czeka na pliki z FTP |
 | 3. Motyw | ✅ szkielet, szablony, identyfikacja wizualna |
-| 4–8 | ⬜ |
+| 4. Struktura treści | ✅ strony, menu główne + stopka, kategorie |
+| 5–8 | ⬜ |
 | 9. Wdrożenie | ⬜ |
 | 10–12 | ⬜ |
 
