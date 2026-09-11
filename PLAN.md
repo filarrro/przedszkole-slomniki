@@ -1,0 +1,676 @@
+# Strona przedszkola — plan projektu
+
+Dokument roboczy. Pracujemy **etapami**. Każdy etap ma: cel, kroki, kryteria odbioru i status.
+Po każdym etapie testujemy, zanim ruszymy dalej.
+
+Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pominięte (z uzasadnieniem)
+
+---
+
+## 0. Kontekst i zasady
+
+**Co budujemy:** jedna strona WWW dla jednego konkretnego przedszkola. Nie SaaS, nie uniwersalny CMS.
+
+**Priorytety (w tej kolejności):**
+1. Krótki czas wykonania
+2. Prostota wdrożenia i utrzymania
+3. Niski koszt
+4. Samodzielna edycja treści przez pracowników
+5. Łatwe zarządzanie zdjęciami
+6. Dodawanie nowych podstron bez developera
+7. Różne poziomy uprawnień
+8. Wydajność i bezpieczeństwo
+9. Brak zbędnej komplikacji technologicznej
+
+**Zasada nadrzędna:** jeśli WordPress już coś potrafi — używamy tego, nie piszemy własnego.
+Wtyczkę dodajemy, gdy jest szybsza i stabilniejsza niż własny kod. Własnego kodu nie piszemy tylko po to, by uniknąć wtyczki.
+
+### Stack (ustalony)
+- WordPress (CMS + backend + frontend)
+- Własny lekki motyw (PHP + WordPress Template API)
+- Gutenberg jako edytor treści
+- MySQL / MariaDB
+- PHP w wersji zgodnej z WP
+- HTML + CSS + minimum vanilla JS
+- Istniejący hosting — nie zmieniamy
+
+### Poza zakresem (świadomie odrzucone)
+Laravel · Payload CMS · Strapi · Next.js · React jako frontend · osobne API / headless · VPS · Vercel i inne hostingi · ciężkie page buildery (Elementor) · własny system logowania · SPA
+
+### Architektura
+```
+Przeglądarka
+      ↓
+  WordPress
+   ↓      ↓
+  PHP    MySQL
+   ↓
+własny lekki motyw
+```
+
+### Zasady pracy z AI
+- Nie zakładamy znajomości WordPressa ani PHP po stronie właściciela projektu.
+- Przy każdym większym kroku: (1) krótko co i po co, (2) konkretne działania, (3) kod tylko gdy potrzebny, (4) gdzie dokładnie go wkleić, (5) jak sprawdzić, że działa.
+- Nie robimy wielu niezweryfikowanych kroków naraz.
+- Nie generujemy całego projektu w jednym strzale.
+
+### Zasady dla kodu
+- Prosty, konwencjonalny, zgodny ze standardami WordPressa (WPCS).
+- Bez „magii" i nadmiernych abstrakcji.
+- Czytelny dla kolejnego agenta AI / developera.
+- Przed napisaniem funkcji: sprawdź, czy WP już jej nie ma.
+
+---
+
+## Etap 1 — Analiza hostingu
+
+**Cel:** wiedzieć, na czym stoimy, zanim cokolwiek instalujemy. Bez tego reszta to zgadywanie.
+
+- [ ] Wersja PHP (i czy da się podnieść)
+- [ ] Wersja MySQL / MariaDB
+- [ ] Rozszerzenia PHP wymagane przez WP (mysqli, gd/imagick, curl, mbstring, zip, json)
+- [ ] `.htaccess` / mod_rewrite — czy działa (potrzebne do ładnych URL-i)
+- [ ] `memory_limit` PHP (min. 128M, zalecane 256M)
+- [ ] `upload_max_filesize` i `post_max_size` (zdjęcia!)
+- [ ] `max_execution_time`
+- [x] Dostęp FTP / SFTP — jest
+- [ ] Dostęp SSH (opcjonalny, ale ułatwia)
+- [ ] Cron systemowy (do zastąpienia WP-Cron)
+- [ ] SSL / certyfikat (Let's Encrypt?)
+- [ ] Wybór katalogu dla WordPressa (główna domena / subdomena / podkatalog)
+- [ ] Backupy hostingu — czy są, jak częste, jaka retencja, jak odtworzyć
+- [x] Limity bazy danych — bazy ∞, dysk 35 GB
+- [ ] Panel hostingu — jaki (cPanel / DirectAdmin / własny)
+- [ ] **Co już stoi na koncie?** 5,5 GB / 56 tys. plików zajęte — sprawdzić przed instalacją
+
+**Jak sprawdzić:** panel hostingu + plik `phpinfo.php` wgrany tymczasowo na serwer (usunąć zaraz po sprawdzeniu — ujawnia konfigurację serwera).
+
+**Nie zakładamy:** Node.js, Dockera, VPS-a, composera, dostępu roota.
+
+**Kryteria odbioru:** wypełniona tabelka parametrów poniżej + decyzja, czy hosting wystarcza.
+
+### Wyniki
+
+**Hosting: cyber_Folks.** Źródła: zrzut panelu (2026-09-11) + https://cyberfolks.pl/parametry-techniczne/#hosting-www
+
+| Parametr | Wartość | Status |
+|---|---|---|
+| PHP | MultiPHP — do 8.5 | ✅ **wybrane 8.5** (WP core kompatybilny od 6.9) |
+| memory_limit | do 1024 MB | ✅ ogromny zapas |
+| MySQL — rozmiar bazy | bez limitu | ✅ |
+| MySQL — połączenia | 25 jednoczesnych / użytkownik | ✅ |
+| MySQL — max czas zapytania | 180 s | ✅ |
+| HTTP timeout | 300 s | ✅ |
+| `.htaccess` | obsługiwany | ✅ ładne URL-e OK |
+| GD + ImageMagick | dostępne | ✅ miniaturki, konwersja WebP |
+| CURL / iconv / Freetype | dostępne | ✅ |
+| Backup hostingu | 1×/24h, retencja do 28 dni | ✅ solidnie |
+| SSH | od pakietu cyber_RUN wzwyż | ⚠️ zależy od pakietu |
+| Miejsce na dysku | 35 840 MB (5551 zajęte) | ✅ |
+| Transfer | ∞ (1,26 GB użyte) | ✅ |
+| Bazy danych | ∞ (2 użyte) | ✅ |
+| Konta FTP | ∞ (1 użyte) | ✅ |
+| Liczba plików | 56 189 / 1 000 000 | ✅ WP to ~2–3 tys. plików |
+| Konta e-mail | ∞ (4 użyte) | ✅ |
+| Limit wysyłki e-mail | 5000 | ✅ wystarczy dla formularza |
+| MySQL/MariaDB — wersja | ? | do sprawdzenia |
+| upload_max_filesize | ? | ⚠️ ustawić min. 16M (zdjęcia) |
+| post_max_size | ? | ⚠️ ≥ upload_max_filesize |
+| max_execution_time | ? | do sprawdzenia |
+| Cron | ? | sprawdzić w panelu |
+| SSL | ? | cyber_Folks daje Let's Encrypt — włączyć |
+| Katalog WP | ? | do ustalenia |
+
+### ✅ Wniosek Etapu 1
+
+**Hosting w pełni wystarcza pod WordPressa. Brak blokerów.** Można przechodzić do Etapu 2.
+Pozostałe znaki zapytania to ustawienia do zmiany w panelu, nie ograniczenia platformy.
+
+**Stan katalogu:** w FTP stoi **stara strona przedszkola** (5,5 GB, 56 tys. plików). Do usunięcia przed instalacją WP.
+
+### Do zrobienia w panelu cyber_Folks
+Nie pilne — budujemy lokalnie. Wykonać przy wdrożeniu (Etap 9).
+- [ ] Sprawdzić cron
+- [ ] Sprawdzić pakiet (czy z SSH)
+- [ ] Sprawdzić wersję MySQL/MariaDB
+
+### ⚠️ Usunięcie starej strony — operacja nieodwracalna
+
+Wykonywane dopiero przy wdrożeniu (Etap 9). **Nic nie kasujemy przed odhaczeniem wszystkich punktów:**
+
+- [ ] Pełny backup katalogu przez FTP na dysk lokalny (całość, nie wybiórczo)
+- [ ] Eksport obu baz danych przez phpMyAdmin (Eksport → SQL) — stara strona może z nich korzystać
+- [ ] Przegląd zawartości pod kątem materiałów do odzyskania:
+  - [ ] logo i grafiki przedszkola
+  - [ ] zdjęcia (galerie ze starej strony)
+  - [ ] PDF-y i dokumenty
+  - [ ] teksty do przeniesienia (O przedszkolu, oferta, kontakt)
+- [ ] Potwierdzenie od klienta, że stara strona nie jest już potrzebna
+- [ ] Weryfikacja, że backup cyber_Folks obejmuje ten katalog i wiadomo, jak go odtworzyć
+- [ ] Dopiero teraz: usunięcie plików
+- [ ] Usunięcie nieużywanej bazy danych starej strony (po potwierdzeniu, która to)
+
+
+---
+
+## Etap 2 — Środowisko lokalne
+
+**Cel:** działający WordPress na laptopie. Całą stronę budujemy lokalnie, na serwer wchodzimy dopiero gotowi (Etap 9).
+
+**Dlaczego lokalnie:** szybciej, bez ryzyka dla produkcji, można psuć i cofać, nie trzeba jeszcze kasować starej strony.
+
+### Stack lokalny
+- **DDEV** (Docker) — Docker już jest na maszynie
+- PHP 8.5 — tak jak na produkcji
+- MariaDB/MySQL w kontenerze
+- wbudowany `wp-cli` — automatyzacja instalacji, ról, stron
+
+### Układ katalogów
+```
+przedszkole-wp/              ← repo git
+├── PLAN.md
+├── .ddev/                   ← konfiguracja DDEV
+├── theme/                   ← NASZ KOD (jedyne, co wersjonujemy)
+│   └── przedszkole/
+└── wp/                      ← WordPress (w .gitignore)
+    └── wp-content/themes/
+        └── przedszkole  →   symlink do ../../../theme/przedszkole
+```
+
+**Zasada:** git wersjonuje tylko motyw. Rdzeń WP, wtyczki i uploady są ignorowane — to nie nasz kod.
+
+### Kroki
+- [x] Instalacja DDEV (`brew install ddev/ddev/ddev`) — v1.25.4
+- [x] `ddev config` — typ `wordpress`, PHP 8.5, docroot `wp`
+- [x] `ddev start` — kontenery działają
+- [x] WordPress 7.1 pl_PL zainstalowany przez `wp-cli`
+- [x] Konto administratora (lokalne, robocze)
+- [x] Struktura katalogów + symlink motywu
+- [x] `.gitignore` — rdzeń WP, uploads, wtyczki, zrzuty baz
+- [x] `git init` + staging
+- [ ] Pierwszy commit
+- [x] Ustawienia WP: język PL, Europe/Warsaw, permalinki `/%postname%/`
+- [x] Usunięcie domyślnych treści, wtyczek i zbędnych motywów
+- [x] Minimalny szkielet motywu — aktywowany
+- [ ] `WP_DEBUG` włączone (środowisko lokalne)
+- [ ] HTTPS lokalnie: `mkcert -install` (wymaga hasła — do wykonania ręcznie)
+
+### Stan środowiska
+
+| Element | Wartość |
+|---|---|
+| Adres lokalny | http://przedszkole.ddev.site |
+| Panel | http://przedszkole.ddev.site/wp-admin |
+| Login / hasło | `dev` / `dev12345` (tylko lokalnie, nie trafia na produkcję) |
+| WordPress | 7.1 pl_PL |
+| PHP | 8.5.8 |
+| Baza | MariaDB 11.8 (`db` / `db` / `db`) |
+| DDEV | 1.25.4 |
+| Motyw aktywny | `przedszkole` 0.1.0 |
+| Motyw zapasowy | `twentytwentyfive` (do diagnostyki) |
+
+### Przydatne komendy
+```bash
+ddev start              # uruchom srodowisko
+ddev stop               # zatrzymaj
+ddev describe           # adresy i status
+ddev launch             # otworz strone w przegladarce
+ddev exec wp --path=wp <komenda>   # wp-cli
+ddev export-db --file=dump.sql.gz  # zrzut bazy
+ddev mysql              # konsola SQL
+```
+
+**Uwaga:** `wp-cli` uruchamiaj z `--path=wp`, bo docroot to `wp/`, a kontener startuje w katalogu projektu.
+
+**Kryteria odbioru:** ✅ strona zwraca 200, panel działa, ładne URL-e działają, motyw aktywny.
+
+---
+
+## Etap 2b — Migracja treści z Joomli
+
+**Cel:** przenieść treści ze starej strony (Joomla 3.10.5) do WordPressa.
+
+Szczegółowa analiza i plan: **[MIGRACJA.md](MIGRACJA.md)**
+
+### Skrót
+- Stara strona: Przedszkole w Słomnikach, Joomla 3.10.5
+- 1753 opublikowane artykuły (2015–2026), **440 z ostatnich 3 lat**
+- 782 pliki graficzne na serwerze — to tylko **miniatury-zajawki** (realnie ~412)
+- ⚠️ **Prawdziwe galerie są w Google Photos: 395 albumów linkowanych z 387 artykułów**
+- 118 załączników: 86 PDF + dokumenty, 77 MB — migrujemy wszystkie, niezależnie od daty
+- 4 autorki: Bożenka, Agnieszka, Ewa, Aneta
+- Treść to czysty HTML — brak shortcode'ów i wtyczek galerii
+- Domena: `przedszkoleslomniki.pl`, katalog: `/home/icrdslom/domains/przedszkoleslomniki.pl/public_html/`
+
+- [x] Import zrzutu do lokalnej bazy roboczej
+- [x] Analiza struktury i zakresu
+- [ ] **Pobranie `images/` i `attachments/` ze starego FTP** ⚠️ przed usunięciem starej strony
+- [x] Zakres: lata szkolne 2023/24–2025/26 (od 2023-09-01) → 440 wpisów
+- [x] Autorstwo: 7 kont grupowych, wyprowadzanych z kategorii
+- [x] Decyzja: galerie **zostają w Google Photos** — konto należy do przedszkola
+- [ ] Skrypt migracyjny
+- [ ] Weryfikacja i przekierowania 301
+
+**Kryteria odbioru:** wpisy w WordPressie z poprawnymi datami, autorami, treścią i zdjęciami; próbka 20 artykułów sprawdzona ręcznie.
+
+---
+
+## Etap 3 — Własny motyw
+
+**Cel:** lekki motyw z własną identyfikacją wizualną. Podstawa pod treści.
+
+### Kierunek wizualny
+Ciepła biel zamiast czystej bieli, granat-fiolet z logotypu jako kolor wiodący,
+jeden ciepły akcent (miód) na przyciski. Tęcza z logo użyta oszczędnie —
+cienki pasek nad nagłówkiem i kolory przypisane sześciu grupom.
+
+Sekcje rozdzielone **falami z chmurkami** (SVG), tła na miękkich gradientach,
+w hero **własna ilustracja** nauczycielki czytającej dzieciom. Charakter przedszkolny,
+ale bez krzykliwości i bez zdjęć stockowych.
+
+Paleta wyprowadzona z pliku `logo.png` — kolory pobrane bezpośrednio z logotypu.
+
+### Paleta
+
+| Rola | Kolor | Zastosowanie |
+|---|---|---|
+| Tło | `#FDFAF5` | ciepła biel, tło strony |
+| Karta | `#FFFFFF` | kafelki, panele |
+| Tekst | `#2B2733` | treść |
+| Tekst pomocniczy | `#5F5869` | daty, zajawki |
+| Granat | `#3D2FB5` | nagłówki, linki, stopka — z logotypu |
+| Granat jasny | `#ECEAFB` | tła aktywnych elementów |
+| Akcent (miód) | `#E8961C` | przyciski, wyróżnienia |
+| Obramowanie | `#EAE3D9` | ramki kart |
+
+### Kolory grup
+
+Paleta pastelowa, wyprowadzona z tęczy w logotypie. Każda grupa ma trzy odcienie:
+**pastel** na tło etykiety, **średni** na pasek kafelka i do użytku w edytorze,
+**ciemny** na tekst — sam pastel nie daje wystarczającego kontrastu pod tekst.
+
+| Grupa | Barwa | Pastel (tło) | Średni | Ciemny (tekst) | Kontrast |
+|---|---|---|---|---|---|
+| Misie | różowy | `#F7DCE7` | `#E88BAE` | `#A8305C` | 5,04 |
+| Wiewiórki | pomarańcz | `#FBE4CD` | `#EFA45C` | `#96540F` | 4,78 |
+| Zajączki | błękit | `#D8EDF9` | `#6FBFE4` | `#175F80` | 5,83 |
+| Żabki | zielony | `#DCEFD7` | `#7BC45F` | `#2E6B26` | 5,35 |
+| Jeżyki | czerwony | `#F9DCD7` | `#E4705C` | `#A63A28` | 4,99 |
+| Kotki | żółty | `#FAF0C6` | `#EFC63F` | `#79590A` | 5,65 |
+
+Kontrast tekst/pastel policzony i zweryfikowany — wszystkie pary spełniają WCAG AA (wymóg 4,5).
+Odcienie średnie są w `theme.json` (widoczne w edytorze), pastel i ciemny jako zmienne CSS.
+
+### Krój pisma
+
+**Nunito**, wersja zmienna (grubości 400–800 z jednego pliku).
+Licencja **SIL Open Font License 1.1** — wolno używać komercyjnie i na stronach
+placówek publicznych. Treść licencji w `assets/fonts/OFL.txt` (wymóg OFL).
+
+Hostowany lokalnie, bez CDN. Podzielony na zestawy znaków:
+`latin` (39 kB) i `latin-ext` (35 kB, polskie znaki) — przeglądarka pobiera tylko potrzebny.
+Font wstępnie wczytywany przez filtr `wp_preload_resources`.
+
+### Pliki motywu
+```
+theme/przedszkole/
+├── style.css              tokeny + wszystkie style (jeden plik, jedno żądanie)
+├── theme.json             paleta, typografia, odstępy — wspólne z Gutenbergiem
+├── functions.php          wsparcie motywu, menu, widgety, sprzątanie WP
+├── inc/helpers.php        funkcje pomocnicze (etykiety grup)
+├── header.php  footer.php
+├── front-page.php         strona główna: treść z Gutenberga + auto aktualności
+├── page.php  single.php
+├── archive.php  home.php  index.php
+├── search.php  404.php
+├── template-parts/
+│   ├── card.php              kafelek aktualności
+│   └── chmurki.php           falista krawędź z chmurkami (SVG)
+└── assets/
+    ├── js/nav.js             menu mobilne (~1 kB)
+    ├── img/hero.svg          ilustracja do hero (~9 kB)
+    └── fonts/                Nunito woff2 + licencja OFL
+```
+
+### Zrobione
+- [x] `theme.json` — paleta, typografia płynna (clamp), odstępy, style przycisków
+- [x] `style.css` — tokeny, reset, układ, nagłówek, stopka, karty, paginacja
+- [x] Nagłówek: przyklejony, pasek tęczy, logotyp, menu
+- [x] Nawigacja: poziomo na desktopie z podmenu, panel rozwijany na telefonie
+- [x] Menu mobilne w czystym JS — Escape zamyka, przełączenie na desktop resetuje
+- [x] Stopka: kontakt, menu, godziny (obszary widgetów)
+- [x] Szablony: strona główna, strona, wpis, archiwum, wyszukiwanie, 404
+- [x] Kafelki aktualności z kolorowymi etykietami grup
+- [x] Dostępność: skip link, widoczny focus, `prefers-reduced-motion`, `aria-expanded`
+- [x] Semantyczny HTML: `<header> <nav> <main> <article> <footer>`
+- [x] Responsywność: 3 kolumny → 2 → 1
+- [x] Sprzątanie WP: emoji, generator, wlwmanifest, RSD, XML-RPC wyłączone
+- [x] Zero frameworków, zero jQuery, zero zewnętrznych zapytań
+- [x] Logo wgrane do biblioteki mediów i ustawione jako logo motywu
+- [x] Ilustracja hero — własny SVG, kolory dopasowane do logotypu
+- [x] Fale z chmurkami między sekcjami
+- [x] Gradienty: hero, sekcja aktualności, kafelki
+- [x] Nunito hostowane lokalnie, dzielone na zestawy znaków, z preload
+- [x] Pastelowa paleta grup z weryfikacją kontrastu WCAG AA
+- [x] Fala z chmurkami przed stopką na wszystkich podstronach
+
+### Do dokończenia
+- [ ] Wypełnienie widgetów stopki (adres, telefon, godziny)
+- [ ] Weryfikacja wyglądu edytora Gutenberg (Etap 5)
+- [ ] Komponent linku do galerii Google Photos (styl gotowy, brak użycia)
+- [ ] Sekcje „Dlaczego my" / skróty na stronie głównej — do ustalenia z klientem
+
+**Kryteria odbioru:** ✅ strona spójna na telefonie i desktopie, konsola czysta, brak błędów PHP.
+
+### Podgląd wizualny
+Panel podglądu w aplikacji blokuje pliki podrzędne z `*.ddev.site`.
+Do zrzutów służy `tools/podglad.py` — skleja stronę w jeden plik HTML.
+Do normalnej pracy wystarczy http://przedszkole.ddev.site w przeglądarce.
+
+---
+
+## Etap 4 — Struktura treści
+
+**Cel:** szkielet serwisu — puste strony, menu, kategorie. Bez finalnych tekstów.
+
+### Proponowana struktura
+Bazuje na realnym menu starej strony (patrz MIGRACJA.md).
+- Strona główna
+- O przedszkolu
+- Oferta
+- Grupy
+  - Wiewiórki
+  - Żabki
+  - Zajączki
+  - Misie
+  - Kotki
+  - Jeżyki
+- Aktualności
+- Galeria
+- Dla rodziców
+- Dokumenty
+- Jadłospis
+- Kontakt
+- Deklaracja dostępności ⚖️ wymagana prawem
+
+- [ ] Utworzenie stron wg struktury
+- [ ] Ustawienie strony głównej jako statycznej + strony wpisów („Aktualności")
+- [ ] Menu główne + kolejność + podstrony jako pozycje zagnieżdżone
+- [ ] Kategorie wpisów (jeśli potrzebne, np. Ogłoszenia / Wydarzenia)
+- [ ] Decyzja: galerie jako strony czy własny typ treści (domyślnie: **strony**, prościej)
+- [ ] Decyzja: dokumenty jako strona z listą linków do Media Library (domyślnie: **tak**, prościej)
+
+**Ważne:** nie kodujemy każdej podstrony jako osobnego szablonu. Standardowy `page.php` + Gutenberg obsługuje wszystko. Osobny szablon tylko tam, gdzie naprawdę trzeba (strona główna, kontakt).
+
+**Kryteria odbioru:** administrator potrafi sam dodać nową stronę i wstawić ją do menu. Sprawdzamy to praktycznie.
+
+---
+
+## Etap 5 — Gutenberg
+
+**Cel:** edytor ma wyglądać i działać tak, by pracownik przedszkola nie musiał znać HTML.
+
+- [ ] `theme.json` dopięty: kolory, rozmiary czcionek, szerokość treści — dostępne jako gotowe opcje w edytorze
+- [ ] Style edytora (`editor-style.css`) — podgląd w edytorze = wygląd na stronie
+- [ ] Ograniczenie palety kolorów do kolorów marki (mniej pomyłek)
+- [ ] Sprawdzenie bloków: nagłówek, akapit, lista, obraz, galeria, przycisk, cytat, kolumny, grupa, okładka, osadzenie, plik
+- [ ] Wzorce bloków (block patterns) dla powtarzalnych sekcji — szybciej niż własne bloki
+- [ ] Ewentualne ograniczenie listy dostępnych bloków (tylko jeśli edytor przytłacza użytkownika)
+- [ ] Własne bloki — **tylko jeśli standardowe naprawdę nie wystarczą**. Domyślnie: brak.
+
+**Kryteria odbioru:** osoba nietechniczna układa sekcję ze zdjęciem, nagłówkiem i przyciskiem bez pomocy.
+
+---
+
+## Etap 6 — Użytkownicy i uprawnienia
+
+**Cel:** każdy widzi tylko to, czego potrzebuje.
+
+| Rola | Zakres | Rola WP |
+|---|---|---|
+| Administrator | wszystko: konfiguracja, motyw, wtyczki, użytkownicy | Administrator |
+| Dyrektor | strony, aktualności, galerie, dokumenty, media | Editor (Redaktor) |
+| Nauczyciel (konto grupowe) | aktualności, zdjęcia, galerie; bez konfiguracji technicznej | Author |
+
+**Konta grupowe (z migracji):** `grupa-kotki`, `grupa-zabki`, `grupa-jezyki`, `grupa-zajaczki`, `grupa-misie`, `grupa-wiewiorki` — rola Author. Plus `przedszkole` (Editor) na treści ogólne.
+
+- [ ] Mapowanie ról na natywne role WP
+- [ ] Utworzenie kont dla realnych osób
+- [ ] Sprawdzenie, czy natywne role wystarczają
+- [ ] Jeśli nie — minimalna korekta uprawnień (kod w motywie lub lekka wtyczka typu Members). Bez ciężkich systemów uprawnień.
+- [ ] Ukrycie zbędnych elementów panelu dla ról nietechnicznych
+- [ ] Zasada: konto administratora **nie** służy do codziennej pracy
+
+**Kryteria odbioru:** zalogowanie się na każde konto i weryfikacja, co widać w panelu, a czego nie.
+
+---
+
+## Etap 7 — Frontend
+
+**Cel:** działające, wyglądające widoki na realnych treściach.
+
+### 7.1 Strona główna
+- [ ] Sekcja powitalna
+- [ ] Najnowsze aktualności (3–4 wpisy z miniaturkami)
+- [ ] Skróty do kluczowych sekcji
+- [ ] Kontakt / godziny otwarcia
+
+### 7.2 Strony treściowe
+- [ ] `page.php` — uniwersalny szablon dla wszystkich stron Gutenberga
+- [ ] Obsługa stron zagnieżdżonych (Grupy → Motylki)
+
+### 7.3 Aktualności
+- [ ] Lista wpisów: tytuł, zdjęcie wyróżniające, data, zajawka
+- [ ] Pojedynczy wpis: tytuł, treść, zdjęcie, data, autor, kategoria
+- [ ] Paginacja
+- [ ] Archiwum kategorii (jeśli używamy kategorii)
+
+### 7.4 Galerie — linki do Google Photos
+Galerie przedszkola żyją w Google Photos (395 albumów). Nie budujemy własnego systemu galerii.
+- [ ] Czytelny komponent „Zobacz zdjęcia" prowadzący do albumu
+- [ ] Oznaczenie, że link prowadzi na zewnątrz
+- [ ] Tekst alternatywny dla linków (dziś puste — problem dostępności)
+- [ ] Natywne bloki galerii WP dostępne dla treści, które trafią bezpośrednio na stronę
+- [ ] Miniatury zamiast pełnych zdjęć na listach — **obowiązkowo**
+- [ ] `loading="lazy"` (WP robi to sam — zweryfikować)
+- [ ] Poprawne `srcset` / rozmiary obrazów
+- [ ] WebP/AVIF jeśli hosting i WP pozwalają
+- [ ] Limit rozmiaru uploadu + instrukcja dla personelu
+
+### 7.5 Dokumenty
+- [ ] Strona z listą dokumentów PDF (linki do Media Library)
+- [ ] Nazwa dokumentu + ewentualne grupowanie (nagłówki sekcji w Gutenbergu)
+- [ ] Otwieranie PDF w nowej karcie
+
+### 7.6 Kontakt
+- [ ] Dane kontaktowe, adres, godziny
+- [ ] Mapa (statyczny obraz lub osadzenie — uwaga na prywatność i wydajność)
+- [ ] Formularz kontaktowy (lekka wtyczka, np. Contact Form 7 / WPForms Lite / Fluent Forms)
+- [ ] Antyspam bez reCAPTCHA jeśli się da (honeypot)
+- [ ] Weryfikacja, że maile realnie dochodzą (często wymaga SMTP)
+- [ ] RODO: informacja o przetwarzaniu danych przy formularzu
+
+**Kryteria odbioru:** każdy widok przetestowany na realnej treści, na telefonie i desktopie.
+
+---
+
+## Etap 8 — SEO, wydajność, bezpieczeństwo
+
+**Cel:** dopięcie po tym, jak strona działa. Nie wcześniej.
+
+### SEO
+- [ ] Poprawne `<title>` i meta description
+- [ ] Struktura nagłówków H1→H2→H3
+- [ ] Przyjazne adresy URL
+- [ ] Sitemap XML (natywna w WP lub z wtyczki)
+- [ ] Canonical
+- [ ] Open Graph (podgląd linków na Facebooku)
+- [ ] Dane strukturalne: LocalBusiness / Preschool, Article dla wpisów
+- [ ] `alt` przy zdjęciach — instrukcja dla personelu
+- [ ] `robots.txt`
+- [ ] Wtyczka SEO: lekka i stabilna (np. SEOPress / Slim SEO). Nie instalujemy molocha.
+- [ ] Google Search Console
+
+### Wydajność
+- [ ] Rozmiar CSS i JS pod kontrolą
+- [ ] Brak zewnętrznych zapytań (fonty, biblioteki) — wszystko lokalnie
+- [ ] Optymalizacja obrazów
+- [ ] Cache stron (wtyczka lub cache hostingu)
+- [ ] Kompresja GZIP/Brotli + nagłówki cache w `.htaccess`
+- [ ] Liczba zapytań SQL na stronę — sprawdzić (Query Monitor na czas testów)
+- [ ] Pomiar PageSpeed / Lighthouse — cel: zielone Core Web Vitals
+
+### Bezpieczeństwo
+- [ ] Aktualny WP, PHP, wtyczki + plan aktualizacji
+- [ ] Mocne hasła; rozważyć 2FA dla administratora
+- [ ] Ograniczenie prób logowania (wtyczka lub `.htaccess`)
+- [ ] `DISALLOW_FILE_EDIT` włączone
+- [ ] Ukrycie wersji WP
+- [ ] XML-RPC wyłączone, jeśli niepotrzebne
+- [ ] Uprawnienia plików: 644 pliki / 755 katalogi
+- [ ] Blokada wykonywania PHP w `wp-content/uploads`
+- [ ] Walidacja i sanityzacja we własnym kodzie (`esc_html`, `esc_url`, `wp_kses_post`, nonces)
+- [ ] Minimum wtyczek — każda ma uzasadnienie
+- [ ] Polityka prywatności + informacja o cookies (RODO)
+
+---
+
+## Etap 9 — Wdrożenie na serwer
+
+**Cel:** przeniesienie gotowej strony z laptopa na cyber_Folks.
+
+### 9.1 Przygotowanie serwera
+- [ ] PHP → 8.5 w panelu
+- [ ] `upload_max_filesize` / `post_max_size` → min. 16M
+- [ ] SSL Let's Encrypt → włączony + wymuszony HTTPS
+- [ ] Nowa baza MySQL + użytkownik z ograniczonymi uprawnieniami
+
+### 9.2 Usunięcie starej strony
+**Nieodwracalne — wykonać checklistę z Etapu 1 w całości przed kasowaniem.**
+- [ ] Checklista „Usunięcie starej strony" (Etap 1) odhaczona w 100%
+- [ ] Materiały odzyskane i przeniesione do nowej strony
+- [ ] Usunięcie plików starej strony
+- [ ] Usunięcie nieużywanej bazy
+
+### 9.3 Przeniesienie
+- [ ] Eksport bazy lokalnej (`ddev export-db`)
+- [ ] Zamiana adresów w bazie: lokalny → produkcyjny (`wp search-replace`, uwaga na dane serializowane)
+- [ ] Import bazy na serwer przez phpMyAdmin
+- [ ] Wgranie plików przez FTP: rdzeń WP + motyw + wtyczki + uploads
+- [ ] **Motyw jako zwykły katalog, nie symlink** — symlink działa tylko lokalnie
+- [ ] `wp-config.php` produkcyjny: dane bazy, nowe klucze (salts), prefiks tabel, `DISALLOW_FILE_EDIT`, `WP_DEBUG` = false
+- [ ] `.htaccess` z regułami permalinków
+
+### 9.4 Po wdrożeniu
+- [ ] Konta użytkowników dla realnych osób (mocne hasła)
+- [ ] Usunięcie lokalnego konta roboczego
+- [ ] Przejście po wszystkich podstronach — czy działają
+- [ ] Sprawdzenie, czy zdjęcia się ładują (ścieżki!)
+- [ ] Test formularza kontaktowego na produkcji
+- [ ] `robots.txt` + indeksowanie włączone (WP potrafi blokować — sprawdzić Ustawienia → Czytanie)
+- [ ] Przekierowania ze starych adresów, jeśli stara strona była indeksowana w Google
+
+**Kryteria odbioru:** strona działa pod docelową domeną po HTTPS, identycznie jak lokalnie.
+
+---
+
+## Etap 10 — Backup
+
+**Cel:** da się odtworzyć stronę po awarii. Sprawdzone, nie założone.
+
+- [ ] Backup bazy MySQL — automatyczny
+- [ ] Backup plików, zwłaszcza `wp-content/uploads`
+- [ ] Backup przechowywany **poza** katalogiem strony (inne konto / chmura)
+- [ ] Harmonogram: baza codziennie, pliki tygodniowo (do dostosowania)
+- [ ] Retencja: minimum 30 dni
+- [ ] Weryfikacja backupu hostingu (zasady + retencja + jak odtworzyć)
+- [ ] **Testowe odtworzenie backupu** — backup nieprzetestowany to brak backupu
+- [ ] Spisana procedura odtworzenia
+
+---
+
+## Etap 11 — Testy i odbiór
+
+- [ ] Desktop / tablet / telefon
+- [ ] Chrome, Safari, Firefox, Edge
+- [ ] Formularz kontaktowy — mail dochodzi
+- [ ] Upload zdjęcia przez użytkownika nietechnicznego
+- [ ] Utworzenie galerii przez użytkownika nietechnicznego
+- [ ] Dodanie aktualności przez nauczyciela
+- [ ] Edycja istniejącej strony
+- [ ] Utworzenie nowej podstrony + dodanie do menu
+- [ ] Zmiana kolejności menu
+- [ ] Strona 404
+- [ ] Wyszukiwarka
+- [ ] Linki wewnętrzne — brak martwych
+- [ ] Lighthouse: wydajność / dostępność / SEO
+- [ ] Test ról: każde konto widzi to, co powinno
+- [ ] Odtworzenie backupu
+- [ ] Poprawne wyświetlanie polskich znaków
+- [ ] Sprawdzenie strony na wolnym łączu mobilnym
+
+---
+
+## Etap 12 — Przekazanie klientowi
+
+- [ ] Krótka instrukcja obsługi (jak dodać wpis, zdjęcia, galerię, stronę) — max 2–3 strony, ze zrzutami ekranu
+- [ ] Szkolenie dla personelu (30–60 min)
+- [ ] Przekazanie danych dostępowych w bezpieczny sposób
+- [ ] Spisanie: co robić przy aktualizacjach, kogo pytać o pomoc
+- [ ] Dokumentacja techniczna motywu (krótka, dla przyszłego developera/AI)
+
+---
+
+## Rejestr decyzji
+
+| Data | Decyzja | Uzasadnienie |
+|---|---|---|
+| 2026-09-11 | WordPress zamiast własnego CMS-a | WP daje logowanie, role, media, menu, aktualizacje od ręki |
+| 2026-09-11 | Własny lekki motyw zamiast gotowego | wydajność, brak zbędnego kodu, łatwość modyfikacji |
+| 2026-09-11 | Gutenberg zamiast page buildera | natywny, bez vendor lock-in, lżejszy |
+| 2026-09-11 | Brak architektury headless | zbędna złożoność dla jednej strony wizytówkowej |
+| 2026-09-11 | Hosting: cyber_Folks, bez zmian | wystarczający: memory 1 GB, .htaccess, GD+ImageMagick, backup 28 dni |
+| 2026-09-11 | PHP 8.5 | najnowsza dostępna; WP core kompatybilny od 6.9; wtyczki weryfikować pojedynczo |
+| 2026-09-11 | Stara strona z FTP do usunięcia | po pełnym backupie i odzyskaniu materiałów (logo, zdjęcia, teksty) |
+| 2026-09-11 | Budujemy najpierw lokalnie | szybciej, bez ryzyka dla produkcji, stara strona może stać do końca |
+| 2026-09-11 | DDEV zamiast MAMP/LocalWP | Docker już jest; pliki w repo, wbudowany wp-cli, PHP 8.5, blisko produkcji |
+| 2026-09-11 | Nie odtwarzamy struktury kategorii z Joomli | narosła organicznie: literówki, rok szkolny w roku szkolnym, puste archiwa |
+| 2026-09-11 | Migracja: lata szkolne 2023/24–2025/26 (440 wpisów) | rok szkolny to naturalna jednostka dla przedszkola |
+| 2026-09-11 | Nunito jako krój pisma | SIL OFL 1.1 — wolna licencja, dopuszczalna dla placówki publicznej; hostowana lokalnie, bez CDN |
+| 2026-09-11 | Pastelowa paleta grup zamiast nasyconej | decyzja klienta; każdy kolor w trzech odcieniach, kontrast zweryfikowany |
+| 2026-09-11 | Galerie zostają w Google Photos | konto należy do przedszkola, więc brak ryzyka utraty; oszczędza ~35 GB i duży nakład pracy |
+| 2026-09-11 | Konta autorów grupowe, nie imienne | decyzja klienta; kompromis: współdzielone hasło, brak rozliczalności — odnotowany w MIGRACJA.md |
+| 2026-09-11 | Rok szkolny z daty publikacji, nie z kategorii | WP ma archiwa po dacie natywnie; odpada kilkadziesiąt pustych kategorii |
+| 2026-09-11 | Git wersjonuje tylko motyw | rdzeń WP i wtyczki to cudzy kod; symlink lokalnie, zwykły katalog na serwerze |
+
+---
+
+## Pytania otwarte
+
+- [ ] Jaki dokładnie hosting i jakie parametry? (Etap 1)
+- [ ] Czy klient ma logo, kolory, materiały graficzne? (część może być na starej stronie — odzyskać przed usunięciem)
+- [ ] Do kogo należy konto Google z albumami zdjęć? Czy jest do niego dostęp?
+- [ ] Jaki jest zakres zgód rodziców na publikację zdjęć dzieci?
+- [ ] Czy są gotowe teksty, czy trzeba je napisać? (sprawdzić starą stronę)
+- [ ] Która z 2 baz danych należy do starej strony?
+- [x] Ile grup i jakie nazwy? → **6: Wiewiórki, Żabki, Zajączki, Misie, Kotki, Jeżyki**
+- [ ] Czy jadłospis to PDF, czy treść wpisywana co tydzień?
+- [ ] Czy potrzebne komentarze pod aktualnościami? (domyślnie: nie)
+- [ ] Domena — istniejąca czy nowa?
+- [x] Zakres migracji → **lata szkolne 2023/24–2025/26, 440 wpisów**
+- [x] Konta autorów → **grupowe** (`grupa-kotki` itd. + `przedszkole`), autorstwo z kategorii
+- [ ] Czy stara strona jest zaindeksowana w Google → przekierowania 301?
+- [ ] Czy potrzebna strefa tylko dla rodziców (logowanie)? (domyślnie: nie — komplikuje)
+- [ ] Kto po wdrożeniu odpowiada za aktualizacje?
+
+---
+
+## Cel końcowy
+
+Lekka strona WordPress dla konkretnego przedszkola:
+działająca na istniejącym hostingu PHP + MySQL · własny lekki motyw · Gutenberg ·
+edycja i tworzenie podstron · aktualności · galerie i upload zdjęć · dokumenty ·
+role użytkowników · responsywna · szybka · bez zbędnych zależności · tania w utrzymaniu ·
+łatwa do dalszej modyfikacji przez AI lub developera.
+
+**To nie ma być idealny CMS. To ma być prosta, szybka i łatwa w utrzymaniu strona jednego przedszkola.**
