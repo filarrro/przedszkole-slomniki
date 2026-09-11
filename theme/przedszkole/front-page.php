@@ -44,9 +44,18 @@ $przedszkole_sa_wpisy = $przedszkole_aktualnosci->have_posts();
 		</div>
 
 		<figure class="hero__art">
-			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/hero.svg' ) ); ?>"
-				width="820" height="560"
-				alt="<?php esc_attr_e( 'Nauczycielka czyta książkę grupie dzieci na łące', 'przedszkole' ); ?>"
+			<?php
+			/*
+			 * Ilustracja tylko w WebP — obrazek z przezroczystym tłem, a PNG
+			 * z alfą waży sześć razy więcej. WebP obsługują wszystkie
+			 * przeglądarki od 2020 roku.
+			 */
+			?>
+			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/hero.webp' ) ); ?>"
+				srcset="<?php echo esc_attr( get_theme_file_uri( 'assets/img/hero-maly.webp' ) . ' 820w, ' . get_theme_file_uri( 'assets/img/hero.webp' ) . ' 1400w' ); ?>"
+				sizes="(min-width: 900px) 52vw, 92vw"
+				width="1400" height="931"
+				alt="<?php esc_attr_e( 'Dzieci w kręgu, każde z pluszakiem: misiem, zajączkiem, żabką, kotkiem, jeżykiem i wiewiórką', 'przedszkole' ); ?>"
 				fetchpriority="high">
 		</figure>
 
