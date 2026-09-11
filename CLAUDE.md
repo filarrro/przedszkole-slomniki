@@ -1,0 +1,96 @@
+# Konwencje projektu
+
+Projekt tworzony w dużej mierze z pomocą agentów AI. Ten plik ma sprawić,
+że kolejny agent nie będzie musiał odkrywać wszystkiego od nowa.
+
+## Zasada nadrzędna
+
+To prosta strona jednego przedszkola, nie idealny CMS.
+**Jeśli WordPress już coś potrafi — użyj tego, nie pisz własnego.**
+Wtyczkę dodaj, gdy jest szybsza i stabilniejsza niż własny kod.
+Nie pisz własnego kodu tylko po to, by uniknąć wtyczki.
+
+Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
+
+## Język
+
+- Kod, komentarze, commity, dokumentacja: **polski**
+- Nazwy funkcji i zmiennych PHP: polskie, z prefiksem `przedszkole_`
+- Komentarze w plikach `.css`, `.js`, `.svg` bez polskich znaków — unikamy
+  problemów z kodowaniem w narzędziach, które ich nie obsługują
+
+## PHP i WordPress
+
+- Standard WordPress Coding Standards: tabulatory, spacje w nawiasach, Yoda nie jest wymagany
+- Każdy plik zaczyna się od `defined( 'ABSPATH' ) || exit;`
+- Escapowanie zawsze: `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`
+- Tłumaczenia przez `__()` / `esc_html_e()` z domeną `przedszkole`
+- Bez abstrakcji na wyrost — płaskie funkcje, nie klasy, dopóki nie ma powodu
+
+## CSS
+
+- Wszystko w jednym `style.css` — jedno żądanie zamiast kilku
+- Kolory i typografia z `theme.json` przez zmienne `--wp--preset--*`
+- Zmienne własne tylko na to, czego `theme.json` nie obsługuje
+- Sekcje numerowane komentarzem, żeby dało się nawigować po pliku
+- Zero frameworków, zero resetów z zewnątrz
+
+## Czego nie robimy
+
+- Zewnętrznych zapytań (CDN, Google Fonts, biblioteki) — wszystko lokalnie
+- jQuery i frameworków JS
+- Page builderów
+- Własnego systemu logowania
+- Własnych bloków Gutenberga bez wyraźnej potrzeby
+- Edycji plików w `wp/` — to nie nasz kod
+
+## Dostępność
+
+Strona placówki publicznej. Ustawa o dostępności cyfrowej wymaga WCAG 2.1 AA.
+- Kontrast tekstu minimum 4.5 — **licz go, nie zgaduj**
+- Widoczny focus, skip link, `aria-expanded` na przełącznikach
+- `prefers-reduced-motion`
+- Semantyczne znaczniki, jedno `<h1>` na stronę
+
+## Praca z wp-cli
+
+Docroot to `wp/`, a kontener startuje w katalogu projektu:
+
+```bash
+ddev exec wp --path=wp <komenda>
+```
+
+**Pułapki, na które już wpadliśmy:**
+
+1. `ddev exec` czyta stdin i **zjada wejście pętli** `while read`.
+   W pętlach dodawaj `</dev/null`:
+   ```bash
+   for x in a b c; do ddev exec wp --path=wp ... </dev/null; done
+   ```
+
+2. Nie używaj zmiennej `HOME` w skryptach — nadpisuje katalog domowy,
+   a `ddev` tworzy wtedy śmieciowy katalog z własną konfiguracją.
+
+3. Ścieżki w `wp media import` są względne wobec katalogu projektu
+   w kontenerze (`/var/www/html`), nie wobec docroota.
+
+## Podgląd wizualny
+
+Panel podglądu w aplikacji blokuje pliki podrzędne z `*.ddev.site`
+(`ERR_BLOCKED_BY_CLIENT`) — strona otwiera się bez stylów.
+
+```bash
+python3 tools/podglad.py / podglad.html    # sklejona strona do zrzutów
+```
+
+Do zwykłej pracy wystarczy http://przedszkole.ddev.site w przeglądarce.
+
+## Bezpieczeństwo
+
+- Zrzuty baz (`*.sql.gz`) **nigdy** do repo — zawierają hashe haseł i adresy e-mail
+- `wp/wp-config.php` poza repo — dane dostępowe do bazy
+- Konto `dev` / `dev12345` jest wyłącznie lokalne, nie przenosimy go na produkcję
+
+## Przed wdrożeniem
+
+W lokalnej instalacji jest treść testowa do usunięcia — patrz PLAN.md, Etap 9.

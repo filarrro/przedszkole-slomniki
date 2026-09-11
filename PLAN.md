@@ -3,7 +3,48 @@
 Dokument roboczy. Pracujemy **etapami**. Każdy etap ma: cel, kroki, kryteria odbioru i status.
 Po każdym etapie testujemy, zanim ruszymy dalej.
 
+Powiązane: [README.md](README.md) — jak uruchomić · [MIGRACJA.md](MIGRACJA.md) — treści ze starej strony · [CLAUDE.md](CLAUDE.md) — konwencje kodu
+
 Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pominięte (z uzasadnieniem)
+
+---
+
+## Stan na 2026-09-11
+
+| Etap | Stan | Uwagi |
+|---|---|---|
+| 1. Analiza hostingu | ✅ | cyber_Folks, brak blokerów |
+| 2. Środowisko lokalne | ✅ | DDEV + WordPress 7.1 + PHP 8.5 |
+| 2b. Migracja z Joomli | 🔄 | analiza gotowa, **czeka na pliki z FTP** |
+| 3. Motyw | ✅ | szkielet, szablony, identyfikacja wizualna |
+| 4. Struktura treści | ⬜ | |
+| 5. Gutenberg | ⬜ | |
+| 6. Użytkownicy | ⬜ | |
+| 7. Frontend | ⬜ | |
+| 8. SEO / wydajność / bezpieczeństwo | ⬜ | |
+| 9. Wdrożenie | ⬜ | |
+| 10–12 | ⬜ | |
+
+### Co blokuje postęp
+
+**Pliki ze starego serwera.** Zdjęcia i dokumenty nie są w zrzucie bazy.
+Do pobrania z `/home/icrdslom/domains/przedszkoleslomniki.pl/public_html/`:
+katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
+
+### Co można robić bez tych plików
+
+- Etap 4 — struktura stron i menu
+- Etap 5 — dostrojenie Gutenberga
+- Etap 6 — role i uprawnienia
+- Skrypt migracyjny — treść da się przenieść bez zdjęć, obrazki dołożyć później
+- Kolejne sekcje strony głównej (wymaga ustaleń z klientem, jakie treści)
+
+### Decyzje czekające na klienta
+
+- Dane do stopki: adres, telefon, godziny otwarcia
+- Jakie sekcje na stronie głównej poza aktualnościami
+- Czy stara strona jest zaindeksowana w Google (przekierowania 301)
+- Zakres zgód rodziców na publikację zdjęć dzieci
 
 ---
 
@@ -561,7 +602,26 @@ Galerie przedszkola żyją w Google Photos (395 albumów). Nie budujemy własneg
 - [ ] `wp-config.php` produkcyjny: dane bazy, nowe klucze (salts), prefiks tabel, `DISALLOW_FILE_EDIT`, `WP_DEBUG` = false
 - [ ] `.htaccess` z regułami permalinków
 
-### 9.4 Po wdrożeniu
+### 9.4 Usunięcie treści testowej
+
+W lokalnej instalacji jest treść wygenerowana na potrzeby testów motywu.
+Nie może trafić na produkcję.
+
+- [ ] 6 przykładowych wpisów (Wiewiórki sadzą kwiaty, Zajączki poznają kosmos,
+      Wycieczka Misiów do lasu, Jesienne warsztaty Jeżyków, Dzień Rodziny u Żabek,
+      Wioska indiańska u Kotków) — treść wypełniaczowa
+- [ ] Puste strony testowe (O przedszkolu, Grupy, Dla rodziców, Dokumenty, Kontakt)
+      — zastąpić realnymi treściami albo usunąć
+- [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
+- [ ] Konto `dev` — **usunąć**, nie przenosić na produkcję
+- [ ] Baza robocza `joomla` — nie migruje na serwer, zostaje lokalnie
+
+```bash
+# Podgląd przed usunięciem
+ddev exec wp --path=wp post list --post_type=post --fields=ID,post_title
+```
+
+### 9.5 Po wdrożeniu
 - [ ] Konta użytkowników dla realnych osób (mocne hasła)
 - [ ] Usunięcie lokalnego konta roboczego
 - [ ] Przejście po wszystkich podstronach — czy działają
@@ -570,7 +630,8 @@ Galerie przedszkola żyją w Google Photos (395 albumów). Nie budujemy własneg
 - [ ] `robots.txt` + indeksowanie włączone (WP potrafi blokować — sprawdzić Ustawienia → Czytanie)
 - [ ] Przekierowania ze starych adresów, jeśli stara strona była indeksowana w Google
 
-**Kryteria odbioru:** strona działa pod docelową domeną po HTTPS, identycznie jak lokalnie.
+**Kryteria odbioru:** strona działa pod docelową domeną po HTTPS, identycznie jak lokalnie,
+bez treści testowej i bez konta `dev`.
 
 ---
 

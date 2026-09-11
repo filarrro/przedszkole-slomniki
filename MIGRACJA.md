@@ -17,6 +17,37 @@ Zrzut zaimportowany lokalnie do osobnej bazy `joomla` (obok bazy WordPressa) —
 ddev mysql joomla        # konsola do bazy Joomli
 ```
 
+### Jak odtworzyć analizę od zera
+
+Baza `joomla` żyje w kontenerze DDEV, a eksport artykułów był w katalogu tymczasowym.
+Jedno i drugie odtwarza się z pliku zrzutu, który leży w katalogu projektu (poza repo).
+
+```bash
+# 1. Import zrzutu do bazy roboczej
+ddev import-db --database=joomla --file=icrdslom_dbj34_1789116422.sql.gz
+
+# 2. Eksport artykułów z zakresu migracji do JSON (jeden obiekt na linię)
+ddev mysql -N --raw joomla -e "SELECT JSON_OBJECT(
+  'id',a.id,'title',a.title,'alias',a.alias,'created',a.created,
+  'modified',a.modified,'cat_path',c.path,'cat_title',c.title,
+  'author',u.name,'images',a.images,'intro',a.introtext,
+  'full',a.\`fulltext\`,'metadesc',a.metadesc)
+FROM l6hwz_content a
+LEFT JOIN l6hwz_categories c ON c.id=a.catid
+LEFT JOIN l6hwz_users u ON u.id=a.created_by
+WHERE a.state=1 AND a.created >= '2023-09-01'
+ORDER BY a.created DESC" > artykuly.jsonl
+
+# 3. Załączniki
+ddev mysql -N --raw joomla -e "SELECT JSON_OBJECT(
+  'id',id,'plik',filename,'sciezka',filename_sys,'typ',file_type,
+  'rozmiar',file_size,'nazwa',display_name,'artykul',parent_id)
+FROM l6hwz_attachments WHERE state=1" > zalaczniki.jsonl
+```
+
+**Uwaga:** `fulltext` jest słowem zastrzeżonym w MariaDB — wymaga odwrotnych apostrofów.
+Pliki `*.jsonl` są w `.gitignore` (zawierają treści i nazwiska autorek).
+
 ### Artykuły
 
 | Stan | Liczba |
@@ -189,6 +220,25 @@ Drzewo kategorii narosło organicznie:
 - [ ] Podmiana ścieżek `images/…` w treści na adresy z `wp-content/uploads`
 - [ ] Weryfikacja: liczba wpisów, losowa próbka 20 artykułów, martwe linki
 - [ ] Mapa przekierowań 301 ze starych adresów (SEO)
+
+### Wskazówki do skryptu migracyjnego
+
+Ustalenia z analizy, które oszczędzą pracy przy pisaniu importu:
+
+- **Obrazek wyróżniający:** brać `images.image_fulltext` (wersja `_nor`), nie `image_intro`
+  (`_min`). WordPress sam wygeneruje miniatury — import obu wariantów podwoiłby pliki.
+- **Ścieżki w polu `images`** mają escapowane ukośniki (`images\/foo.jpg`) — JSON Joomli.
+- **Galerie:** wzorzec `<a href="https://photos.app.goo.gl/..."><img src="images/..."></a>`.
+  Link zostaje, ale trzeba mu dodać czytelny tekst — dziś `<a>` opakowuje sam obrazek,
+  więc czytnik ekranu nie ma czego przeczytać.
+- **Treść** to `introtext` + `fulltext` sklejone. Joomla rozdziela je znacznikiem
+  „czytaj dalej” — w WordPressie nie jest potrzebny.
+- **Autorstwo** z kategorii, nie z `created_by` (patrz „Konta autorów”).
+- **Kategorie:** `cat_path` zawiera pełną ścieżkę; grupę rozpoznać po segmencie
+  (`komunikaty/kotki/...` → Kotki). Ścieżki `*projekty*` → kategoria „Projekty”.
+  Uwaga na literówkę `kotkiorojekty`.
+- **Rok szkolny** wyprowadzić z `created`, nie z kategorii.
+- **6 artykułów** w zakresie ma pustą treść — zdecydować, czy pomijać.
 
 ### ⚠️ Krytyczne: pobrać pliki przed usunięciem starej strony
 

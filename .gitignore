@@ -9,6 +9,8 @@
 *.sql
 *.sql.gz
 *.sql.zip
+# Eksporty tresci ze starej strony - zawieraja tresci i nazwiska autorek
+*.jsonl
 /backup/
 /backups/
 
