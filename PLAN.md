@@ -707,10 +707,13 @@ Galerie przedszkola żyją w Google Photos (395 albumów). Nie budujemy własneg
 ### 7.6 Kontakt
 - [ ] Dane kontaktowe, adres, godziny
 - [ ] Mapa (statyczny obraz lub osadzenie — uwaga na prywatność i wydajność)
-- [ ] Formularz kontaktowy (lekka wtyczka, np. Contact Form 7 / WPForms Lite / Fluent Forms)
-- [ ] Antyspam bez reCAPTCHA jeśli się da (honeypot)
-- [ ] Weryfikacja, że maile realnie dochodzą (często wymaga SMTP)
-- [ ] RODO: informacja o przetwarzaniu danych przy formularzu
+- [-] **Formularz kontaktowy — odrzucony** (decyzja z 11.09.2026). Zostaje
+      adres e-mail i telefon. Odpada wtyczka, konfiguracja SMTP, antyspam,
+      klauzula RODO przy formularzu i utrzymywanie tego wszystkiego przez
+      lata. Przedszkole ma działającą skrzynkę — to wystarczy
+- [-] ~~Antyspam bez reCAPTCHA~~ — bezprzedmiotowe bez formularza
+- [-] ~~Weryfikacja, że maile dochodzą~~ — bezprzedmiotowe bez formularza
+- [-] ~~RODO przy formularzu~~ — bezprzedmiotowe bez formularza
 
 **Kryteria odbioru:** każdy widok przetestowany na realnej treści, na telefonie i desktopie.
 
