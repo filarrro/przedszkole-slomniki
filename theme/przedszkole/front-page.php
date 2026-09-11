@@ -1,0 +1,83 @@
+<?php
+/**
+ * Strona główna.
+ *
+ * Treść w sekcji powitalnej pochodzi ze zwykłej strony WordPressa edytowanej
+ * w Gutenbergu — pracownicy przedszkola mogą ją zmieniać sami. Grafika,
+ * chmurki i sekcja aktualności są dokładane przez motyw.
+ *
+ * @package Przedszkole
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+get_header();
+?>
+
+<section class="hero">
+	<div class="wrap hero__inner">
+
+		<div class="hero__text">
+			<?php
+			if ( have_posts() ) :
+				while ( have_posts() ) :
+					the_post();
+					the_content();
+				endwhile;
+			endif;
+			?>
+		</div>
+
+		<figure class="hero__art">
+			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/hero.svg' ) ); ?>"
+				width="820" height="560"
+				alt="<?php esc_attr_e( 'Nauczycielka czyta książkę grupie dzieci na łące', 'przedszkole' ); ?>"
+				fetchpriority="high">
+		</figure>
+
+	</div>
+
+	<?php get_template_part( 'template-parts/chmurki', null, array( 'kolor' => '#F3F8F2' ) ); ?>
+</section>
+
+<?php
+$przedszkole_aktualnosci = new WP_Query(
+	array(
+		'post_type'           => 'post',
+		'posts_per_page'      => 3,
+		'ignore_sticky_posts' => true,
+		'no_found_rows'       => true,
+	)
+);
+
+if ( $przedszkole_aktualnosci->have_posts() ) :
+	?>
+	<section class="section--miekka section--chmury">
+		<div class="wrap">
+			<div class="section__head">
+				<h2><?php esc_html_e( 'Aktualności', 'przedszkole' ); ?></h2>
+				<?php
+				$przedszkole_strona_wpisow = get_option( 'page_for_posts' );
+				if ( $przedszkole_strona_wpisow ) :
+					?>
+					<a href="<?php echo esc_url( get_permalink( $przedszkole_strona_wpisow ) ); ?>">
+						<?php esc_html_e( 'Zobacz wszystkie', 'przedszkole' ); ?> →
+					</a>
+				<?php endif; ?>
+			</div>
+
+			<div class="cards">
+				<?php
+				while ( $przedszkole_aktualnosci->have_posts() ) :
+					$przedszkole_aktualnosci->the_post();
+					get_template_part( 'template-parts/card' );
+				endwhile;
+				wp_reset_postdata();
+				?>
+			</div>
+		</div>
+	</section>
+	<?php
+endif;
+
+get_footer();
