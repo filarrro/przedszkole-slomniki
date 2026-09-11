@@ -48,6 +48,38 @@ wdrożeniem muszą to być realne skrzynki — patrz PLAN.md, Etap 6.
 Własnych ról nie tworzymy. Natywne Editor i Author pokrywają potrzeby przedszkola,
 uzasadnienie i audyt uprawnień są w PLAN.md.
 
+## `kadra_zdjecie.py`
+
+Wstawia zdjęcia osób w kafelki na stronie „Kadra" — podmienia zawartość lewej
+kolumny kafelka (inicjały albo poprzednie zdjęcie) na wskazany plik.
+
+```bash
+python3 tools/kadra_zdjecie.py              # podgląd, nic nie zapisuje
+python3 tools/kadra_zdjecie.py --zastosuj   # wgrywa do WordPressa
+```
+
+Nowa osoba ze zdjęciem: dopisz linię do słownika `ZDJECIA` (nazwisko dokładnie
+jak w nagłówku `h3`, bez „mgr") i uruchom. Plik nieobecny w bibliotece mediów
+jest importowany przy `--zastosuj`.
+
+Idempotentny — powtórne uruchomienie z tym samym słownikiem nic nie zmienia.
+
+To następca `kadra_kafelki.py` w zakresie zdjęć: tamten skrypt jest jednorazowy
+i na przepisanej stronie już nie zadziała, a zdjęcia przychodzą pojedynczo.
+
+**Zdjęcia muszą być kwadratowe** — kafelek kadruje je do koła. Przygotowanie:
+
+```bash
+sips -s format jpeg -c 905 905 zrodlo.png --out media/kadra/awatar-6.jpg
+sips -z 800 800 media/kadra/awatar-6.jpg
+```
+
+Dwa przebiegi, nie jeden: `sips` łączy `-c` z `-Z` w nieprzewidywalnej kolejności
+i wychodzi obrazek mniejszy, niż się prosiło.
+
+Wyrównanie kolumn (`top`/`center`) zależy od długości biogramu, nie od zdjęcia —
+skrypt go nie rusza.
+
 ## `migracja_tresci.py`
 
 Przenosi treści **statyczne** ze zrzutu Joomli do stron WordPressa — kadrę,

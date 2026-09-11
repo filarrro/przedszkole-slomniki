@@ -45,6 +45,9 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 - Jakie sekcje na stronie głównej poza aktualnościami
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
 - Zakres zgód rodziców na publikację zdjęć dzieci
+- **Zdjęcia kadry.** W kafelkach stoją zastępniki: trzy ilustrowane awatary
+  i dwa stockowe portrety ze znakiem wodnym. Potrzebne prawdziwe zdjęcia
+  pracownic wraz z ich zgodą na publikację. Dziewięć osób ma na razie inicjały
 - ~~Godziny otwarcia — w sekcji „Dlaczego my" stoi tymczasowe 6:30–17:00~~ —
   **potwierdzone** ramowym rozkładem dnia ze starej strony: schodzenie się dzieci
   od 6:30, zajęcia do 17:00. Do potwierdzenia, czy nadal aktualne
