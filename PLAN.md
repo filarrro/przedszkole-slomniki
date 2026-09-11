@@ -974,6 +974,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Galerie zostają w Google Photos | konto należy do przedszkola, więc brak ryzyka utraty; oszczędza ~35 GB i duży nakład pracy |
 | 2026-09-11 | Konta autorów grupowe, nie imienne | decyzja klienta; kompromis: współdzielone hasło, brak rozliczalności — odnotowany w MIGRACJA.md |
 | 2026-09-11 | Rok szkolny z daty publikacji, nie z kategorii | WP ma archiwa po dacie natywnie; odpada kilkadziesiąt pustych kategorii |
+| 2026-09-11 | Kafelek skrótu na ciemniejszym wariancie barwy grupy | biały napis na pastelu z `theme.json` ma kontrast 1,6–3,1, ustawa wymaga 4,5; przyciemnione warianty dają ponad 4,6 przy tym samym odcieniu |
 | 2026-09-11 | Kształt fali jako parametr, nie osobny plik SVG | fala ma kolor sekcji, która po niej następuje — plik z wypalonym kolorem trzeba by trzymać w kilku wersjach |
 | 2026-09-11 | Kafelki „Na skróty" z menu, nie z kodu | dyrekcja zmienia zestaw i opisy w panelu; motyw dobiera tylko ikonę i kolor |
 | 2026-09-11 | Jeden `index.php` zamiast `home.php`, `archive.php` i `index.php` | trzy identyczne pliki; poprawka w jednym omijała dwa pozostałe |

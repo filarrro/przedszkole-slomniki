@@ -27,10 +27,12 @@ if ( empty( $przedszkole_pozycje ) ) {
 }
 
 /*
- * Kolory z palety grup, w kolejności tęczy z logotypu. Kafelków bywa mniej
- * niż kolorów i odwrotnie, więc lista zapętla się modulo.
+ * Kolory z palety grup. Kolejność nie jest tęczowa: sekcja stoi na żółtym tle,
+ * więc barwy najbliższe żółci — kotki i wiewiórki — idą na koniec, gdzie przy
+ * czterech kafelkach w ogóle nie wypadną. Kafelków bywa mniej niż kolorów
+ * i odwrotnie, więc lista zapętla się modulo.
  */
-$przedszkole_kolory = array( 'zajaczki', 'zabki', 'kotki', 'wiewiorki', 'misie', 'jezyki' );
+$przedszkole_kolory = array( 'zajaczki', 'zabki', 'misie', 'jezyki', 'wiewiorki', 'kotki' );
 ?>
 
 <section class="skroty">
@@ -48,6 +50,8 @@ $przedszkole_kolory = array( 'zajaczki', 'zabki', 'kotki', 'wiewiorki', 'misie',
 				?>
 				<li class="skrot skrot--<?php echo esc_attr( $przedszkole_kolor ); ?>">
 					<a class="skrot__link" href="<?php echo esc_url( $przedszkole_pozycja->url ); ?>">
+
+						<span class="skrot__gora">
 
 						<span class="skrot__ikona" aria-hidden="true">
 							<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3"
@@ -118,8 +122,24 @@ $przedszkole_kolory = array( 'zajaczki', 'zabki', 'kotki', 'wiewiorki', 'misie',
 							</svg>
 						</span>
 
-						<span class="skrot__tresc">
-							<span class="skrot__tytul"><?php echo esc_html( $przedszkole_pozycja->title ); ?></span>
+						<span class="skrot__tytul"><?php echo esc_html( $przedszkole_pozycja->title ); ?></span>
+
+						</span>
+
+						<span class="skrot__dol">
+							<?php
+							/*
+							 * Falista granica między kolorową górą a białym dołem karty.
+							 * Rysunek leży na dole, wypełniony kolorem góry, i wchodzi
+							 * w biel — dlatego siedzi w dolnej części, a nie w górnej.
+							 */
+							?>
+							<span class="skrot__fala" aria-hidden="true">
+								<svg viewBox="0 0 1200 120" preserveAspectRatio="none" focusable="false">
+									<path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"/>
+								</svg>
+							</span>
+
 							<?php if ( $przedszkole_pozycja->post_content ) : ?>
 								<span class="skrot__opis"><?php echo esc_html( $przedszkole_pozycja->post_content ); ?></span>
 							<?php endif; ?>
