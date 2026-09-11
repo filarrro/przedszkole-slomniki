@@ -45,6 +45,7 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 - Jakie sekcje na stronie głównej poza aktualnościami
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
 - Zakres zgód rodziców na publikację zdjęć dzieci
+- Godziny otwarcia — w sekcji „Dlaczego my" stoi tymczasowe 6:30–17:00
 
 ---
 
@@ -366,7 +367,8 @@ theme/przedszkole/
 ├── search.php  404.php
 ├── template-parts/
 │   ├── card.php              kafelek aktualności
-│   └── chmurki.php           falista krawędź z chmurkami (SVG)
+│   ├── chmurki.php           falista krawędź z chmurkami (SVG)
+│   └── dlaczego-my.php       sekcja „Dlaczego my" — 4 powody z ikonami SVG
 └── assets/
     ├── js/nav.js             menu mobilne (~1 kB)
     ├── img/hero.svg          ilustracja do hero (~9 kB)
@@ -399,7 +401,8 @@ theme/przedszkole/
 - [ ] Wypełnienie widgetów stopki (adres, telefon, godziny)
 - [ ] Weryfikacja wyglądu edytora Gutenberg (Etap 5)
 - [ ] Komponent linku do galerii Google Photos (styl gotowy, brak użycia)
-- [ ] Sekcje „Dlaczego my" / skróty na stronie głównej — do ustalenia z klientem
+- [x] Sekcja „Dlaczego my" — cztery powody z własnymi ilustracjami SVG
+- [ ] Skróty do kluczowych sekcji na stronie głównej — do ustalenia z klientem
 
 **Kryteria odbioru:** ✅ strona spójna na telefonie i desktopie, konsola czysta, brak błędów PHP.
 

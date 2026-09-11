@@ -598,7 +598,73 @@ a.pill:hover { filter: brightness(.93); }
 
 /* Stopka: miekkie przejscie od tresci do granatu.
    Fala jest wspolna dla wszystkich podstron (footer.php), wiec tlo pod nia
-   musi odpowiadac tlu strony; na stronie glownej - tlu sekcji aktualnosci. */
+   musi odpowiadac tlu strony - takze na glownej, gdzie ostatnia sekcja
+   ("Dlaczego my") stoi na tle strony. */
 .site-footer { margin-top: 0; }
 main + .chmurki { background: var(--wp--preset--color--base); }
-.home main + .chmurki { background: #FBF6EC; }
+
+/* ==========================================================================
+   16. Sekcja "Dlaczego my"
+   ========================================================================== */
+
+.powody > .wrap { padding-block: clamp(2.5rem, 6vw, 4rem); }
+
+.powody__naglowek {
+	max-width: 46rem;
+	margin: 0 auto clamp(2rem, 5vw, 3rem);
+	text-align: center;
+}
+.powody__naglowek h2 { margin: 0; }
+
+/* Krotka kreska w kolorze akcentu pod naglowkiem - zamiast obramowania
+   calej sekcji. Dekoracja, wiec zwykly pseudoelement. */
+.powody__naglowek h2::after {
+	content: "";
+	display: block;
+	width: 64px;
+	height: 4px;
+	margin: .7rem auto 1rem;
+	border-radius: 999px;
+	background: var(--wp--preset--color--accent);
+}
+.powody__naglowek p { margin: 0; color: var(--wp--preset--color--ink-soft); }
+
+.powody__lista {
+	display: grid;
+	gap: clamp(1.5rem, 4vw, 2.5rem);
+	grid-template-columns: 1fr;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+@media (min-width: 560px)  { .powody__lista { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .powody__lista { grid-template-columns: repeat(4, 1fr); } }
+
+.powod { text-align: center; }
+
+/* Na telefonie kafelki sa jeden pod drugim - pelnowymiarowa ikona
+   zajmowalaby wtedy pol ekranu. */
+.powod__ikona {
+	display: block;
+	width: 100%;
+	max-width: 170px;
+	height: auto;
+	margin: 0 auto .5rem;
+}
+@media (min-width: 560px) { .powod__ikona { max-width: 220px; } }
+
+.powod h3 {
+	margin: 0 0 .5rem;
+	font-size: .9375rem;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+/* Kontrast ink-soft na tle strony: 6,5 - z zapasem ponad wymagane 4,5. */
+.powod p {
+	max-width: 22rem;
+	margin: 0 auto;
+	color: var(--wp--preset--color--ink-soft);
+	font-size: .9375rem;
+	line-height: 1.6;
+}

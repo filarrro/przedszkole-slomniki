@@ -6,12 +6,27 @@
  * w Gutenbergu — pracownicy przedszkola mogą ją zmieniać sami. Grafika,
  * chmurki i sekcja aktualności są dokładane przez motyw.
  *
+ * Kolejność: powitanie → aktualności → „Dlaczego my". Fala z chmurkami ma
+ * kolor sekcji, która po niej następuje, więc zapytanie o wpisy leci przed
+ * hero — bez wpisów fala pod hero prowadziłaby do nieistniejącego tła.
+ *
  * @package Przedszkole
  */
 
 defined( 'ABSPATH' ) || exit;
 
 get_header();
+
+$przedszkole_aktualnosci = new WP_Query(
+	array(
+		'post_type'           => 'post',
+		'posts_per_page'      => 3,
+		'ignore_sticky_posts' => true,
+		'no_found_rows'       => true,
+	)
+);
+
+$przedszkole_sa_wpisy = $przedszkole_aktualnosci->have_posts();
 ?>
 
 <section class="hero">
@@ -37,21 +52,16 @@ get_header();
 
 	</div>
 
-	<?php get_template_part( 'template-parts/chmurki', null, array( 'kolor' => '#F3F8F2' ) ); ?>
+	<?php
+	get_template_part(
+		'template-parts/chmurki',
+		null,
+		$przedszkole_sa_wpisy ? array( 'kolor' => '#F3F8F2' ) : null
+	);
+	?>
 </section>
 
-<?php
-$przedszkole_aktualnosci = new WP_Query(
-	array(
-		'post_type'           => 'post',
-		'posts_per_page'      => 3,
-		'ignore_sticky_posts' => true,
-		'no_found_rows'       => true,
-	)
-);
-
-if ( $przedszkole_aktualnosci->have_posts() ) :
-	?>
+<?php if ( $przedszkole_sa_wpisy ) : ?>
 	<section class="section--miekka section--chmury">
 		<div class="wrap">
 			<div class="section__head">
@@ -76,8 +86,12 @@ if ( $przedszkole_aktualnosci->have_posts() ) :
 				?>
 			</div>
 		</div>
-	</section>
-	<?php
-endif;
 
+		<?php get_template_part( 'template-parts/chmurki' ); ?>
+	</section>
+<?php endif; ?>
+
+<?php get_template_part( 'template-parts/dlaczego-my' ); ?>
+
+<?php
 get_footer();
