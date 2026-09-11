@@ -33,3 +33,6 @@ Thumbs.db
 # Tymczasowy podglad wizualny motywu (tools/podglad.py)
 podglad.html
 *.podglad.html
+
+# Wynik posredni migracji tresci statycznych - odtwarzalny ze zrzutu Joomli
+tools/migracja_tresci.json

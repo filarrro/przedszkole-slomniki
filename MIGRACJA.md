@@ -354,3 +354,67 @@ Zrzut zawiera tabelę `l6hwz_users` z hasłami (hashe) i adresami e-mail.
 - Nie trafia do repozytorium (`*.sql.gz` w `.gitignore`)
 - Migrujemy **wyłącznie imiona autorek**, nie hasła ani dane logowania
 - Nowe konta w WordPressie dostają świeże, mocne hasła
+
+---
+
+## Migracja treści statycznych (wykonana 2026-09-11)
+
+Odrębna od migracji aktualności. Dotyczy podstron, które na starej stronie stały
+pod konkretnymi pozycjami menu — nie artykułów newsowych.
+
+Narzędzie: `tools/migracja_tresci.py` (`--zastosuj` wgrywa do WordPressa).
+
+### Skąd wzięliśmy mapę
+
+Z tabeli `l6hwz_menu`, nie z dopasowywania tytułów. Menu Joomli jednoznacznie
+wiąże pozycję z ID artykułu albo kategorii — dopasowanie po tytule trafiałoby
+w aktualności o podobnych nazwach.
+
+### Co przeniesiono — 16 stron
+
+| Strona WordPressa | Źródło w Joomli |
+|---|---|
+| Kadra | art. 18 (dyrektor) + 9 art. z kategorii `kadra` + art. 7, 1805, 1813, 1815 (specjaliści) + art. 8 (administracja) |
+| Grupy → Misie · Zajączki · Żabki · Kotki · Wiewiórki · Jeżyki | opisy kategorii 12–17 + moduły „Zajęcia stałe" + moduły „zajęcia z logopedą" |
+| Jadłospis | art. 22 |
+| Ramowy rozkład dnia | art. 24 (Misie, Zajączki), 197 (Żabki), 23 (starszaki) — scalone w jedną stronę |
+| Opłaty | art. 25 |
+| Kącik logopedy | opis kategorii 19 (godziny pracy) |
+| Dokumenty | art. 21 (sam wstęp) |
+| Dofinansowanie | art. 178 |
+| Kontakt | art. 9 |
+| Deklaracja dostępności | art. 823 |
+| Polityka prywatności | art. 1274 — **tylko kontakt do IOD**, nie polityka |
+
+### Ustalenia, które wypadły przy okazji
+
+**Dane kontaktowe placówki** (art. 9 + moduł 95):
+ul. św. Jadwigi Królowej 4, 32-090 Słomniki · tel. 510 217 005 ·
+sekretariat@przedszkoleslomniki.pl
+
+**Godziny otwarcia: 6:30–17:00.** Z ramowego rozkładu dnia dla starszaków —
+schodzenie się dzieci od 6:30, zajęcia dodatkowe do 17:00. Młodsze grupy mają
+rozkład do 15:00, po tej godzinie przechodzą pod opiekę nauczyciela grupy starszej.
+To potwierdza tymczasową wartość wpisaną w sekcji „Dlaczego my" (Etap 3).
+
+**Obsada grup** (opisy kategorii 12–17) — wychowawcy, pomoc i przedział wiekowy
+dla każdej z sześciu grup.
+
+### Czego w zrzucie nie ma
+
+| Strona | Stan | Najbliższy materiał |
+|---|---|---|
+| **O przedszkolu** | brak podstrony | art. 1 „Witamy w nowym przedszkolu" i art. 93 „Uroczyste otwarcie" — to aktualności z 2015–2016, nie opis placówki |
+| **Oferta** | brak podstrony | moduły „Zajęcia stałe" (angielski, religia) + ogłoszenie o kółkach zainteresowań — to grafik, nie opis oferty |
+| **Grupy** (strona nadrzędna) | brak | stare menu prowadziło prosto do listy grup |
+| **Dla rodziców** (strona nadrzędna) | brak | kategoria bez opisu; pod spodem 19 artykułów poradnikowych |
+| **Galeria** | brak | art. 191 „Galeria prac plastycznych" jest niepublikowany i zawiera pusty shortcode Joomli |
+| **Polityka prywatności** | niepełna | jest wyłącznie kontakt do Inspektora Ochrony Danych. Właściwej polityki i klauzuli RODO trzeba napisać |
+| **Statut, Koncepcja pracy** | tylko nazwy plików | 6 PDF-ów podpiętych do art. 21 leży na FTP starej strony |
+| **Zdjęcia w treści** | wycięte | 5 plików: 1 w Kontakcie, 4 logotypy dofinansowania. Też na FTP |
+
+### Uwaga o aktualności danych
+
+Migrowane strony niosą dane z roku szkolnego 2025/2026 — jadłospis na konkretny
+tydzień czerwca 2026 i harmonogramy zajęć logopedycznych z datami dziennymi.
+Przed wdrożeniem trzeba je odświeżyć albo usunąć.

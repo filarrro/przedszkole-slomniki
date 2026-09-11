@@ -28,3 +28,22 @@ aktualizowany jest tylko rodzic i kolejność. **Menu są kasowane i budowane od
 więc ręczne zmiany w menu przepadną.
 
 Skrypt tworzy wyłącznie puste strony. Treść wchodzi w Etapie 7 i przy migracji.
+
+## `migracja_tresci.py`
+
+Przenosi treści **statyczne** ze zrzutu Joomli do stron WordPressa — kadrę,
+opisy grup, rozkład dnia, opłaty, kontakt i resztę podstron spod menu starej
+strony. Aktualności to osobna migracja.
+
+```bash
+python3 tools/migracja_tresci.py             # podglad: buduje JSON, nic nie zapisuje
+python3 tools/migracja_tresci.py --zastosuj  # wgrywa do WordPressa
+```
+
+Wymaga bazy roboczej `joomla` w kontenerze — patrz [MIGRACJA.md](../MIGRACJA.md),
+sekcja „Jak odtworzyć analizę od zera".
+
+**Nadpisuje treść stron w całości.** Ręczne zmiany w migrowanych stronach przepadną.
+
+Obrazki są wycinane — pliki leżą na FTP starej strony. Skrypt wypisuje na końcu
+listę tego, czego w zrzucie nie ma.

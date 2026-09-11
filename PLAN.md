@@ -39,11 +39,15 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 
 ### Decyzje czekające na klienta
 
-- Dane do stopki: adres, telefon, godziny otwarcia
+- ~~Dane do stopki: adres, telefon, godziny otwarcia~~ — **odzyskane ze zrzutu**
+  (Etap 2b): ul. św. Jadwigi Królowej 4, 32-090 Słomniki, tel. 510 217 005,
+  sekretariat@przedszkoleslomniki.pl. Do potwierdzenia, czy nadal aktualne
 - Jakie sekcje na stronie głównej poza aktualnościami
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
 - Zakres zgód rodziców na publikację zdjęć dzieci
-- Godziny otwarcia — w sekcji „Dlaczego my" stoi tymczasowe 6:30–17:00
+- ~~Godziny otwarcia — w sekcji „Dlaczego my" stoi tymczasowe 6:30–17:00~~ —
+  **potwierdzone** ramowym rozkładem dnia ze starej strony: schodzenie się dzieci
+  od 6:30, zajęcia do 17:00. Do potwierdzenia, czy nadal aktualne
 
 ---
 
@@ -289,7 +293,8 @@ Szczegółowa analiza i plan: **[MIGRACJA.md](MIGRACJA.md)**
 - [x] Zakres: lata szkolne 2023/24–2025/26 (od 2023-09-01) → 440 wpisów
 - [x] Autorstwo: 7 kont grupowych, wyprowadzanych z kategorii
 - [x] Decyzja: galerie **zostają w Google Photos** — konto należy do przedszkola
-- [ ] Skrypt migracyjny
+- [x] Migracja treści **statycznych** — 16 stron (`tools/migracja_tresci.py`)
+- [ ] Skrypt migracyjny **aktualności** (440 wpisów)
 - [ ] Weryfikacja i przekierowania 301
 
 **Kryteria odbioru:** wpisy w WordPressie z poprawnymi datami, autorami, treścią i zdjęciami; próbka 20 artykułów sprawdzona ręcznie.
@@ -480,7 +485,8 @@ Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokryc
 - [x] Decyzja: galerie jako **strony**, nie własny typ treści — właściwe galerie
       i tak żyją w Google Photos, strona „Galeria" to lista linków do albumów
 - [x] Decyzja: dokumenty jako **strona z listą linków** do Media Library
-- [ ] Treść stron — puste, do wypełnienia w Etapie 7 i przy migracji
+- [x] Treść stron — 16 z 23 wypełnione migracją treści statycznych (Etap 2b).
+      Pozostałe 7 wymaga treści pisanej od zera — lista w [MIGRACJA.md](MIGRACJA.md)
 - [ ] Praktyczny test kryterium odbioru z administratorem
 
 ### Odtworzenie struktury od zera
@@ -558,8 +564,8 @@ dostają układu `.is-layout-flow` wokół `the_content()`, więc odstęp ustawi
 **Dwa arkusze zamiast jednego** — wbrew zasadzie z CLAUDE.md. `editor.css` wchodzi
 wyłącznie w panelu, więc front nadal pobiera jeden plik.
 
-**Kryteria odbioru:** osoba nietechniczna układa sekcję ze zdjęciem, nagłówkiem
-i przyciskiem bez pomocy. ⬜ do sprawdzenia praktycznie, przy szkoleniu.
+**Kryteria odbioru:** ✅ osoba nietechniczna układa sekcję ze zdjęciem, nagłówkiem
+i przyciskiem bez pomocy — sprawdzone praktycznie 2026-09-11.
 
 ---
 
@@ -710,8 +716,11 @@ Nie może trafić na produkcję.
 - [ ] 6 przykładowych wpisów (Wiewiórki sadzą kwiaty, Zajączki poznają kosmos,
       Wycieczka Misiów do lasu, Jesienne warsztaty Jeżyków, Dzień Rodziny u Żabek,
       Wioska indiańska u Kotków) — treść wypełniaczowa
-- [ ] 23 strony ze szkieletu (Etap 4) są **puste** — każda musi dostać realną treść
-      albo zniknąć przed wdrożeniem. Puste strony w menu to błąd dostępności.
+- [ ] 7 stron nadal **pustych** (O przedszkolu, Oferta, Grupy, Dla rodziców, Galeria,
+      Aktualności, Strona główna jako treść) — każda musi dostać realną treść albo
+      zniknąć przed wdrożeniem. Puste strony w menu to błąd dostępności.
+- [ ] Strony wypełnione migracją zawierają dane z 2025/2026 (jadłospis na konkretny
+      tydzień, harmonogramy logopedy) — sprawdzić aktualność przed startem
 - [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
 - [ ] Konto `dev` — **usunąć**, nie przenosić na produkcję
 - [ ] Baza robocza `joomla` — nie migruje na serwer, zostaje lokalnie
@@ -808,6 +817,10 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Link do albumu otwiera się w tej samej karcie | nowe okno bez uprzedzenia łamie WCAG 3.2.5 |
 | 2026-09-11 | Lista bloków nieograniczana (na razie) | decyzja po szkoleniu, na podstawie realnych trudności personelu |
 | 2026-09-11 | `#ddev-generated` zdjęte z `wp/wp-config.php` | inaczej ddev kasował `WP_DEBUG` przy każdym starcie; dane bazy nadal z `wp-config-ddev.php` |
+| 2026-09-11 | Mapa treści z tabeli `l6hwz_menu`, nie z tytułów artykułów | menu Joomli jednoznacznie wiąże pozycję z artykułem; dopasowanie po tytule dawałoby trafienia w aktualnościach |
+| 2026-09-11 | Rozkład dnia: trzy warianty na jednej stronie | stare menu miało trzy osobne pozycje pod separatorem — jedna strona z nagłówkami jest prostsza w utrzymaniu |
+| 2026-09-11 | Kadra jako jedna strona składana z 15 artykułów | stara strona rozbijała ją na 15 podstron po jednej osobie — nadmiar nawigacji przy 15 krótkich biogramach |
+| 2026-09-11 | Obrazki wycięte z migrowanej treści | 5 plików leży na FTP starej strony; treść ma wejść teraz, zdjęcia dołożymy po pobraniu |
 | 2026-09-11 | Nie odtwarzamy struktury kategorii z Joomli | narosła organicznie: literówki, rok szkolny w roku szkolnym, puste archiwa |
 | 2026-09-11 | Migracja: lata szkolne 2023/24–2025/26 (440 wpisów) | rok szkolny to naturalna jednostka dla przedszkola |
 | 2026-09-11 | Nunito jako krój pisma | SIL OFL 1.1 — wolna licencja, dopuszczalna dla placówki publicznej; hostowana lokalnie, bez CDN |
