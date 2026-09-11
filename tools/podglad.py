@@ -22,10 +22,12 @@ for m in list(re.finditer(r"<link[^>]+rel=['\"]stylesheet['\"][^>]*>", html)):
                 u=m.group(1).strip('\'"')
                 if u.startswith(('data:','http')): return m.group(0)
                 pelny=_up.urljoin(bazowy,u)
-                if u.endswith('.woff2'):
+                import mimetypes as _mt
+                if pelny.split('?')[0].endswith(('.woff2','.svg','.png','.jpg','.jpeg','.webp','.gif')):
                     try:
                         raw=urllib.request.urlopen(pelny).read()
-                        return 'url("data:font/woff2;base64,%s")' % _b64.b64encode(raw).decode()
+                        mime=_mt.guess_type(pelny.split('?')[0])[0] or 'application/octet-stream'
+                        return 'url("data:%s;base64,%s")' % (mime, _b64.b64encode(raw).decode())
                     except Exception: return m.group(0)
                 return 'url("%s")' % pelny
             css=re.sub(r'url\(([^)]+)\)', _url, css)

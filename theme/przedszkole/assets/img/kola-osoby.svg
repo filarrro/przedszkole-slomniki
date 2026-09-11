@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+	<!-- Trzy gradientowe kola pod zdjeciem osoby (strona Kadra).
+	     Zolte, pomaranczowe i niebieskie; kazdy gradient gasnie do
+	     przezroczystosci, czyli do tla strony.
+	     Uklad zmienia sie odbiciem w style.css - trzy warianty z jednego pliku.
+	     Kola to dekoracja, wiec plik wchodzi jako tlo CSS, nie jako <img>.
+
+	     Zdjecie zajmuje w tym kadrze kolo o promieniu 41 w srodku (patrz
+	     ujemny `inset` w style.css). Kazde kolo dekoracyjne wystaje
+	     spod zdjecia o ok. 16 jednostek i miesci sie w viewBox - inaczej
+	     obcieloby sie na krawedzi i wyszedlby z niego kwadrat. -->
+	<defs>
+		<linearGradient id="zolty" x1="0.1" y1="0" x2="0.9" y2="1">
+			<stop offset="0" stop-color="#EFC63F" stop-opacity=".62"/>
+			<stop offset="1" stop-color="#EFC63F" stop-opacity="0"/>
+		</linearGradient>
+		<linearGradient id="pomaranczowy" x1="0.9" y1="0" x2="0.1" y2="1">
+			<stop offset="0" stop-color="#EFA45C" stop-opacity=".58"/>
+			<stop offset="1" stop-color="#EFA45C" stop-opacity="0"/>
+		</linearGradient>
+		<linearGradient id="niebieski" x1="0" y1="0.1" x2="1" y2="0.9">
+			<stop offset="0" stop-color="#6FBFE4" stop-opacity=".52"/>
+			<stop offset="1" stop-color="#6FBFE4" stop-opacity="0"/>
+		</linearGradient>
+	</defs>
+	<circle cx="72" cy="29" r="27" fill="url(#zolty)"/>
+	<circle cx="26" cy="76" r="22" fill="url(#pomaranczowy)"/>
+	<circle cx="80" cy="80" r="14" fill="url(#niebieski)"/>
+</svg>

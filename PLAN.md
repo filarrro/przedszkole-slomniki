@@ -827,6 +827,12 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Mapa treści z tabeli `l6hwz_menu`, nie z tytułów artykułów | menu Joomli jednoznacznie wiąże pozycję z artykułem; dopasowanie po tytule dawałoby trafienia w aktualnościach |
 | 2026-09-11 | Rozkład dnia: trzy warianty na jednej stronie | stare menu miało trzy osobne pozycje pod separatorem — jedna strona z nagłówkami jest prostsza w utrzymaniu |
 | 2026-09-11 | Kadra jako jedna strona składana z 15 artykułów | stara strona rozbijała ją na 15 podstron po jednej osobie — nadmiar nawigacji przy 15 krótkich biogramach |
+| 2026-09-11 | Kafelek osoby jako wariant stylu `core/columns`, nie własny blok | okrągłe zdjęcie + biogram składają się ze zwykłych bloków; personel podmienia treść bez pisania HTML-a |
+| 2026-09-11 | Trzy gradientowe koła z jednego pliku SVG odbijanego w CSS | trzy układy bez trzech plików; `:nth-child(… of S)` liczy same kafelki, więc nagłówki między nimi nie psują kolejności |
+| 2026-09-11 | Inicjały w kółku, dopóki nie ma zdjęć kadry | 5 fotografii wisi na FTP starej strony; kafelek bez zdjęcia wyglądałby jak dziura, a podmiana na zdjęcie nie zmienia kadru ani stylu |
+| 2026-09-11 | Druga linia kafelka to wykształcenie, nie stopień awansu | przypisania do grup i stopnie pochodzą ze starej strony i zdążyły się zestarzeć; wykształcenie jest w treści u wszystkich 14 osób |
+| 2026-09-11 | Administracja i obsługa zostaje listą, bez kafelków | 11 osób opisanych jedną linijką („Beata Konieczna — sekretariat") nie ma czym wypełnić kafelka |
+| 2026-09-11 | Biogramy wchodzą do kafelków w całości | skrót do 2–3 zdań wyrównałby wysokości, ale trzeba by gdzieś przenieść resztę; przy biogramie dłuższym niż 900 znaków zdjęcie idzie na górę kafelka |
 | 2026-09-11 | Obrazki wycięte z migrowanej treści | 5 plików leży na FTP starej strony; treść ma wejść teraz, zdjęcia dołożymy po pobraniu |
 | 2026-09-11 | Nie odtwarzamy struktury kategorii z Joomli | narosła organicznie: literówki, rok szkolny w roku szkolnym, puste archiwa |
 | 2026-09-11 | Migracja: lata szkolne 2023/24–2025/26 (440 wpisów) | rok szkolny to naturalna jednostka dla przedszkola |

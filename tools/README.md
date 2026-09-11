@@ -47,3 +47,26 @@ sekcja „Jak odtworzyć analizę od zera".
 
 Obrazki są wycinane — pliki leżą na FTP starej strony. Skrypt wypisuje na końcu
 listę tego, czego w zrzucie nie ma.
+
+## `kadra_kafelki.py`
+
+Przepisuje stronę „Kadra" z prozy na kafelki osób — jeden `is-style-kafelek-osoby`
+na dyrektora, nauczycielkę i specjalistkę. Biogramy bierze z obecnej treści strony,
+nie z pamięci; dokłada inicjały i linię wykształcenia, poprawia literówki po Joomli.
+
+```bash
+python3 tools/kadra_kafelki.py              # podgląd na stdout, nic nie zapisuje
+python3 tools/kadra_kafelki.py --zastosuj   # wgrywa do WordPressa
+```
+
+Sekcja „Pracownicy administracji i obsługi" zostaje listą akapitów — 11 osób
+opisanych jedną linijką nie ma czym wypełnić kafelka.
+
+**Jednorazowy.** Na już przepisanej stronie odmawia działania: parser oczekuje
+układu `h3` + akapity, a w kafelkach nagłówki siedzą w kolumnach.
+Linia wykształcenia jest w skrypcie wpisana z ręki — nowa osoba w kadrze wymaga
+dopisania jej do słownika `WYKSZTALCENIE` albo wstawienia wzorca z edytora.
+
+Zdjęcia bierze ze słownika `ZDJECIA` (nazwisko → plik w `media/kadra/`). Kto go
+tam nie ma, dostaje inicjały. Plik nieobecny w bibliotece mediów jest importowany
+przy `--zastosuj`; podgląd niczego nie wgrywa.

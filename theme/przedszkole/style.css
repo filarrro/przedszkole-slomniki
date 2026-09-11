@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.6.8
+Version: 0.7.4
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -965,3 +965,116 @@ main + .chmurki { background: var(--wp--preset--color--base); }
 	border-radius: var(--radius);
 }
 .wp-block-details summary { font-weight: 700; cursor: pointer; }
+
+/* ==========================================================================
+   19. Kafelek osoby (strona Kadra)
+   Wariant zwyklych kolumn, nie wlasny blok: okragle zdjecie po lewej,
+   biogram po prawej. Trzy gradientowe kola pod zdjeciem to jeden plik SVG
+   odbijany w CSS - trzy uklady bez trzech plikow.
+   Zamiast zdjecia moga stac inicjaly; oba warianty maja ten sam kadr,
+   pierscien i cien, wiec podmiana zdjecia nic nie psuje.
+   ========================================================================== */
+
+.wp-block-columns.is-style-kafelek-osoby { gap: 2.5rem; }
+/* Kola wystaja poza kafelek, wiec sasiedzi potrzebuja wiecej powietrza
+   niz zwykly blok - inaczej dekoracje dwoch kafelkow sie zderzaja. */
+.entry__content > .wp-block-columns.is-style-kafelek-osoby { margin-top: 3rem; }
+.entry__content > .wp-block-columns.is-style-kafelek-osoby + * { margin-top: 3rem; }
+
+/* Lewa kolumna - pole na zdjecie albo inicjaly.
+   `container-type` pozwala skalowac inicjaly wzgledem szerokosci kolumny
+   (jednostka cqw), a nie okna: kafelek wyglada tak samo przy kazdym uklad
+   kolumn i w edytorze. */
+.is-style-kafelek-osoby > .wp-block-column:first-child {
+	position: relative;
+	container-type: inline-size;
+}
+
+/* Kola. Ujemny `inset`, zeby wystawaly poza zdjecie. */
+.is-style-kafelek-osoby > .wp-block-column:first-child::before {
+	content: "";
+	position: absolute;
+	inset: -11%;
+	background: url("assets/img/kola-osoby.svg") center / contain no-repeat;
+	pointer-events: none;
+}
+
+/* Uklady 2 i 3 - ten sam plik, inne odbicie.
+   `of S` liczy same kafelki, wiec naglowki miedzy nimi nie psuja kolejnosci.
+   Przegladarka bez obslugi `of S` pokaze wszedzie uklad pierwszy -
+   strata wylacznie kosmetyczna. */
+:nth-child(3n + 2 of .is-style-kafelek-osoby) > .wp-block-column:first-child::before {
+	transform: scaleX(-1);
+}
+:nth-child(3n + 3 of .is-style-kafelek-osoby) > .wp-block-column:first-child::before {
+	transform: scale(-1);
+}
+
+/* Zdjecie i inicjaly - wspolny kadr. `position` stawia je nad kolami. */
+.is-style-kafelek-osoby .wp-block-image {
+	position: relative;
+	width: 100%;
+	margin: 0;
+}
+.is-style-kafelek-osoby .wp-block-image img,
+.is-style-kafelek-osoby .kafelek-osoby__inicjaly {
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	aspect-ratio: 1;
+	border: 10px solid var(--wp--preset--color--surface);
+	border-radius: 50%;
+	box-shadow: var(--shadow-lift);
+	object-fit: cover;
+}
+
+/* Inicjaly zamiast zdjecia - dopoki nie ma fotografii. Tlo w kolorze strony,
+   wiec kolo definiuje bialy pierscien i cien, a nie wypelnienie.
+   Kolor tekstu na tle strony: kontrast 14,0 (WCAG AA i AAA). */
+.is-style-kafelek-osoby .kafelek-osoby__inicjaly {
+	position: relative;
+	display: grid;
+	place-items: center;
+	overflow: hidden;          /* obcina znak wodny do kola */
+	background: var(--wp--preset--color--base);
+	color: var(--wp--preset--color--ink);
+	font-size: clamp(1.75rem, 26cqw, 4.5rem);
+	font-weight: 800;
+	line-height: 1;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+}
+
+/* Znak wodny - te same inicjaly powiekszone i przygaszone, obciete krawedzia
+   kola. W tresci stoja drugi raz, bo CSS nie odczyta tekstu elementu;
+   `aria-hidden` trzyma je poza drzewem dostepnosci, zeby czytnik ekranu
+   nie przeczytal inicjalow dwa razy. */
+.kafelek-osoby__znak-wodny {
+	position: absolute;
+	scale: 2.1;
+	opacity: .15;
+}
+
+/* Opis. Naglowek bez gornego odstepu - rownowaza go kolumny. */
+.is-style-kafelek-osoby h3.wp-block-heading { margin-top: 0; }
+.is-style-kafelek-osoby > .wp-block-column + .wp-block-column > * + * { margin-top: .85rem; }
+.is-style-kafelek-osoby .kafelek-osoby__tytul {
+	margin-top: .25rem;
+	color: var(--wp--preset--color--ink);
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 600;
+}
+/* Biogram - kontrast 6,5 na tle strony. */
+.is-style-kafelek-osoby > .wp-block-column + .wp-block-column p:not(.kafelek-osoby__tytul) {
+	color: var(--wp--preset--color--ink-soft);
+}
+
+/* Po zlozeniu kolumn (WordPress robi to sam ponizej 782 px) zdjecie
+   zajelo by cala szerokosc - stad gorny limit. */
+@media (max-width: 781px) {
+	.is-style-kafelek-osoby > .wp-block-column:first-child {
+		max-width: 240px;
+	}
+}
