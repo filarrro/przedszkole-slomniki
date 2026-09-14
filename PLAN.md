@@ -882,6 +882,17 @@ dostały jawne `z-index` (sekcja 17). Ten sam mechanizm dotyczy deseniu
 w „Na skróty": przeniesiony z tła sekcji do pseudoelementu zakryłby kafelki,
 więc zawartość sekcji ma własną warstwę.
 
+**Ogon tej samej sprawy, znaleziony po fakcie: wygaszenia krawędzi kadru
+wychodziły ponad falę nad stopką.** Kadr jest pozycjonowany, ale bez `z-index`,
+więc sam kontekstu układania nie tworzy — a wtedy `z-index: 1` z obu wygaszeń
+(`::before`, `::after`) liczy się względem całej strony, nie względem kadru.
+Fala nad stopką na stronie głównej wjeżdża na dolną krawędź zdjęcia ujemnym
+marginesem, więc trafiała pod te wygaszenia zamiast nad nie. Na ekranie
+szerszym niż 2560 px widać to było wprost: kremowa mgiełka bocznego wygaszenia
+leżała na grzbiecie fali. Lekarstwo to `isolation: isolate` na `.skrzydla__kadr` —
+zamyka oba wygaszenia wewnątrz kadru, nie ruszając ich kolejności względem
+zdjęcia i pasków.
+
 **Kryteria odbioru podetapu:** Firefox pokazuje kompletną stronę bez ruchu;
 przy włączonym ograniczeniu ruchu nie rusza się nic w żadnej przeglądarce;
 przechodzenie Tabem przez kafelki nie zostawia przezroczystych elementów;

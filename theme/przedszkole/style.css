@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.15.0
+Version: 0.15.1
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -988,6 +988,15 @@ main + .fala { background: var(--wp--preset--color--base); }
 	   `hidden` tworzy kontener przewijania i zdjecie oraz paski liczylyby swoje
 	   osie czasu wzgledem kadru zamiast wzgledem okna. */
 	overflow: clip;
+	/* Wlasny kontekst ukladania. Kadr jest pozycjonowany, ale bez `z-index`,
+	   wiec sam kontekstu nie tworzy - a wtedy `z-index` wygaszen krawedzi
+	   (`::before`, `::after`) liczy sie wzgledem calej strony i wychodzi
+	   ponad fale nad stopka, ktora na stronie glownej wjezdza na dolna
+	   krawedz kadru. Na ekranie szerszym niz 2560 px bylo to widac wprost:
+	   kremowa mgielka bocznego wygaszenia lezala na grzbiecie fali.
+	   `isolation` zamyka oba wygaszenia wewnatrz kadru, nie ruszajac ich
+	   kolejnosci wzgledem zdjecia i paskow. */
+	isolation: isolate;
 }
 
 .skrzydla__zdjecie {
