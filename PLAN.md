@@ -775,6 +775,103 @@ ciasteczka i wymagało klauzuli RODO. Kafelki pochodzą z OpenStreetMap na licen
 ODbL — podpis z odnośnikiem do autorów jest warunkiem licencji i nie wolno go
 usuwać. Obok mapy stoi przycisk „Wyznacz trasę" prowadzący do nawigacji.
 
+### 7.7 Animacje powiązane z przewijaniem
+
+- [ ] Sekcja `23. Animacje powiazane z przewijaniem` na końcu `style.css`
+- [ ] Siatka bezpieczeństwa w sekcji 7 (`animation-timeline: none !important`)
+- [ ] Wejście kafelków: aktualności, „Na skróty", „Dlaczego my"
+- [ ] Dryf chmurek w powitaniu
+- [ ] Parallaks bazgrołów w „Na skróty" (przy okazji naprawa iOS)
+- [ ] Zbliżenie zdjęcia i wjazd pasków w „Skrzydłach"
+- [ ] Cień nagłówka po odjechaniu od góry (globalnie)
+- [ ] Testy: Chrome, Safari 26, Firefox, ograniczony ruch, klawiatura, iPhone
+- [ ] Podbicie wersji motywu (`style.css` + `functions.php`)
+
+Animacje sterowane przewijaniem (CSS scroll-driven animations, `animation-timeline`)
+zamiast obserwatora przecięć w JavaScripcie. Zero skryptu, zero wtyczki, zero
+nasłuchu zdarzeń — przeglądarka liczy postęp sama, poza wątkiem głównym.
+
+**Wsparcie przeglądarek jest niepełne i to determinuje całą resztę.** Dane z MDN
+(`browser-compat-data`, wrzesień 2026): Chrome i Edge od 115, Safari od 26,
+Firefox — nadal tylko w wersjach testowych. Do tego iOS starszy niż 26 nie ma
+tego wcale, a na telefonach to spory kawałek ruchu. Wniosek: czysta ozdoba.
+Stan bazowy CSS jest stanem końcowym animacji, reguły wchodzą wyłącznie
+w `@supports (animation-timeline: view())`, a przeglądarka bez wsparcia pokazuje
+kompletną, statyczną stronę. Nic nie zależy od tego, czy animacja się wykona.
+
+**Ograniczenie ruchu wymaga osobnej obsługi — globalna reguła z sekcji 7 tu nie
+działa.** `animation-duration: .01ms !important` skraca czas trwania, ale postęp
+animacji sterowanej przewijaniem bierze się z osi czasu, nie z czasu trwania:
+animacja nadal chodzi z przewijaniem, tylko szybciej. Dlatego każda reguła jest
+bramkowana `@media (prefers-reduced-motion: no-preference)` — przy `reduce` nie
+deklarujemy jej w ogóle. Dodatkowo do bloku `reduce` w sekcji 7 dokładamy
+`animation-timeline: none !important`, który odpina element od każdej osi czasu
+(także od domyślnej) i zostawia go w stanie bazowym — siatka bezpieczeństwa na
+kod, który powstanie później, i na bloki Gutenberga.
+
+Wzorzec wspólny dla wszystkich reguł:
+
+```css
+@supports (animation-timeline: view()) {
+@media (prefers-reduced-motion: no-preference) {
+	.cards .card {
+		animation: przedszkole-wejscie 1ms linear both;
+		animation-timeline: view();
+		animation-range: entry 5% entry 55%;
+	}
+	.cards .card:nth-child(2) { animation-range: entry 12% entry 62%; }
+	.cards .card:nth-child(3) { animation-range: entry 19% entry 69%; }
+	.card:focus-within { animation: none; }
+}
+}
+@keyframes przedszkole-wejscie {
+	from { opacity: 0; transform: translateY(24px); }
+	to   { opacity: 1; transform: none; }
+}
+```
+
+Trzy rzeczy w tym wzorcu są nieoczywiste i każda kosztowałaby śledztwo:
+
+1. `animation-timeline` musi stać **po** skrócie `animation`. Skrót zawiera oś
+   czasu jako składnik resetujący i cofa ją do `auto` — deklaracja przed skrótem
+   przepada bez śladu.
+2. `1ms` zamiast pominięcia czasu trwania. Firefox wymaga niezerowej wartości,
+   a przy braku wsparcia dla osi czasu animacja trwa milisekundę, czyli jest
+   niewidoczna, zamiast błysnąć.
+3. Kaskada przez przesunięty `animation-range`, nie przez `animation-delay`.
+   Opóźnienie w czasie nie ma sensu, gdy zegarem jest pozycja przewijania.
+
+`:focus-within` wyłącza animację, bo element z `opacity: 0` na początku zakresu,
+na który wskoczył Tab, byłby niewidocznym celem fokusu. Przy wyłączonej animacji
+wraca stan bazowy, czyli widoczny.
+
+Animujemy `transform` i `opacity` — jedyne własności, które idą przez kompozytor.
+Wyjątkiem jest cień nagłówka; jeśli będzie zamulał, przenosimy go na `opacity`
+warstwy `::after`.
+
+Parallaks w „Na skróty" przy okazji naprawia błąd: deseń bazgrołów stoi dziś na
+`background-attachment: fixed`, które Safari na iOS traktuje jak `scroll`, więc na
+telefonie efektu nie ma w ogóle. Deseń przenosi się na `.skroty::before`
+(`inset: -15% 0`) przesuwany przez `transform` — kompozytorowo i na każdym
+systemie, gdzie oś czasu działa. To jedyna zmiana strukturalna w tym podetapie;
+reszta to dopisane reguły.
+
+Odrzucone: animowanie pojedynczych ścieżek wewnątrz SVG fal (osie czasu na
+elementach SVG są niepewne, a jednego `<svg>` nie da się rozbić bez nazwanych osi
+i `timeline-scope`), pasek postępu czytania na tęczy (sensowny na wpisie,
+bezużyteczny na stronie głównej), przypinanie sekcji.
+
+Kolejność prac: najpierw wejścia kafelków (sam CSS, najmniejsze ryzyko), potem
+parallaks, na końcu paski i nagłówek. Cień nagłówka dotyka wszystkich podstron,
+więc sprawdzany osobno.
+
+**Kryteria odbioru podetapu:** Firefox pokazuje kompletną stronę bez ruchu;
+przy włączonym ograniczeniu ruchu nie rusza się nic w żadnej przeglądarce;
+przechodzenie Tabem przez kafelki nie zostawia przezroczystych elementów;
+tło „Na skróty" przesuwa się na iPhonie; przy zoomie 200% i szerokości 320 px
+nic nie wychodzi poza kadr. `tools/podglad.py` robi zrzuty statyczne, więc tych
+efektów nie pokaże — weryfikacja tylko w prawdziwej przeglądarce.
+
 **Kryteria odbioru:** ✅ każdy widok przetestowany na realnej treści, na telefonie
 i desktopie — strona główna, lista i pojedyncza aktualność, archiwum kategorii,
 strona-rodzic z podstronami, strona-dziecko, kontakt z mapą, galeria, 404,
