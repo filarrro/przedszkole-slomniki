@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.9.8
+Version: 0.10.1
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -403,7 +403,13 @@ a:hover { color: #2E2390; }
 }
 .card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.card__body { padding: 1.25rem 1.35rem 1.5rem; display: flex; flex-direction: column; flex: 1; gap: .6rem; }
+/* Zastepnik dla wpisu bez zdjecia: kreskowka zwierzat na szarobezowym tle.
+   Rysunek nie niesie tresci, wiec `aria-hidden` w szablonie i puste `alt`.
+   Tlo pod obrazkiem w kolorze jego wlasnego tla - widac je, zanim plik sie
+   wczyta, i przy kadrowaniu `cover` nie odcina sie od niego zadna krawedz. */
+.card__media--brak { background: var(--karta-brak-tlo); }
+
+.card__body { position: relative; padding: 1.25rem 1.35rem 1.5rem; display: flex; flex-direction: column; flex: 1; gap: .6rem; }
 
 .card__meta {
 	display: flex;
@@ -647,7 +653,7 @@ a.pill:hover { filter: brightness(.93); }
 	display: block;
 	width: 100%;
 	height: clamp(48px, 6vw, 100px);
-	transform: rotate(180deg);
+	transform: scaleY(-1);
 }
 /* Skos to jedna plaska krzywa - przy wysokosci warstwowej fali robil sie
    z niej pusty zolty pas nad sekcja. */
@@ -688,21 +694,56 @@ a.pill:hover { filter: brightness(.93); }
 /* Delikatny gradient na kartach — mniej plasko, bez krzykliwosci. */
 .card__body { background: linear-gradient(180deg, #FFFFFF 0%, #FDFBF7 100%); }
 
-/* Pasek w kolorze grupy na gorze kafelka. */
-.card::before {
+/* Kolor grupy w jednej zmiennej - ten sam pasek na gorze i fala na dole. */
+.card                    { --karta-kolor: var(--wp--preset--color--primary-soft); }
+.card.category-wiewiorki { --karta-kolor: var(--wp--preset--color--wiewiorki); }
+.card.category-zabki     { --karta-kolor: var(--wp--preset--color--zabki); }
+.card.category-zajaczki  { --karta-kolor: var(--wp--preset--color--zajaczki); }
+.card.category-misie     { --karta-kolor: var(--wp--preset--color--misie); }
+.card.category-kotki     { --karta-kolor: var(--wp--preset--color--kotki); }
+.card.category-jezyki    { --karta-kolor: var(--wp--preset--color--jezyki); }
+
+/* Pasek w kolorze grupy tuz pod zdjeciem, a nie na samej gorze karty -
+   inaczej przy zdjeciu ginie na jego tle i nie wiadomo, czyja to grupa. */
+.card__body::before {
 	content: "";
 	position: absolute;
 	inset: 0 0 auto 0;
 	height: 4px;
-	background: var(--wp--preset--color--primary-soft);
+	background: var(--karta-kolor);
 	z-index: 1;
 }
-.card.category-wiewiorki::before { background: var(--wp--preset--color--wiewiorki); }
-.card.category-zabki::before     { background: var(--wp--preset--color--zabki); }
-.card.category-zajaczki::before  { background: var(--wp--preset--color--zajaczki); }
-.card.category-misie::before     { background: var(--wp--preset--color--misie); }
-.card.category-kotki::before     { background: var(--wp--preset--color--kotki); }
-.card.category-jezyki::before    { background: var(--wp--preset--color--jezyki); }
+
+/* Fala w tym samym kolorze zamyka kafelek u dolu. Ksztalt idzie przez maske,
+   a nie przez `background-image`: w data URI nie da sie uzyc zmiennej CSS,
+   a kolor musi sledzic grupe. Odbicie w pionie, bo w zrodlowym SVG wypelnienie
+   siedzi przy gornej krawedzi - obrot o 180 stopni przerzucilby grubszy koniec
+   fali na prawo i lewa krawedz karty zostalaby prawie pusta.
+
+   `preserveAspectRatio="none"` jest konieczne: bez niego SVG trzyma proporcje
+   10:1 z viewBoxa, wiec na szerszej karcie fala skaluje sie do wysokosci,
+   siada na srodku i po bokach zostaje goly pasek. */
+.card::after {
+	content: "";
+	position: absolute;
+	inset: auto 0 0 0;
+	height: 34px;
+	background: var(--karta-kolor);
+	transform: scaleY(-1);
+	pointer-events: none;
+	z-index: 1;
+	-webkit-mask: var(--karta-fala) no-repeat top / 100% 100%;
+	mask: var(--karta-fala) no-repeat top / 100% 100%;
+}
+/* Tlo zastepnika zdjecia - kolor zgodny z tlem pliku `brak-zdjecia.webp`. */
+.card { --karta-brak-tlo: #E0D8CD; }
+
+.card {
+	--karta-fala: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><g fill="black"><path d="M0 0v99.7C62 69 122.4 48.7 205 66c83.8 17.6 160.5 20.4 240-12 54-22 110-26 173-10a392.2 392.2 0 0 0 222-5c55-17 110.3-36.9 160-27.2V0H0Z" opacity=".5"></path><path d="M0 0v74.7C62 44 122.4 28.7 205 46c83.8 17.6 160.5 25.4 240-7 54-22 110-21 173-5 76.5 19.4 146.5 23.3 222 0 55-17 110.3-31.9 160-22.2V0H0Z"></path></g></svg>');
+}
+
+/* Miejsce na fale pod trescia - inaczej tekst wchodzi na grzbiet. */
+.card__body { padding-bottom: 3.1rem; }
 
 /* Stopka: miekkie przejscie od tresci do granatu.
    Fala jest wspolna dla wszystkich podstron (footer.php), wiec tlo pod nia

@@ -13,6 +13,12 @@ defined( 'ABSPATH' ) || exit;
 		<span class="card__media">
 			<?php the_post_thumbnail( 'przedszkole-karta', array( 'loading' => 'lazy' ) ); ?>
 		</span>
+	<?php else : ?>
+		<?php /* Zastepnik trzyma te sama proporcje co zdjecie, wiec kafelki bez zdjecia nie rozjezdzaja sie w rzedzie. */ ?>
+		<span class="card__media card__media--brak" aria-hidden="true">
+			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/brak-zdjecia.webp' ) ); ?>"
+				alt="" width="1200" height="805" loading="lazy" decoding="async">
+		</span>
 	<?php endif; ?>
 
 	<div class="card__body">
