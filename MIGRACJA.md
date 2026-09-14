@@ -554,8 +554,8 @@ dla każdej z sześciu grup.
 
 | Strona | Stan | Najbliższy materiał |
 |---|---|---|
-| **O przedszkolu** | brak podstrony | art. 1 „Witamy w nowym przedszkolu" i art. 93 „Uroczyste otwarcie" — to aktualności z 2015–2016, nie opis placówki |
-| **Oferta** | brak podstrony | moduły „Zajęcia stałe" (angielski, religia) + ogłoszenie o kółkach zainteresowań — to grafik, nie opis oferty |
+| **O przedszkolu** | brak podstrony → **strona usunięta 2026-09-14** | art. 1 „Witamy w nowym przedszkolu" i art. 93 „Uroczyste otwarcie" — to aktualności z 2015–2016, nie opis placówki |
+| **Oferta** | brak podstrony → **strona usunięta 2026-09-14** | moduły „Zajęcia stałe" (angielski, religia) + ogłoszenie o kółkach zainteresowań — to grafik, nie opis oferty |
 | **Grupy** (strona nadrzędna) | brak | stare menu prowadziło prosto do listy grup |
 | **Dla rodziców** (strona nadrzędna) | brak | kategoria bez opisu; pod spodem 19 artykułów poradnikowych |
 | **Galeria** | brak | art. 191 „Galeria prac plastycznych" jest niepublikowany i zawiera pusty shortcode Joomli |

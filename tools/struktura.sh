@@ -26,9 +26,9 @@ strona() {
 
 echo "== Strony =="
 
-O_PRZEDSZKOLU=$(strona o-przedszkolu   "O przedszkolu"        0 1)
-strona kadra                "Kadra"                 "$O_PRZEDSZKOLU" 1 >/dev/null
-strona oferta               "Oferta"                "$O_PRZEDSZKOLU" 2 >/dev/null
+# „O przedszkolu" i „Oferta" usuniete 2026-09-14 - patrz PLAN.md, Etap 4.
+# Kadra stoi wprost w menu glownym, bez strony nadrzednej.
+KADRA=$(strona kadra        "Kadra"                 0 1)
 
 GRUPY=$(strona grupy        "Grupy"                 0 2)
 strona misie                "Misie"                 "$GRUPY" 1 >/dev/null
@@ -81,9 +81,7 @@ wp menu location assign menu-glowne primary >/dev/null
 poz() { wp menu item add-post menu-glowne "$1" --porcelain; }
 pozp() { wp menu item add-post menu-glowne "$1" --parent-id="$2" --porcelain; }
 
-M_O=$(poz "$O_PRZEDSZKOLU")
-pozp "$(wp post list --post_type=page --name=kadra  --field=ID)" "$M_O" >/dev/null
-pozp "$(wp post list --post_type=page --name=oferta --field=ID)" "$M_O" >/dev/null
+poz "$KADRA" >/dev/null
 
 M_G=$(poz "$GRUPY")
 for s in misie wiewiorki zajaczki zabki jezyki kotki; do

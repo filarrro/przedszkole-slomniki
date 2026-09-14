@@ -455,11 +455,16 @@ Do normalnej pracy wystarczy http://przedszkole.ddev.site w przeglądarce.
 Scalenie propozycji z realnym menu starej strony (patrz MIGRACJA.md).
 Płaska lista 13 pozycji nie mieściła się w poziomym menu — stąd zagnieżdżenie.
 
+**Korekta 2026-09-14.** „O przedszkolu" i „Oferta" usunięte. Pierwsza miała
+wyłącznie treść testową i nie było z czego jej napisać — stara strona nie miała
+takiej podstrony (patrz MIGRACJA.md, „Czego w zrzucie nie ma"). Druga niosła
+jedno zdanie o zajęciach dodatkowych, a te są już opisane na stronach grup.
+Kadra przeszła na górny poziom menu, adres z `/o-przedszkolu/kadra/` na `/kadra/`.
+Menu główne: 7 pozycji najwyższego poziomu, 18 łącznie.
+
 ```
 Strona główna              (statyczna, poza menu)
-O przedszkolu
-  ├── Kadra
-  └── Oferta
+Kadra
 Grupy
   ├── Misie · Wiewiórki · Zajączki
   └── Żabki · Jeżyki · Kotki
@@ -503,7 +508,7 @@ Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokryc
 `ogloszenia` — aktualności ogólne, ustawiona jako kategoria domyślna.
 „Bez kategorii" usunięta.
 
-- [x] Utworzenie stron wg struktury — 23 strony
+- [x] Utworzenie stron wg struktury — 21 stron (było 23; „O przedszkolu” i „Oferta” usunięte)
 - [x] Ustawienie strony głównej jako statycznej + strony wpisów („Aktualności")
 - [x] Menu główne + kolejność + podstrony jako pozycje zagnieżdżone
 - [x] Menu w stopce (lokalizacja `footer` była zarejestrowana, ale pusta)
@@ -513,7 +518,7 @@ Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokryc
 - [x] Decyzja: galerie jako **strony**, nie własny typ treści — właściwe galerie
       i tak żyją w Google Photos, strona „Galeria" to lista linków do albumów
 - [x] Decyzja: dokumenty jako **strona z listą linków** do Media Library
-- [x] Treść stron — 16 z 23 wypełnione migracją treści statycznych (Etap 2b).
+- [x] Treść stron — 16 z 21 wypełnione migracją treści statycznych (Etap 2b).
       Pozostałe 7 wymaga treści pisanej od zera — lista w [MIGRACJA.md](MIGRACJA.md)
 - [ ] Praktyczny test kryterium odbioru z administratorem
 
@@ -1253,13 +1258,12 @@ Nie może trafić na produkcję.
       (każdy ma metadaną `_joomla_id`)
 - [x] ~~3 ilustrowane awatary w kafelkach kadry~~ — usunięte 2026-09-14,
       kafelki wróciły do inicjałów. Zostają 2 stockowe portrety
-- [ ] **Strona „O przedszkolu" (ID 5) ma treść wypełniaczową** — „Lorem ipsum"
-      i mem z biblioteki mediów (`meme_motherofgod.jpeg`, załącznik 141).
-      Strona jest opublikowana, więc to widoczne na froncie
-- [ ] 7 stron bez realnej treści (O przedszkolu — wypełniacz, pozostałe puste:
-      Oferta, Grupy, Dla rodziców, Galeria, Aktualności, Strona główna jako treść)
-      — każda musi dostać realną treść albo zniknąć przed wdrożeniem.
-      Puste strony w menu to błąd dostępności.
+- [x] ~~Strona „O przedszkolu" z treścią wypełniaczową~~ — usunięta 2026-09-14
+      razem ze stroną „Oferta" i memem z biblioteki mediów. Biblioteka trzyma
+      już tylko logo i dwa stockowe zastępniki kadry
+- [ ] 5 stron nadal pustych (Grupy, Dla rodziców, Galeria, Aktualności,
+      Strona główna jako treść) — każda musi dostać realną treść albo zniknąć
+      przed wdrożeniem. Puste strony w menu to błąd dostępności.
 - [ ] Strony wypełnione migracją zawierają dane z 2025/2026 (jadłospis na konkretny
       tydzień, harmonogramy logopedy) — sprawdzić aktualność przed startem
 - [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
@@ -1403,6 +1407,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-14 | Ograniczenie prób logowania własnym kodem, nie wtyczką | kilkadziesiąt linijek bez ekranu ustawień, tabeli w bazie i cyklu aktualizacji; wtyczka wejdzie w to miejsce, gdyby okazało się za słabo |
 | 2026-09-14 | Adres IP wyłącznie z `REMOTE_ADDR`, bez `X-Forwarded-For` | nagłówek nadaje klient, więc bot omijałby licznik; za CDN-em trzeba będzie ten filtr poprawić |
 | 2026-09-14 | Awatary wyłączone | panel wysyłał zahaszowane adresy e-mail pracowników do Gravatara |
+| 2026-09-14 | „O przedszkolu” i „Oferta” usunięte, Kadra na górny poziom | pierwsza miała samą treść testową i brak źródła do napisania; druga jedno zdanie, które dubluje opisy grup |
 | 2026-09-14 | Ilustrowane awatary kadry usunięte | rysunkowa postać pod imieniem i nazwiskiem czyta się jak portret tej osoby; inicjały nie wprowadzają w błąd |
 | 2026-09-14 | Bez wtyczki cache i bez minifikacji | 35 ms TTFB, jeden arkusz, zero zapytań zewnętrznych; kompresja serwera daje 72 kB → 23 kB, a projekt nie ma kroku budowania |
 | 2026-09-14 | Bez banera ciasteczek | niezalogowany odwiedzający nie dostaje ani jednego `Set-Cookie`, strona nie ładuje niczego z cudzych serwerów; warunek przestaje obowiązywać przy pierwszej analityce lub osadzonej mapie |
