@@ -777,15 +777,16 @@ usuwać. Obok mapy stoi przycisk „Wyznacz trasę" prowadzący do nawigacji.
 
 ### 7.7 Animacje powiązane z przewijaniem
 
-- [ ] Sekcja `23. Animacje powiazane z przewijaniem` na końcu `style.css`
-- [ ] Siatka bezpieczeństwa w sekcji 7 (`animation-timeline: none !important`)
-- [ ] Wejście kafelków: aktualności, „Na skróty", „Dlaczego my"
-- [ ] Dryf chmurek w powitaniu
-- [ ] Parallaks bazgrołów w „Na skróty" (przy okazji naprawa iOS)
-- [ ] Zbliżenie zdjęcia i wjazd pasków w „Skrzydłach"
-- [ ] Cień nagłówka po odjechaniu od góry (globalnie)
-- [ ] Testy: Chrome, Safari 26, Firefox, ograniczony ruch, klawiatura, iPhone
-- [ ] Podbicie wersji motywu (`style.css` + `functions.php`)
+- [x] Sekcja `23. Animacje powiazane z przewijaniem` na końcu `style.css`
+- [x] Siatka bezpieczeństwa w sekcji 7 (`animation-timeline: none !important`)
+- [x] Wejście kafelków: aktualności, „Na skróty", „Dlaczego my"
+- [x] Dryf chmurek w powitaniu
+- [x] Parallaks bazgrołów w „Na skróty" (przy okazji naprawa iOS)
+- [x] Zbliżenie zdjęcia i wjazd pasków w „Skrzydłach"
+- [x] Cień nagłówka po odjechaniu od góry (globalnie)
+- [x] Testy: Chrome, klawiatura, 320 px — zrobione. **Safari 26, Firefox
+      i iPhone czekają na sprzęt**
+- [x] Podbicie wersji motywu (`style.css` + `functions.php`) — 0.14.0
 
 Animacje sterowane przewijaniem (CSS scroll-driven animations, `animation-timeline`)
 zamiast obserwatora przecięć w JavaScripcie. Zero skryptu, zero wtyczki, zero
@@ -864,6 +865,21 @@ bezużyteczny na stronie głównej), przypinanie sekcji.
 Kolejność prac: najpierw wejścia kafelków (sam CSS, najmniejsze ryzyko), potem
 parallaks, na końcu paski i nagłówek. Cień nagłówka dotyka wszystkich podstron,
 więc sprawdzany osobno.
+
+**Pułapka, której nie było w projekcie: `overflow: hidden` zabija `view()`.**
+`hidden` robi z elementu kontener przewijania, a oś czasu `view()` liczy się
+względem najbliższego takiego kontenera. Sekcja „Na skróty" i kadr „Skrzydeł"
+przycinały nim zawartość — więc kafelki, deseń, zdjęcie i paski mierzyły się
+względem pudełka, które nigdy się nie przewija, i były „widoczne" od załadowania
+strony. Animacje kończyły się, zanim cokolwiek wjechało na ekran. Lekarstwo to
+`overflow: clip`: przycina tak samo, kontenera nie tworzy.
+
+Druga niespodzianka: zdjęcie w „Skrzydłach" dostało `transform`, a element
+z transformacją maluje się w warstwie pozycjonowanych — zaczęło zasłaniać
+wygaszoną górną krawędź kadru, która stoi przed nim w kodzie. Gradienty i hasło
+dostały jawne `z-index` (sekcja 17). Ten sam mechanizm dotyczy deseniu
+w „Na skróty": przeniesiony z tła sekcji do pseudoelementu zakryłby kafelki,
+więc zawartość sekcji ma własną warstwę.
 
 **Kryteria odbioru podetapu:** Firefox pokazuje kompletną stronę bez ruchu;
 przy włączonym ograniczeniu ruchu nie rusza się nic w żadnej przeglądarce;
@@ -1082,6 +1098,10 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Mapa jako statyczny obrazek OpenStreetMap | osadzona mapa Google to kilkaset kB z cudzego serwera, ciasteczka i klauzula RODO; obrazek waży 43 kB i nikogo nie śledzi |
 | 2026-09-11 | Zdjęcia przechodzą na WebP przy wgrywaniu, plik źródłowy kasowany | konwersja przed zmniejszaniem obejmuje każdą wielkość, także pełną; dwa formaty tego samego zdjęcia to podwójne miejsce bez pożytku |
 | 2026-09-11 | Plik sprzed zmniejszenia (`original_image`) nie jest przechowywany | kilka megabajtów na pozycję w bibliotece, po które nikt nie sięga |
+| 2026-09-14 | Animacje przewijania w czystym CSS, jako ozdoba | `animation-timeline` liczy przeglądarka poza wątkiem głównym; wsparcie jest niepełne (Firefox, iOS < 26), więc stan bazowy jest stanem końcowym i nic od animacji nie zależy |
+| 2026-09-14 | Ograniczenie ruchu bramkowane osobno, nie globalną regułą z sekcji 7 | `animation-duration: .01ms` skraca czas, a tu zegarem jest przewijanie — animacja chodziłaby dalej, tylko szybciej |
+| 2026-09-14 | `overflow: clip` zamiast `hidden` w „Na skróty" i „Skrzydłach" | `hidden` tworzy kontener przewijania, względem którego `view()` uznaje zawartość za widoczną od początku |
+| 2026-09-14 | Deseń „Na skróty" w pseudoelemencie zamiast `background-attachment: fixed` | Safari na iOS traktuje `fixed` jak `scroll`, więc na telefonie efektu nie było w ogóle |
 | 2026-09-11 | Próg zmniejszania zdjęć 2048 px, limit uploadu 5 MB | treść ma 1140 px; limit odcina filmy i surowe pliki z aparatu, mieści skan dokumentu i zdjęcie z telefonu |
 | 2026-09-11 | Git wersjonuje tylko motyw | rdzeń WP i wtyczki to cudzy kod; symlink lokalnie, zwykły katalog na serwerze |
 
