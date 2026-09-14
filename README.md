@@ -80,5 +80,7 @@ Do dokończenia ręcznie:
 - 7 wpisów, które na starej stronie były samą zajawką dla pliku PDF
 - 11 wpisów z treścią, ale bez dokumentu
 - przekierowania 301 ze starych adresów
+- zdjęcia kadry — 12 osób ma inicjały, 2 stockowe zastępniki czekają na podmianę
+- strona „O przedszkolu" ma jeszcze treść wypełniaczową
 
 Listy z nazwami plików: [MIGRACJA.md](MIGRACJA.md), sekcja „Do dokończenia ręcznie".

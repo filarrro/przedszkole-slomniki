@@ -47,9 +47,11 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 - Jakie sekcje na stronie głównej poza aktualnościami
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
 - Zakres zgód rodziców na publikację zdjęć dzieci
-- **Zdjęcia kadry.** W kafelkach stoją zastępniki: trzy ilustrowane awatary
-  i dwa stockowe portrety ze znakiem wodnym. Potrzebne prawdziwe zdjęcia
-  pracownic wraz z ich zgodą na publikację. Dziewięć osób ma na razie inicjały
+- **Zdjęcia kadry.** Zostały dwa stockowe portrety ze znakiem wodnym (Agata Dudek,
+  Marta Gądek); trzy ilustrowane awatary usunięte 2026-09-14, bo podpisane imieniem
+  i nazwiskiem wyglądały jak portret tej osoby. Dwanaście osób ma inicjały.
+  Potrzebne prawdziwe zdjęcia pracownic wraz z ich zgodą na publikację —
+  bez nich zostają inicjały, które są poprawnym stanem końcowym, nie brakiem
 - ~~Godziny otwarcia — w sekcji „Dlaczego my" stoi tymczasowe 6:30–17:00~~ —
   **potwierdzone** ramowym rozkładem dnia ze starej strony: schodzenie się dzieci
   od 6:30, zajęcia do 17:00. Do potwierdzenia, czy nadal aktualne
@@ -1022,8 +1024,9 @@ nie ma po nim wchodzić.
 **Logo: PNG 34 kB → WebP 17 kB.** Trafiło do biblioteki przed filtrem
 konwertującym wgrywane zdjęcia (Etap 7), więc jako jedyny stały zasób strony
 zostało w starym formacie. Wgrane jeszcze raz, tą samą drogą co wszystko inne.
-Pozostałe pliki JPEG w bibliotece to zastępniki kadry i śmieci testowe —
-znikają w Etapie 9, nie ma czego konwertować.
+Pozostałe pliki JPEG w bibliotece to dwa stockowe zastępniki kadry i jeden
+plik testowy (`meme_motherofgod.jpeg`) — znikają razem z treścią zastępczą,
+nie ma czego konwertować.
 
 **Jeden `fetchpriority="high"` na stronę.** WordPress sam wskazuje przeglądarce
 jeden obrazek jako najważniejszy do pobrania i trafiał nim w logo, bo jest
@@ -1245,12 +1248,18 @@ niezalogowanego nie zawiera `Set-Cookie` ani adresu spoza domeny.
 W lokalnej instalacji jest treść wygenerowana na potrzeby testów motywu.
 Nie może trafić na produkcję.
 
-- [ ] 6 przykładowych wpisów (Wiewiórki sadzą kwiaty, Zajączki poznają kosmos,
-      Wycieczka Misiów do lasu, Jesienne warsztaty Jeżyków, Dzień Rodziny u Żabek,
-      Wioska indiańska u Kotków) — treść wypełniaczowa
-- [ ] 7 stron nadal **pustych** (O przedszkolu, Oferta, Grupy, Dla rodziców, Galeria,
-      Aktualności, Strona główna jako treść) — każda musi dostać realną treść albo
-      zniknąć przed wdrożeniem. Puste strony w menu to błąd dostępności.
+- [x] ~~6 przykładowych wpisów~~ — usunięte 2026-09-14 razem z dwoma obrazkami
+      z biblioteki mediów. W bazie zostało 428 wpisów, wszystkie z migracji
+      (każdy ma metadaną `_joomla_id`)
+- [x] ~~3 ilustrowane awatary w kafelkach kadry~~ — usunięte 2026-09-14,
+      kafelki wróciły do inicjałów. Zostają 2 stockowe portrety
+- [ ] **Strona „O przedszkolu" (ID 5) ma treść wypełniaczową** — „Lorem ipsum"
+      i mem z biblioteki mediów (`meme_motherofgod.jpeg`, załącznik 141).
+      Strona jest opublikowana, więc to widoczne na froncie
+- [ ] 7 stron bez realnej treści (O przedszkolu — wypełniacz, pozostałe puste:
+      Oferta, Grupy, Dla rodziców, Galeria, Aktualności, Strona główna jako treść)
+      — każda musi dostać realną treść albo zniknąć przed wdrożeniem.
+      Puste strony w menu to błąd dostępności.
 - [ ] Strony wypełnione migracją zawierają dane z 2025/2026 (jadłospis na konkretny
       tydzień, harmonogramy logopedy) — sprawdzić aktualność przed startem
 - [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
@@ -1394,6 +1403,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-14 | Ograniczenie prób logowania własnym kodem, nie wtyczką | kilkadziesiąt linijek bez ekranu ustawień, tabeli w bazie i cyklu aktualizacji; wtyczka wejdzie w to miejsce, gdyby okazało się za słabo |
 | 2026-09-14 | Adres IP wyłącznie z `REMOTE_ADDR`, bez `X-Forwarded-For` | nagłówek nadaje klient, więc bot omijałby licznik; za CDN-em trzeba będzie ten filtr poprawić |
 | 2026-09-14 | Awatary wyłączone | panel wysyłał zahaszowane adresy e-mail pracowników do Gravatara |
+| 2026-09-14 | Ilustrowane awatary kadry usunięte | rysunkowa postać pod imieniem i nazwiskiem czyta się jak portret tej osoby; inicjały nie wprowadzają w błąd |
 | 2026-09-14 | Bez wtyczki cache i bez minifikacji | 35 ms TTFB, jeden arkusz, zero zapytań zewnętrznych; kompresja serwera daje 72 kB → 23 kB, a projekt nie ma kroku budowania |
 | 2026-09-14 | Bez banera ciasteczek | niezalogowany odwiedzający nie dostaje ani jednego `Set-Cookie`, strona nie ładuje niczego z cudzych serwerów; warunek przestaje obowiązywać przy pierwszej analityce lub osadzonej mapie |
 | 2026-09-14 | Logo przerobione na WebP przez ponowne wgranie | trafiło do biblioteki przed filtrem konwertującym; 34 kB → 17 kB na każdej podstronie |

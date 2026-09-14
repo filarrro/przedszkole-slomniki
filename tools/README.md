@@ -77,6 +77,11 @@ Nowa osoba ze zdjęciem: dopisz linię do słownika `ZDJECIA` (nazwisko dokładn
 jak w nagłówku `h3`, bez „mgr") i uruchom. Plik nieobecny w bibliotece mediów
 jest importowany przy `--zastosuj`.
 
+Zdjęcie do usunięcia: skasuj linię i uruchom — kafelek wróci do inicjałów.
+Skrypt przechodzi po **wszystkich** kafelkach, nie po samym słowniku, więc brak
+wpisu znaczy „inicjały", a nie „nie ruszaj". Sam załącznik zostaje w bibliotece
+mediów — usuwa się go osobno przez `wp post delete <ID> --force`.
+
 Idempotentny — powtórne uruchomienie z tym samym słownikiem nic nie zmienia.
 
 To następca `kadra_kafelki.py` w zakresie zdjęć: tamten skrypt jest jednorazowy
