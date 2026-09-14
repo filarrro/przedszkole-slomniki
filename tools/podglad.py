@@ -30,7 +30,10 @@ for m in list(re.finditer(r"<link[^>]+rel=['\"]stylesheet['\"][^>]*>", html)):
                         return 'url("data:%s;base64,%s")' % (mime, _b64.b64encode(raw).decode())
                     except Exception: return m.group(0)
                 return 'url("%s")' % pelny
-            css=re.sub(r'url\(([^)]+)\)', _url, css)
+            # Adresy w cudzyslowie moga zawierac nawiasy (inline SVG z url(%23a)),
+            # wiec najpierw probujemy dopasowac caly cudzyslow, a dopiero potem
+            # goly adres bez nawiasow.
+            css=re.sub(r'url\(("[^"]*"|\'[^\']*\'|[^)]+)\)', _url, css)
             html=html.replace(tag, "<style>\n"+css+"\n</style>")
         except Exception: pass
 for m in list(re.finditer(r"<script[^>]+src=['\"]([^'\"]+)['\"][^>]*></script>", html)):
