@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.10.1' );
+define( 'PRZEDSZKOLE_VERSION', '0.13.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );

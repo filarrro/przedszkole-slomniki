@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.10.1
+Version: 0.13.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -347,6 +347,37 @@ a:hover { color: #2E2390; }
 		transition-duration: .01ms !important;
 		scroll-behavior: auto !important;
 	}
+}
+
+/* Przejscie miedzy stronami - View Transitions API dla nawigacji
+   miedzydokumentowej. Przegladarka sama robi przenikanie starej klatki
+   w nowa; my tylko wlaczamy mechanizm i skracamy czas.
+   Bez wsparcia (Firefox, Safari < 18.2) at-rule jest ignorowana
+   i nawigacja wyglada jak dotad - zadnego zapasowego kodu nie trzeba.
+
+   Selektor `*` wyzej nie dosiega pseudoelementow przejscia, wiec
+   ograniczenie ruchu wylaczamy osobno, ponizej. */
+@view-transition { navigation: auto; }
+
+/* Kto prosi o ograniczenie ruchu, nie dostaje przenikania.
+   Dwa zabezpieczenia, bo nie kazda przegladarka pozwala zagniezdzic
+   `@view-transition` w `@media`: wylaczamy sam mechanizm, a gdyby
+   zagniezdzenie nie przeszlo - zerujemy animacje pseudoelementow. */
+@media (prefers-reduced-motion: reduce) {
+	@view-transition { navigation: none; }
+
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
+}
+
+/* Domyslne 0.25 s jest o wlos za dlugie przy przeskoku o cala strone. */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: .18s;
+	animation-timing-function: ease;
 }
 
 /* ==========================================================================
