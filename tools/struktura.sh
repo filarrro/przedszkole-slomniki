@@ -26,9 +26,14 @@ strona() {
 
 echo "== Strony =="
 
-# „O przedszkolu" i „Oferta" usuniete 2026-09-14 - patrz PLAN.md, Etap 4.
-# Kadra stoi wprost w menu glownym, bez strony nadrzednej.
-KADRA=$(strona kadra        "Kadra"                 0 1)
+# Kolejnosc od najczesciej odwiedzanego: aktualnosci sa sercem serwisu,
+# dofinansowanie i kontakt zamykaja liste. Numery to `menu_order` stron -
+# widoczna kolejnosc menu bierze sie z pozycji nizej, ale trzymamy oba
+# zgodnie, zeby lista stron w panelu nie klamala.
+#
+# Usuniete 2026-09-14 (patrz PLAN.md, Etap 4): „O przedszkolu", „Oferta"
+# i „Galeria". Kadra stoi wprost w menu, bez strony nadrzednej.
+AKTUALNOSCI=$(strona aktualnosci "Aktualności"      0 1)
 
 GRUPY=$(strona grupy        "Grupy"                 0 2)
 strona misie                "Misie"                 "$GRUPY" 1 >/dev/null
@@ -38,21 +43,19 @@ strona zabki                "Żabki"                 "$GRUPY" 4 >/dev/null
 strona jezyki               "Jeżyki"                "$GRUPY" 5 >/dev/null
 strona kotki                "Kotki"                 "$GRUPY" 6 >/dev/null
 
-AKTUALNOSCI=$(strona aktualnosci "Aktualności"      0 3)
-
-RODZICE=$(strona dla-rodzicow "Dla rodziców"        0 4)
+RODZICE=$(strona dla-rodzicow "Dla rodziców"        0 3)
 strona dokumenty            "Dokumenty"             "$RODZICE" 1 >/dev/null
 strona jadlospis            "Jadłospis"             "$RODZICE" 2 >/dev/null
 strona ramowy-rozklad-dnia  "Ramowy rozkład dnia"   "$RODZICE" 3 >/dev/null
 strona oplaty               "Opłaty"                "$RODZICE" 4 >/dev/null
 strona kacik-logopedy       "Kącik logopedy"        "$RODZICE" 5 >/dev/null
 
+KADRA=$(strona kadra        "Kadra"                 0 4)
 DOFINANSOWANIE=$(strona dofinansowanie "Dofinansowanie" 0 5)
-GALERIA=$(strona galeria    "Galeria"               0 6)
-KONTAKT=$(strona kontakt    "Kontakt"               0 7)
+KONTAKT=$(strona kontakt    "Kontakt"               0 6)
 
-DOSTEPNOSC=$(strona deklaracja-dostepnosci "Deklaracja dostępności" 0 8)
-PRYWATNOSC=$(strona polityka-prywatnosci   "Polityka prywatności"   0 9)
+DOSTEPNOSC=$(strona deklaracja-dostepnosci "Deklaracja dostępności" 0 7)
+PRYWATNOSC=$(strona polityka-prywatnosci   "Polityka prywatności"   0 8)
 
 # Polityka prywatnosci - natywny mechanizm WP (Ustawienia -> Prywatnosc)
 wp option update wp_page_for_privacy_policy "$PRYWATNOSC" >/dev/null
@@ -81,22 +84,20 @@ wp menu location assign menu-glowne primary >/dev/null
 poz() { wp menu item add-post menu-glowne "$1" --porcelain; }
 pozp() { wp menu item add-post menu-glowne "$1" --parent-id="$2" --porcelain; }
 
-poz "$KADRA" >/dev/null
+poz "$AKTUALNOSCI" >/dev/null
 
 M_G=$(poz "$GRUPY")
 for s in misie wiewiorki zajaczki zabki jezyki kotki; do
 	pozp "$(wp post list --post_type=page --name=$s --field=ID)" "$M_G" >/dev/null
 done
 
-poz "$AKTUALNOSCI" >/dev/null
-
 M_R=$(poz "$RODZICE")
 for s in dokumenty jadlospis ramowy-rozklad-dnia oplaty kacik-logopedy; do
 	pozp "$(wp post list --post_type=page --name=$s --field=ID)" "$M_R" >/dev/null
 done
 
+poz "$KADRA" >/dev/null
 poz "$DOFINANSOWANIE" >/dev/null
-poz "$GALERIA" >/dev/null
 poz "$KONTAKT" >/dev/null
 
 echo "== Menu w stopce =="

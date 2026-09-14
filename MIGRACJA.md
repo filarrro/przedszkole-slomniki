@@ -558,7 +558,7 @@ dla każdej z sześciu grup.
 | **Oferta** | brak podstrony → **strona usunięta 2026-09-14** | moduły „Zajęcia stałe" (angielski, religia) + ogłoszenie o kółkach zainteresowań — to grafik, nie opis oferty |
 | **Grupy** (strona nadrzędna) | brak | stare menu prowadziło prosto do listy grup |
 | **Dla rodziców** (strona nadrzędna) | brak | kategoria bez opisu; pod spodem 19 artykułów poradnikowych |
-| **Galeria** | brak | art. 191 „Galeria prac plastycznych" jest niepublikowany i zawiera pusty shortcode Joomli |
+| **Galeria** | brak → **strona usunięta 2026-09-14** | art. 191 „Galeria prac plastycznych" jest niepublikowany i zawiera pusty shortcode Joomli |
 | **Polityka prywatności** | niepełna | jest wyłącznie kontakt do Inspektora Ochrony Danych. Właściwej polityki i klauzuli RODO trzeba napisać |
 | **Statut, Koncepcja pracy** | tylko nazwy plików | 6 PDF-ów podpiętych do art. 21 leży na FTP starej strony |
 | **Zdjęcia w treści** | wycięte | 5 plików: 1 w Kontakcie, 4 logotypy dofinansowania. Też na FTP |

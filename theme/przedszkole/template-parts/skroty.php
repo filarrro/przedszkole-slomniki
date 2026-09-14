@@ -87,15 +87,6 @@ $przedszkole_kolory = array( 'zajaczki', 'zabki', 'misie', 'jezyki', 'wiewiorki'
 										<?php
 										break;
 
-									case 'galeria':
-										// Zdjęcie z górami i słońcem.
-										?>
-										<rect x="6" y="10" width="36" height="28" rx="3"/>
-										<circle cx="17" cy="20" r="3"/>
-										<path d="M6 32l10-9 8 7 6-5 12 11"/>
-										<?php
-										break;
-
 									case 'kontakt':
 										// Koperta.
 										?>

@@ -31,8 +31,10 @@ Skrypt tworzy wyłącznie puste strony. Treść wchodzi w Etapie 7 i przy migrac
 
 ## `skroty.sh`
 
-Tworzy menu „Na skróty" — kafelki na stronie głównej (Etap 7). Cztery pozycje:
-Grupy, Dla rodziców, Galeria, Kontakt, każda z opisem pod tytułem.
+Tworzy menu „Na skróty" — kafelki na stronie głównej (Etap 7). Trzy pozycje:
+Grupy, Dla rodziców, Kontakt, każda z opisem pod tytułem. Kafelek „Galeria"
+wypadł 2026-09-14 razem ze stroną; siatka to `auto-fit`, więc rząd wypełnia
+się sam i trzy kafelki nie zostawiają dziury.
 
 ```bash
 tools/skroty.sh

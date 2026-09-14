@@ -455,28 +455,32 @@ Do normalnej pracy wystarczy http://przedszkole.ddev.site w przeglądarce.
 Scalenie propozycji z realnym menu starej strony (patrz MIGRACJA.md).
 Płaska lista 13 pozycji nie mieściła się w poziomym menu — stąd zagnieżdżenie.
 
-**Korekta 2026-09-14.** „O przedszkolu" i „Oferta" usunięte. Pierwsza miała
-wyłącznie treść testową i nie było z czego jej napisać — stara strona nie miała
-takiej podstrony (patrz MIGRACJA.md, „Czego w zrzucie nie ma"). Druga niosła
-jedno zdanie o zajęciach dodatkowych, a te są już opisane na stronach grup.
+**Korekta 2026-09-14.** Usunięte trzy strony: „O przedszkolu", „Oferta"
+i „Galeria". Pierwsza miała wyłącznie treść testową i nie było z czego jej
+napisać — stara strona nie miała takiej podstrony (patrz MIGRACJA.md, „Czego
+w zrzucie nie ma"). Druga niosła jedno zdanie o zajęciach dodatkowych, a te są
+już opisane na stronach grup. Trzecia była zbędna, odkąd każdy wpis prowadzi
+wprost do swojego albumu — zbiorcza lista 395 linków nie miała komu służyć.
 Kadra przeszła na górny poziom menu, adres z `/o-przedszkolu/kadra/` na `/kadra/`.
-Menu główne: 7 pozycji najwyższego poziomu, 18 łącznie.
+
+**Kolejność menu** od najczęściej odwiedzanego: Aktualności · Grupy ·
+Dla rodziców · Kadra · Dofinansowanie · Kontakt. Sześć pozycji najwyższego
+poziomu, 17 łącznie.
 
 ```
 Strona główna              (statyczna, poza menu)
-Kadra
+Aktualności                (strona wpisów)
 Grupy
   ├── Misie · Wiewiórki · Zajączki
   └── Żabki · Jeżyki · Kotki
-Aktualności                (strona wpisów)
 Dla rodziców
   ├── Dokumenty
   ├── Jadłospis
   ├── Ramowy rozkład dnia
   ├── Opłaty
   └── Kącik logopedy
+Kadra
 Dofinansowanie             ⚖️ wymagania zewnętrzne — musi być widoczne
-Galeria
 Kontakt
 
 — stopka —
@@ -508,7 +512,7 @@ Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokryc
 `ogloszenia` — aktualności ogólne, ustawiona jako kategoria domyślna.
 „Bez kategorii" usunięta.
 
-- [x] Utworzenie stron wg struktury — 21 stron (było 23; „O przedszkolu” i „Oferta” usunięte)
+- [x] Utworzenie stron wg struktury — 20 stron (było 23; „O przedszkolu”, „Oferta” i „Galeria” usunięte)
 - [x] Ustawienie strony głównej jako statycznej + strony wpisów („Aktualności")
 - [x] Menu główne + kolejność + podstrony jako pozycje zagnieżdżone
 - [x] Menu w stopce (lokalizacja `footer` była zarejestrowana, ale pusta)
@@ -516,9 +520,12 @@ Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokryc
 - [x] Strona polityki prywatności przez natywny mechanizm WP (`wp_page_for_privacy_policy`)
       — WP sam dokłada `rel="privacy-policy"` do linku
 - [x] Decyzja: galerie jako **strony**, nie własny typ treści — właściwe galerie
-      i tak żyją w Google Photos, strona „Galeria" to lista linków do albumów
+      i tak żyją w Google Photos
+- [x] **Korekta 2026-09-14: strona „Galeria" usunięta.** Zbiorcza lista linków
+      dublowała aktualności — każdy wpis ma własny przycisk „Zobacz zdjęcia",
+      a 395 albumów to archiwum przeglądane po wydarzeniach, nie po liście
 - [x] Decyzja: dokumenty jako **strona z listą linków** do Media Library
-- [x] Treść stron — 16 z 21 wypełnione migracją treści statycznych (Etap 2b).
+- [x] Treść stron — 16 z 20 wypełnione migracją treści statycznych (Etap 2b).
       Pozostałe 7 wymaga treści pisanej od zera — lista w [MIGRACJA.md](MIGRACJA.md)
 - [ ] Praktyczny test kryterium odbioru z administratorem
 
@@ -672,10 +679,10 @@ naprawdę chronione, zwraca 403 (tabela wyżej).
 - **Adresy e-mail kont.** Skrypt nadaje `grupa-<nazwa>@przedszkoleslomniki.pl`.
   Na produkcji muszą to być realne skrzynki, inaczej nie zadziała odzyskiwanie
   hasła. Hosting pokazuje 4 użyte konta pocztowe — brakuje sześciu
-- **Galeria a rola Author.** „Galeria” to strona, więc nauczyciel jej nie
-  zredaguje. Naturalny obieg: link do albumu ląduje we wpisie grupy
-  (wzorzec „Link do albumu”), a stronę zbiorczą prowadzi dyrekcja.
-  Nie nadajemy z tego powodu uprawnień do stron
+- ~~**Galeria a rola Author.**~~ Rozstrzygnięte 2026-09-14 przez usunięcie
+  strony „Galeria”: link do albumu ląduje we wpisie grupy (wzorzec „Link
+  do albumu”), a nauczyciel edytuje wpisy, nie strony. Nie ma już strony
+  zbiorczej, o której uprawnienia trzeba by się spierać
 - **Kategoria domyślna to `ogloszenia`.** Nauczyciel, który zapomni zaznaczyć
   swoją grupę, opublikuje wpis w ogłoszeniach ogólnych. Do instrukcji dla
   personelu (Etap 12), nie do kodu
@@ -1261,9 +1268,9 @@ Nie może trafić na produkcję.
 - [x] ~~Strona „O przedszkolu" z treścią wypełniaczową~~ — usunięta 2026-09-14
       razem ze stroną „Oferta" i memem z biblioteki mediów. Biblioteka trzyma
       już tylko logo i dwa stockowe zastępniki kadry
-- [ ] 5 stron nadal pustych (Grupy, Dla rodziców, Galeria, Aktualności,
-      Strona główna jako treść) — każda musi dostać realną treść albo zniknąć
-      przed wdrożeniem. Puste strony w menu to błąd dostępności.
+- [ ] 4 strony nadal puste (Grupy, Dla rodziców, Aktualności, Strona główna
+      jako treść) — każda musi dostać realną treść albo zniknąć przed
+      wdrożeniem. Puste strony w menu to błąd dostępności.
 - [ ] Strony wypełnione migracją zawierają dane z 2025/2026 (jadłospis na konkretny
       tydzień, harmonogramy logopedy) — sprawdzić aktualność przed startem
 - [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
@@ -1314,7 +1321,7 @@ bez treści testowej i bez konta `dev`.
 - [ ] Chrome, Safari, Firefox, Edge
 - [ ] Formularz kontaktowy — mail dochodzi
 - [ ] Upload zdjęcia przez użytkownika nietechnicznego
-- [ ] Utworzenie galerii przez użytkownika nietechnicznego
+- [ ] Wstawienie linku do albumu we wpisie przez nauczycielkę (wzorzec „Link do albumu”)
 - [ ] Dodanie aktualności przez nauczyciela
 - [ ] Edycja istniejącej strony
 - [ ] Utworzenie nowej podstrony + dodanie do menu
@@ -1407,6 +1414,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-14 | Ograniczenie prób logowania własnym kodem, nie wtyczką | kilkadziesiąt linijek bez ekranu ustawień, tabeli w bazie i cyklu aktualizacji; wtyczka wejdzie w to miejsce, gdyby okazało się za słabo |
 | 2026-09-14 | Adres IP wyłącznie z `REMOTE_ADDR`, bez `X-Forwarded-For` | nagłówek nadaje klient, więc bot omijałby licznik; za CDN-em trzeba będzie ten filtr poprawić |
 | 2026-09-14 | Awatary wyłączone | panel wysyłał zahaszowane adresy e-mail pracowników do Gravatara |
+| 2026-09-14 | Strona „Galeria” usunięta, menu ustawione wg częstości odwiedzin | zbiorcza lista albumów dublowała aktualności, w których każdy wpis ma własny przycisk do albumu |
 | 2026-09-14 | „O przedszkolu” i „Oferta” usunięte, Kadra na górny poziom | pierwsza miała samą treść testową i brak źródła do napisania; druga jedno zdanie, które dubluje opisy grup |
 | 2026-09-14 | Ilustrowane awatary kadry usunięte | rysunkowa postać pod imieniem i nazwiskiem czyta się jak portret tej osoby; inicjały nie wprowadzają w błąd |
 | 2026-09-14 | Bez wtyczki cache i bez minifikacji | 35 ms TTFB, jeden arkusz, zero zapytań zewnętrznych; kompresja serwera daje 72 kB → 23 kB, a projekt nie ma kroku budowania |

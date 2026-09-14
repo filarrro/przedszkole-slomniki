@@ -31,12 +31,14 @@ dodaj() {
 	wp post update "$pozycja" --post_content="$opis"
 }
 
+# Trzy kafelki, nie cztery — „Galeria” usunięta 2026-09-14 wraz ze stroną.
+# Siatka to `auto-fit minmax(240px, 1fr)`, więc rząd wypełnia się sam.
+#
 # Kafelki tylko wtedy, gdy menu jest puste — skrypt można uruchomić ponownie
 # bez mnożenia pozycji.
 if [ "$( wp menu item list na-skroty --format=count )" = "0" ]; then
 	dodaj grupy        "Nasze grupy"   "Sześć grup, każda z własnym kącikiem i wychowawcą"
 	dodaj dla-rodzicow "Dla rodziców"  "Jadłospis, rozkład dnia, opłaty i dokumenty"
-	dodaj galeria      "Galeria"       "Zdjęcia z wycieczek, uroczystości i zajęć"
 	dodaj kontakt      "Kontakt"       "Adres, telefon i godziny pracy sekretariatu"
 fi
 
