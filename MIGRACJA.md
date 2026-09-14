@@ -2,6 +2,11 @@
 
 Dokument roboczy Etapu 2b. Analiza wykonana 2026-09-11 na zrzucie `icrdslom_dbj34_1789116422.sql.gz`.
 
+**Stan: treść przeniesiona.** 16 stron statycznych (2026-09-11) i 428 wpisów
+z aktualnościami (2026-09-14). Pliki ze starego serwera przepadły — patrz
+„Pliki ze starego serwera: przepadły". Zostają przekierowania 301 i uzupełnienie
+brakujących dokumentów.
+
 ---
 
 ## Co zastaliśmy
@@ -193,15 +198,15 @@ Drzewo kategorii narosło organicznie:
 | Joomla | WordPress |
 |---|---|
 | Artykuł z `komunikaty/<grupa>/…` | Wpis (post), kategoria = nazwa grupy |
-| Artykuł z `rok-szkolny-*` | Wpis, kategoria „Aktualności" |
-| Artykuł z `<grupa>projekty/…` | Wpis, kategoria „Projekty" + grupa |
+| Artykuł z `rok-szkolny-*` | Wpis, kategoria „Ogłoszenia" |
+| Artykuł z `<grupa>projekty/…` | Wpis, kategoria = nazwa grupy |
 | Kadra, Specjaliści, Dokumenty, Jadłospis, Opłaty, Rozkład dnia, Dofinansowanie, Deklaracja dostępności | **Strony** (nie wpisy) |
 | `created` | `post_date` |
 | Kategoria → grupa | `post_author` (konto grupowe) |
 | `alias` | `post_name` (slug) |
-| `images.image_fulltext` | Obrazek wyróżniający |
+| `images.image_fulltext` | ~~Obrazek wyróżniający~~ — plik przepadł z FTP |
 | `introtext` + `fulltext` | `post_content` (bez `<!-- pagebreak -->`) |
-| `metadesc` | Meta description |
+| `metadesc` | ~~Meta description~~ — puste we wszystkich 440 artykułach |
 
 **Rok szkolny** wyprowadzamy z daty publikacji, nie z kategorii — nie potrzeba archiwalnych kategorii, WordPress ma archiwa po dacie z pudełka.
 
@@ -210,16 +215,19 @@ Drzewo kategorii narosło organicznie:
 - [x] Import zrzutu do lokalnej bazy roboczej `joomla`
 - [x] Analiza: liczby, struktura, zdjęcia, autorzy
 - [x] Eksport 440 artykułów do JSON
-- [ ] **Pobranie katalogu `images/` ze starego FTP** ⚠️ przed usunięciem starej strony
-- [ ] Ustalenie zakresu z klientem (patrz „Decyzje do podjęcia")
-- [ ] Skrypt konwertujący: JSON → import do WordPressa przez `wp-cli`
-- [ ] Czyszczenie HTML: usunięcie stylów inline, `<font>`, pustych `<p>`, atrybutów Joomli
-- [ ] Konwersja treści na bloki Gutenberga (`wp post create` + parser)
-- [ ] Upload zdjęć do Media Library + przypisanie obrazków wyróżniających
-- [ ] Upload załączników (118 plików) do Media Library + podlinkowanie w treści
-- [ ] Podmiana ścieżek `images/…` w treści na adresy z `wp-content/uploads`
-- [ ] Weryfikacja: liczba wpisów, losowa próbka 20 artykułów, martwe linki
-- [ ] Mapa przekierowań 301 ze starych adresów (SEO)
+- [x] ~~Pobranie katalogu `images/` ze starego FTP~~ — **nie udało się, patrz niżej**
+- [x] Ustalenie zakresu z klientem (patrz „Decyzje do podjęcia")
+- [x] Skrypt konwertujący: `tools/migracja_wpisow.py`
+- [x] Czyszczenie HTML: usunięcie stylów inline, `<font>`, pustych `<p>`, atrybutów Joomli
+- [x] Konwersja treści na bloki Gutenberga
+- [x] Skan treści pod kątem wstrzykniętego kodu — **czysto, zero trafień**
+- [x] Odnośniki do albumów → przyciski `is-style-galeria` z czytelnym tekstem
+- [x] Import 428 wpisów (2026-09-14)
+- [x] Weryfikacja: liczba wpisów, porównanie długości treści, próbka na froncie
+- [ ] ~~Upload zdjęć do Media Library~~ — **bez plików niewykonalne**
+- [ ] ~~Upload załączników (118 plików)~~ — **bez plików niewykonalne**
+- [ ] Mapa przekierowań 301 ze starych adresów (SEO) — wpisy mają `_joomla_id`,
+      więc da się je zmapować bez ręcznej listy
 
 ### Wskazówki do skryptu migracyjnego
 
@@ -240,23 +248,72 @@ Ustalenia z analizy, które oszczędzą pracy przy pisaniu importu:
 - **Rok szkolny** wyprowadzić z `created`, nie z kategorii.
 - **6 artykułów** w zakresie ma pustą treść — zdecydować, czy pomijać.
 
-### ⚠️ Krytyczne: pobrać pliki przed usunięciem starej strony
+### ❌ Pliki ze starego serwera: przepadły
 
-Zdjęcia **nie są w bazie** — to pliki na serwerze. Zrzut SQL zawiera tylko ścieżki.
-Przed skasowaniem starej strony (Etap 9) trzeba pobrać przez FTP co najmniej:
+**Stan na 2026-09-14.** Dostępu do FTP nie ma i nie będzie. HTTP też nie pomoże —
+`przedszkoleslomniki.pl` oddaje stronę błędu 403 od cyberFolks (hosting wyłączył
+witrynę), a każda ścieżka do pliku kończy się na 404:
 
-Katalog główny starej strony:
+```bash
+curl -o /dev/null -w '%{http_code}\n' \
+  http://przedszkoleslomniki.pl/images/aktualnosci/2023/Przywitanie_jesieni_2023_glowne.jpg
+# 404
 ```
-/home/icrdslom/domains/przedszkoleslomniki.pl/public_html/
+
+Co przez to tracimy:
+
+| Zasób | Ile | Skutek |
+|---|---|---|
+| Obrazki wyróżniające artykułów | 407 plików | wpisy bez zdjęcia, motyw pokazuje zastępnik |
+| Załączniki (PDF, ODT) | 118 plików, 77 MB | 6 wpisów pominiętych (były samą zajawką pliku), 11 zaimportowanych bez dokumentu |
+| Grafiki szablonu | — | bez znaczenia, mamy własną identyfikację wizualną |
+
+**Czego NIE tracimy:** galerii. Właściwe zdjęcia z wydarzeń są w Google Photos,
+a linki do 395 albumów siedzą w treści artykułów i działają. To dlatego utrata
+FTP jest kosztowna, ale nie zabójcza.
+
+Obrazki *w treści* w zakresie 440 artykułów to praktycznie wyłącznie ikonka
+`galeria.png` (312 wystąpień) — dekoracja, nie zdjęcia. Nie ma czego żałować.
+
+### Decyzja: wpisy idą bez obrazka wyróżniającego
+
+**Reguła klienta:** nie dorabiamy zdjęć sztucznie. Obrazek tylko wtedy, gdy treść
+artykułu wskazuje na konkretne zdjęcie.
+
+W zakresie 440 artykułów **nie ma ani jednego takiego odnośnika.** Sprawdzone:
+zero `lh3.googleusercontent.com`, zero `drive.google.com`, zero `images.app.goo.gl`.
+Jedyne konkretne obrazki to ścieżki z FTP i `galeria.png`. (224 odnośniki do
+`drive.google.com` w bazie należą do starszych artykułów, poza zakresem, i prowadzą
+do materiałów edukacyjnych, nie do zdjęć.)
+
+Wniosek: wszystkie 428 wpisów bez obrazka, kafelek pokazuje `assets/img/brak-zdjecia.webp`.
+
+<details>
+<summary>Gdyby przedszkole zmieniło zdanie: okładki albumów da się pobrać</summary>
+
+Sprawdzone na żywo 2026-09-14. Strona udostępnionego albumu Google Photos wystawia
+metadane Open Graph — wystarczy pobrać ją z nagłówkiem `User-Agent` crawlera
+(zwykła przeglądarka dostaje pustą stronę wymagającą JavaScriptu):
+
+```bash
+curl -sL -A "facebookexternalhit/1.1" https://photos.app.goo.gl/TUg4HYsFenLrHGoD7 \
+  | grep -oE 'og:(image|title)" content="[^"]*"'
 ```
 
-- [ ] `public_html/images/` — zdjęcia artykułów, 782 pliki (obejmuje `images/aktualnosci/2023–2026/`)
-- [ ] `public_html/attachments/` — 118 załączników, 77 MB (PDF-y, dokumenty)
-- [ ] `public_html/templates/` — logo i grafiki szablonu (opcjonalnie, do odtworzenia identyfikacji wizualnej)
+- `og:title` → tytuł albumu z datą („2023.09.28 Iluzjonista · Thursday, Sep 28, 2023")
+- `og:image` → adres okładki na `lh3.googleusercontent.com`
 
-Obecność `administrator/`, `components/`, `configuration.php` potwierdza, że to katalog główny Joomli.
+Adres okładki przyjmuje parametr rozmiaru: `=s0` daje 1920 px zamiast domyślnych 600.
+Ze strony albumu da się też wyciągnąć adresy **wszystkich** zdjęć (w próbce: 79),
+więc pełna migracja galerii jest technicznie możliwa — tylko decyzja mówi inaczej.
 
-**Bez tych plików migracja jest niemożliwa, a operacja nieodwracalna.**
+**Pokrycie, gdyby włączyć:** 384 z 440 artykułów (te z linkiem do albumu).
+
+**Czego to nie rozwiązuje:** okładka to prawdziwe zdjęcie z wydarzenia, czyli twarze
+dzieci na listach wpisów i w podglądach linków. Stare zajawki były często grafikami.
+To zmiana charakteru strony, nie tylko wypełnienie dziury — i temat zgód rodziców
+(patrz „Otwarte, do sprawdzenia u klienta").
+</details>
 
 ---
 
@@ -314,8 +371,11 @@ Obecność `administrator/`, `components/`, `configuration.php` potwierdza, że 
 
 - [x] **Zakres czasowy:** lata szkolne 2023/24–2025/26, czyli od **2023-09-01** → **440 artykułów**
 - [x] **Autorstwo:** konta grupowe, wyprowadzane z kategorii artykułu (patrz niżej)
-- [ ] **Strony statyczne** (Kadra, Dokumenty, Jadłospis, Opłaty, Deklaracja dostępności) — migrować niezależnie od daty. Domyślnie: tak.
+- [x] **Strony statyczne** (Kadra, Dokumenty, Jadłospis, Opłaty, Deklaracja dostępności) — migrowane niezależnie od daty, wykonane 2026-09-11
+- [x] **Obrazki wyróżniające** — bez nich. Zdjęcia dokładamy tylko tam, gdzie treść wskazuje konkretny plik, a w zakresie migracji nie ma ani jednego takiego odnośnika
 - [ ] **Stare artykuły (2015–2023)** — skasować, czy zostawić dostępne w archiwum?
+      1313 artykułów zostało w bazie roboczej. Zrzut `*.sql.gz` jest jedynym archiwum —
+      przy usuwaniu bazy `joomla` z DDEV trzeba o tym pamiętać
 - [ ] **Przekierowania 301** ze starych adresów — potrzebne, jeśli stara strona jest zaindeksowana w Google.
 
 ---
@@ -354,6 +414,96 @@ Zrzut zawiera tabelę `l6hwz_users` z hasłami (hashe) i adresami e-mail.
 - Nie trafia do repozytorium (`*.sql.gz` w `.gitignore`)
 - Migrujemy **wyłącznie imiona autorek**, nie hasła ani dane logowania
 - Nowe konta w WordPressie dostają świeże, mocne hasła
+
+---
+
+## Migracja aktualności (wykonana 2026-09-14)
+
+Narzędzie: `tools/migracja_wpisow.py` (`--zastosuj` wgrywa do WordPressa).
+Idempotentne — wpis rozpoznaje po metadanej `_joomla_id`.
+
+### Wynik
+
+| | |
+|---|---|
+| Artykułów w zakresie | 440 |
+| **Zaimportowanych wpisów** | **428** |
+| Pominiętych: treść już jest na stronach | 5 |
+| Pominiętych: pusta treść (sama zajawka załącznika) | 7 |
+| Przycisków do albumów Google Photos | 399 w 383 wpisach |
+| Obrazków wyciętych z treści (pliki z FTP) | 407 |
+| Utrata treści w konwersji | 0 % (sprawdzone na wszystkich 428) |
+
+Rozkład po kategoriach: Ogłoszenia 118 · Kotki 66 · Żabki 63 · Jeżyki 51 ·
+Zajączki 48 · Misie 42 · Wiewiórki 40.
+
+### 🔒 Skan treści: czysto
+
+Stara strona była zaatakowana, więc **każdy artykuł przechodzi przez skaner przed
+konwersją** — nie tylko te 440 w zakresie, kontrolnie przejrzane zostały wszystkie 1753.
+
+Sygnatury blokujące (wpis pomijany): `<script>`, `<iframe>`, `<object>`, `<embed>`,
+`<form>`, `<meta>`, `<style>`, `<svg>`, atrybuty zdarzeń (`onclick`, `onerror`),
+`javascript:`/`vbscript:`/`data:text/html`, `eval()`, `atob()`, `unescape()`,
+`document.write`, `window.location`, kod PHP, ciągi escapowane szesnastkowo.
+
+Sygnatury ostrzegawcze (wpis przechodzi, trafia do raportu): ukryta treść
+(`display:none`, `text-indent:-`, `opacity:0`), słownictwo spamowe, odnośniki do
+domen typowych dla spamu, duże bloki base64.
+
+**Trafień: zero.** Infekcja siedziała w plikach PHP na serwerze, nie w treści
+artykułów. Kontrola uzupełniająca: wszystkie 380+ domen w odnośnikach to YouTube,
+Google Photos i polskie portale edukacyjne — żadnego wstrzykniętego spamu SEO.
+Pięć trafień na „base64" w starszych artykułach to legalne `data:image` wklejone
+w treść przez autorki.
+
+Skaner zostaje w skrypcie na stałe — gdyby kiedyś doszło do ponownego importu
+z zainfekowanego źródła, nie trzeba pamiętać o ręcznym sprawdzeniu.
+
+### Mapowanie, które zadziałało
+
+- **Kategoria i autor ze ścieżki kategorii Joomli.** Segment `komunikaty/kotki/…`
+  → kategoria Kotki + konto `grupa-kotki`. Literówka `kotkiorojekty` i sufiks
+  `projekty` obsłużone. Wszystko inne → Ogłoszenia + konto `przedszkole`.
+- **Data z `created` przez `get_date_from_gmt()`.** Joomla trzyma UTC, WordPress
+  chce obu wersji. Bez przeliczenia wpisy wieczorne skakałyby o dwie godziny.
+- **Albumy → przyciski.** Wzorzec `<a href="photos…"><img galeria.png></a>` (399
+  kotwic, każda bez tekstu — czytnik ekranu nie miał czego przeczytać) zamieniony
+  na blok przycisku w wariancie `is-style-galeria` z tekstem „Zobacz zdjęcia".
+  Motyw dokłada adnotację „(album w serwisie Google Zdjęcia)".
+- **Wiele albumów w jednym wpisie.** 3 artykuły opisywały po 5–6 albumów, każdy
+  poprzedzony akapitem „Grupa Żabki". Etykieta wchodzi do tekstu przycisku —
+  inaczej strona miałaby sześć identycznych odnośników, co jest błędem dostępności.
+- **Wykluczenie duplikatów.** 5 artykułów (jadłospis, opisy specjalistek) jest już
+  treścią stron z migracji statycznej. Stała `ARTYKULY_STRON` w `migracja_tresci.py`
+  jest wspólnym źródłem prawdy dla obu skryptów.
+
+### Do dokończenia ręcznie
+
+**7 wpisów pominiętych** — na starej stronie były samą zajawką dla pliku PDF/ODT,
+więc bez plików nie ma z czego zrobić wpisu. Dokumenty trzeba odtworzyć z innego
+źródła (gmina, archiwum przedszkola) i wstawić jako nowe wpisy albo na stronę
+„Dokumenty":
+
+| Artykuł | Data | Brakujący plik |
+|---|---|---|
+| Zapisy na dyżur wakacyjny | 2026-05-15 | HARMONOGRAM POSTĘPOWANIA WAKACJE.odt, WNIOSEK-O-PRZYJĘCIE-DZIECKA-DO-PRZEDSZKOLA-WAKACJE.odt |
+| OŚWIADCZENIE WOLI | 2025-04-06 | OSWIADCZENIE WOLI |
+| DEKLARACJA KONTYNUACJI | 2025-02-16 | DEKLARACJA KONTYNUACJI EDUKACJI-2.pdf |
+| Zarządzenie Burmistrza Gminy Słomniki | 2025-02-13 | Zarządzenie rekrutacja Przedszkole i OP 2025 2026.pdf |
+| Stawianie granic | 2025-02-13 | STAWIANIE GRANIC.pdf |
+| Wniosek na dyżur wakacyjny | 2024-05-11 | Wniosek do pobrania |
+| O projekcie: „Mały miś…" | 2024-01-29 | (bez załączników — artykuł był pusty) |
+
+**11 wpisów zaimportowanych, ale bez dokumentu** — treść jest, brakuje pliku:
+Oświadczenie woli 2026/2027, Wniosek o przyjęcie dziecka, Informacje nt deklaracji
+kontynuacji (2024/25 i 2026/27), Rekrutacja (2024 i 2026), Policja dla Seniorów,
+Konwencja o prawach dziecka, Standardy Ochrony Małoletnich, Zebranie z Rodzicami.
+Pełną listę z nazwami plików wypisuje skrypt na końcu przebiegu.
+
+**Treści z bieżącego roku do odświeżenia.** Wpisy z lat 2023–2026 są archiwum i mogą
+zostać jak są, ale komunikaty rekrutacyjne odnoszą się do zamkniętych już terminów.
+Do przeglądu przed wdrożeniem razem z treściami statycznymi (patrz niżej).
 
 ---
 

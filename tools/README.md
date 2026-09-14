@@ -114,6 +114,38 @@ sekcja „Jak odtworzyć analizę od zera".
 Obrazki są wycinane — pliki leżą na FTP starej strony. Skrypt wypisuje na końcu
 listę tego, czego w zrzucie nie ma.
 
+Stała `ARTYKULY_STRON` wylicza artykuły zużyte przez strony. `migracja_wpisow.py`
+ją importuje i pomija — inaczej ta sama treść wyszłaby i jako strona, i jako wpis.
+
+## `migracja_wpisow.py`
+
+Przenosi **aktualności** — 428 wpisów z lat szkolnych 2023/24–2025/26.
+Kategorię i autora wyprowadza ze ścieżki kategorii Joomli (6 grup + Ogłoszenia),
+datę z `created` (Joomla trzyma UTC, skrypt przelicza na czas lokalny).
+
+```bash
+python3 tools/migracja_wpisow.py             # podglad: buduje plan, nic nie wgrywa
+python3 tools/migracja_wpisow.py --zastosuj  # wgrywa do WordPressa
+python3 tools/migracja_wpisow.py --limit 20  # probka do obejrzenia
+```
+
+Idempotentny: wpis rozpoznaje po metadanej `_joomla_id`, więc powtórny przebieg
+aktualizuje, a nie duplikuje. Konwersję HTML → bloki bierze z `migracja_tresci.py`.
+
+**Skan treści przed importem.** Stara strona była zaatakowana, więc każdy artykuł
+przechodzi przez `skanuj()`. Sygnatura blokująca (kod wykonywalny, znacznik
+`<script>`/`<iframe>`, atrybut zdarzenia, kod PHP) = wpis pominięty i wypisany
+w raporcie. Sygnatura ostrzegawcza (ukryta treść, słownictwo spamowe, domena
+typowa dla spamu) = wpis przechodzi, ale trafia do raportu. Przebieg z 2026-09-14
+nie znalazł ani jednego trafienia w 440 artykułach.
+
+Klikalna ikonka `galeria.png` prowadząca do albumu w Google Photos zamienia się
+w przycisk w wariancie `is-style-galeria` z tekstem „Zobacz zdjęcia". Gdy wpis ma
+kilka albumów, etykieta z poprzedzającego akapitu („Grupa Żabki") wchodzi do
+tekstu przycisku — inaczej strona miałaby sześć identycznych odnośników.
+
+Bez obrazków wyróżniających — dlaczego, patrz [MIGRACJA.md](../MIGRACJA.md).
+
 ## `kadra_kafelki.py`
 
 Przepisuje stronę „Kadra" z prozy na kafelki osób — jeden `is-style-kafelek-osoby`

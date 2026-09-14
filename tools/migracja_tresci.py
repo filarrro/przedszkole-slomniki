@@ -203,12 +203,17 @@ KADRA_NAUCZYCIELE = [6, 11, 12, 13, 14, 15, 16, 1335, 1508]
 KADRA_SPECJALISCI = [7, 1805, 1813, 1815]
 KADRA_ADMINISTRACJA = 8
 
+# Artykuły zużyte przez strony statyczne. Migracja aktualności
+# (`migracja_wpisow.py`) importuje tę listę i pomija te artykuły — inaczej
+# ta sama treść wychodzi dwa razy: jako strona i jako wpis.
+ARTYKULY_STRON = (
+	[KADRA_DYREKTOR, KADRA_ADMINISTRACJA, 9, 21, 22, 23, 24, 25, 178, 197, 823, 1274]
+	+ KADRA_NAUCZYCIELE + KADRA_SPECJALISCI
+)
+
 
 def zbuduj():
-	art = artykuly(
-		[KADRA_DYREKTOR, KADRA_ADMINISTRACJA, 9, 21, 22, 23, 24, 25, 178, 197, 823, 1274]
-		+ KADRA_NAUCZYCIELE + KADRA_SPECJALISCI
-	)
+	art = artykuly(ARTYKULY_STRON)
 	kat = opisy_kategorii([k[0] for k in GRUPY.values()] + [19])
 	mod = moduly([k[1] for k in GRUPY.values()] + [k[2] for k in GRUPY.values()] + [95, 120])
 	strony = {}

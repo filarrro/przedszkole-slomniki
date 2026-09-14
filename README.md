@@ -53,7 +53,7 @@ albo dane — nie należą do repozytorium.
 |---|---|
 | 1. Analiza hostingu | ✅ cyber_Folks wystarcza, brak blokerów |
 | 2. Środowisko lokalne | ✅ DDEV + WordPress 7.1 + PHP 8.5 |
-| 2b. Migracja z Joomli | 🔄 analiza gotowa, czeka na pliki z FTP |
+| 2b. Migracja z Joomli | ✅ 16 stron + 428 wpisów; pliki z FTP przepadły |
 | 3. Motyw | ✅ szkielet, szablony, identyfikacja wizualna |
 | 4. Struktura treści | ✅ strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ wzorce, warianty stylów, style bloków |
@@ -67,14 +67,18 @@ Szczegóły i kryteria odbioru: [PLAN.md](PLAN.md).
 
 ---
 
-## Co blokuje postęp
+## Co zostało z migracji
 
-**Pliki ze starego serwera.** Zdjęcia i dokumenty nie są w zrzucie bazy — to pliki na FTP.
-Do pobrania przed usunięciem starej strony:
+**Pliki ze starego serwera przepadły.** Hosting wyłączył starą witrynę — domena
+oddaje 403, ścieżki do plików 404, FTP niedostępny. Nie ma skąd wziąć 407 obrazków
+wyróżniających ani 118 załączników (PDF-y, wnioski, zarządzenia).
 
-```
-/home/icrdslom/domains/przedszkoleslomniki.pl/public_html/images/
-/home/icrdslom/domains/przedszkoleslomniki.pl/public_html/attachments/
-```
+Treść przeniesiona w całości: **16 stron** i **428 wpisów**, bez utraty tekstu.
+Zdjęcia z wydarzeń nie zginęły — siedzą w Google Photos i wpisy linkują do 395 albumów.
 
-Bez nich migracja jest niewykonalna, a usunięcie starej strony nieodwracalne.
+Do dokończenia ręcznie:
+- 7 wpisów, które na starej stronie były samą zajawką dla pliku PDF
+- 11 wpisów z treścią, ale bez dokumentu
+- przekierowania 301 ze starych adresów
+
+Listy z nazwami plików: [MIGRACJA.md](MIGRACJA.md), sekcja „Do dokończenia ręcznie".

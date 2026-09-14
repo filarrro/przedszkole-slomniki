@@ -34,5 +34,6 @@ Thumbs.db
 podglad.html
 *.podglad.html
 
-# Wynik posredni migracji tresci statycznych - odtwarzalny ze zrzutu Joomli
+# Wyniki posrednie migracji - odtwarzalne ze zrzutu Joomli
 tools/migracja_tresci.json
+tools/migracja_wpisow.json

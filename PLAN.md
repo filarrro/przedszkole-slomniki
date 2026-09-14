@@ -285,24 +285,34 @@ Szczegółowa analiza i plan: **[MIGRACJA.md](MIGRACJA.md)**
 ### Skrót
 - Stara strona: Przedszkole w Słomnikach, Joomla 3.10.5
 - 1753 opublikowane artykuły (2015–2026), **440 z ostatnich 3 lat**
-- 782 pliki graficzne na serwerze — to tylko **miniatury-zajawki** (realnie ~412)
-- ⚠️ **Prawdziwe galerie są w Google Photos: 395 albumów linkowanych z 387 artykułów**
-- 118 załączników: 86 PDF + dokumenty, 77 MB — migrujemy wszystkie, niezależnie od daty
+- ❌ 782 pliki graficzne i 118 załączników **przepadły** — stary hosting wyłączył witrynę,
+  FTP niedostępny. Zostały same ścieżki w bazie
+- ✅ **Prawdziwe galerie są w Google Photos: 395 albumów linkowanych z 387 artykułów** —
+  linki działają, więc zdjęcia z wydarzeń nie zginęły
 - 4 autorki: Bożenka, Agnieszka, Ewa, Aneta
 - Treść to czysty HTML — brak shortcode'ów i wtyczek galerii
 - Domena: `przedszkoleslomniki.pl`, katalog: `/home/icrdslom/domains/przedszkoleslomniki.pl/public_html/`
 
 - [x] Import zrzutu do lokalnej bazy roboczej
 - [x] Analiza struktury i zakresu
-- [ ] **Pobranie `images/` i `attachments/` ze starego FTP** ⚠️ przed usunięciem starej strony
+- [x] ~~Pobranie `images/` i `attachments/` ze starego FTP~~ — **nieosiągalne**, hosting
+      wyłączył witrynę (403 na stronie, 404 na plikach). 407 obrazków i 118 załączników przepadło
 - [x] Zakres: lata szkolne 2023/24–2025/26 (od 2023-09-01) → 440 wpisów
 - [x] Autorstwo: 7 kont grupowych, wyprowadzanych z kategorii
 - [x] Decyzja: galerie **zostają w Google Photos** — konto należy do przedszkola
+- [x] Decyzja: wpisy **bez obrazków wyróżniających** — zdjęcia tylko tam, gdzie treść
+      wskazuje konkretny plik, a takich odnośników w zakresie nie ma
 - [x] Migracja treści **statycznych** — 16 stron (`tools/migracja_tresci.py`)
-- [ ] Skrypt migracyjny **aktualności** (440 wpisów)
-- [ ] Weryfikacja i przekierowania 301
+- [x] Skrypt migracyjny **aktualności** (`tools/migracja_wpisow.py`) + skan treści
+      pod kątem wstrzykniętego kodu — zero trafień w 1753 artykułach
+- [x] Import 428 wpisów, weryfikacja: kategorie, autorzy, daty, zero utraty treści
+- [ ] Przekierowania 301 ze starych adresów — wpisy trzymają `_joomla_id`,
+      więc mapowanie nie wymaga ręcznej listy
+- [ ] Uzupełnienie 7 pominiętych wpisów i 11 brakujących dokumentów z innego źródła
 
-**Kryteria odbioru:** wpisy w WordPressie z poprawnymi datami, autorami, treścią i zdjęciami; próbka 20 artykułów sprawdzona ręcznie.
+**Kryteria odbioru:** wpisy w WordPressie z poprawnymi datami, autorami i treścią;
+próbka sprawdzona ręcznie. Zdjęć nie ma z czego przenieść — pliki przepadły wraz
+ze starym serwerem, szczegóły w [MIGRACJA.md](MIGRACJA.md).
 
 ---
 
