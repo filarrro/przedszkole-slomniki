@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.16.2
+Version: 0.17.2
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -1729,15 +1729,15 @@ main + .fala { background: var(--wp--preset--color--base); }
 	   240 px, ktore w siatce tresci (1140 px) nie zmiesci piatej kolumny.
 	   Na liscie aktualnosci kafelki ida jeden pod drugim i kazdy wchodzi
 	   osobno - przesuniecie nic tam nie zmienia. */
-	.cards .card:nth-child(3n + 2) { animation-range: entry 12% entry 62%; }
-	.cards .card:nth-child(3n + 3) { animation-range: entry 19% entry 69%; }
+	.cards .card:nth-child(3n + 2) { animation-range: entry 19% entry 69%; }
+	.cards .card:nth-child(3n + 3) { animation-range: entry 33% entry 83%; }
 
 	.skroty__lista .skrot:nth-child(4n + 2),
-	.powody__lista .powod:nth-child(4n + 2) { animation-range: entry 10% entry 60%; }
+	.powody__lista .powod:nth-child(4n + 2) { animation-range: entry 15% entry 65%; }
 	.skroty__lista .skrot:nth-child(4n + 3),
-	.powody__lista .powod:nth-child(4n + 3) { animation-range: entry 15% entry 65%; }
+	.powody__lista .powod:nth-child(4n + 3) { animation-range: entry 25% entry 75%; }
 	.skroty__lista .skrot:nth-child(4n + 4),
-	.powody__lista .powod:nth-child(4n + 4) { animation-range: entry 20% entry 70%; }
+	.powody__lista .powod:nth-child(4n + 4) { animation-range: entry 35% entry 85%; }
 
 	/* `:focus-within` wylacza animacje, bo element z `opacity: 0` na poczatku
 	   zakresu, na ktory wskoczyl Tab, bylby niewidocznym celem fokusu. Przy
@@ -1773,6 +1773,44 @@ main + .fala { background: var(--wp--preset--color--base); }
 		animation-range: 0 100vh;
 	}
 
+	/* --- Paralaksa warstw powitania --- */
+
+	/* Ta sama os co chmurki: przewijanie strony, zakres pierwszej wysokosci okna.
+	   `view()` nie ma tu czego mierzyc, bo pas stoi na samej gorze i w chwili
+	   wczytania ma "wejscie" juz za soba.
+
+	   Glebia wychodzi z roznicy predkosci, nie z kierunku: kazda warstwa jedzie
+	   w gore, tylko z inna amplituda. Od tylu do przodu - biala plama prawie
+	   stoi, ilustracja odjezdza wyrazniej, tekst najmocniej. Zadna nie wedruje
+	   w dol, bo dolna krawedz pasa zajmuje fala i plama weszlaby na nia.
+
+	   Wartosci dla plamy i ilustracji sa procentowe - procent liczy sie od
+	   wysokosci samego elementu, wiec rozjazd skaluje sie razem z ukladem i na
+	   waskim ekranie nie wypycha dzieci poza plame. Zapas miedzy krawedzia plamy
+	   a krawedzia obrazka to okolo 9,3% szerokosci kolumny, rozjazd na koncu
+	   zakresu okolo 2,7% - ilustracja zostaje w srodku plamy.
+
+	   Tekst dostaje wartosc w pikselach, bo jego wysokosc zalezy od dlugosci
+	   tresci wpisanej w Gutenbergu i procent dawalby raz kilkanascie, raz sto
+	   pikseli. Bez zmiany `opacity` - przycisk w powitaniu jest celem Taba
+	   i ma byc widoczny niezaleznie od pozycji przewijania. */
+	.hero__text {
+		animation: przedszkole-powitanie-tekst 1ms linear both;
+		animation-timeline: scroll(root block);
+		animation-range: 0 100vh;
+	}
+	.hero__art img {
+		animation: przedszkole-powitanie-obraz 1ms linear both;
+		animation-timeline: scroll(root block);
+		animation-range: 0 100vh;
+	}
+	/* Plama to pseudoelement `.hero__art::before` z sekcji 13. */
+	.hero__art::before {
+		animation: przedszkole-powitanie-plama 1ms linear both;
+		animation-timeline: scroll(root block);
+		animation-range: 0 100vh;
+	}
+
 	/* --- Paralaksa bazgrolow w "Na skroty" --- */
 
 	/* Desen jedzie wolniej niz sekcja: przez caly czas, gdy sekcja jest
@@ -1803,12 +1841,12 @@ main + .fala { background: var(--wp--preset--color--base); }
 	.skrzydla__pasek--gora {
 		animation: przedszkole-pasek-lewo 1ms linear both;
 		animation-timeline: view();
-		animation-range: entry 20% entry 80%;
+		animation-range: entry 35% entry 95%;
 	}
 	.skrzydla__pasek--dol {
 		animation: przedszkole-pasek-prawo 1ms linear both;
 		animation-timeline: view();
-		animation-range: entry 35% entry 95%;
+		animation-range: entry 50% entry 100%;
 	}
 
 	/* --- Cien naglowka po odjechaniu od gory --- */
@@ -1824,8 +1862,16 @@ main + .fala { background: var(--wp--preset--color--base); }
 }
 }
 
+/* Klatka posrednia trzyma `opacity` na zerze przez pierwsze 35% zakresu -
+   kafelek zostaje niewidoczny dluzej przy dolnej krawedzi ekranu i wynurza sie
+   dopiero wyzej. Nie dotyka `transform`, wiec przesuniecie interpoluje sie
+   niezaleznie, przez caly zakres: kafelek jedzie do gory juz od poczatku
+   i w chwili pojawienia sie ma czesc drogi za soba. Stad 36px zamiast 24:
+   przy przytrzymaniu do 35% zakresu na widoczna czesc ruchu zostaje 23,4px,
+   czyli mniej wiecej tyle, ile widac bylo przed opoznieniem alfy. */
 @keyframes przedszkole-wejscie {
-	from { opacity: 0; transform: translateY(24px); }
+	from { opacity: 0; transform: translateY(36px); }
+	35%  { opacity: 0; }
 	to   { opacity: 1; transform: none; }
 }
 
@@ -1834,6 +1880,12 @@ main + .fala { background: var(--wp--preset--color--base); }
 @keyframes przedszkole-chmurka-lewo  { from { translate: 0; }      to { translate: -70px; } }
 @keyframes przedszkole-chmurka-prawo { from { translate: 0; }      to { translate: 60px; } }
 @keyframes przedszkole-paralaksa     { from { translate: 0 -11%; } to { translate: 0 11%; } }
+
+/* Powitanie: kazda warstwa startuje w stanie bazowym, wiec bez wsparcia dla osi
+   czasu pas wyglada dokladnie tak, jak go ustawia sekcja 13. */
+@keyframes przedszkole-powitanie-tekst  { from { translate: 0; } to { translate: 0 -40px; } }
+@keyframes przedszkole-powitanie-obraz  { from { translate: 0; } to { translate: 0 -6%; } }
+@keyframes przedszkole-powitanie-plama  { from { translate: 0; } to { translate: 0 -1%; } }
 
 @keyframes przedszkole-zblizenie  { from { transform: scale(1.08); }        to { transform: none; } }
 @keyframes przedszkole-pasek-lewo  { from { opacity: 0; translate: -30% 0; } to { opacity: 1; translate: 0; } }
