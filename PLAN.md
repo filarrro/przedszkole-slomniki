@@ -9,7 +9,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 
 ---
 
-## Stan na 2026-09-11
+## Stan na 2026-09-14
 
 | Etap | Stan | Uwagi |
 |---|---|---|
@@ -21,7 +21,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
 | 6. Użytkownicy | ✅ | role natywne, konta grupowe, panel odchudzony |
 | 7. Frontend | ✅ | widoki gotowe; lista dokumentów czeka na PDF-y z FTP |
-| 8. SEO / wydajność / bezpieczeństwo | ⬜ | |
+| 8. SEO / wydajność / bezpieczeństwo | 🔄 | motyw gotowy; `.htaccess`, cache i Search Console przy wdrożeniu |
 | 9. Wdrożenie | ⬜ | |
 | 10–12 | ⬜ | |
 
@@ -36,7 +36,8 @@ katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
 - ~~Etap 6 — role i uprawnienia~~ — **zrobione**
 - ~~Etap 7 — frontend~~ — **zrobione**, poza listą dokumentów (potrzebne PDF-y)
 - Skrypt migracyjny — treść da się przenieść bez zdjęć, obrazki dołożyć później
-- Etap 8 — SEO, wydajność, bezpieczeństwo
+- ~~Etap 8 — SEO, wydajność, bezpieczeństwo~~ — **zrobione** w części, która
+  mieści się w kodzie; reszta to ustawienia serwera (Etap 9)
 
 ### Decyzje czekające na klienta
 
@@ -899,40 +900,292 @@ wyniki wyszukiwania.
 
 **Cel:** dopięcie po tym, jak strona działa. Nie wcześniej.
 
-### SEO
-- [ ] Poprawne `<title>` i meta description
-- [ ] Struktura nagłówków H1→H2→H3
-- [ ] Przyjazne adresy URL
-- [ ] Sitemap XML (natywna w WP lub z wtyczki)
-- [ ] Canonical
-- [ ] Open Graph (podgląd linków na Facebooku)
-- [ ] Dane strukturalne: LocalBusiness / Preschool, Article dla wpisów
-- [ ] `alt` przy zdjęciach — instrukcja dla personelu
-- [ ] `robots.txt`
-- [ ] Wtyczka SEO: lekka i stabilna (np. SEOPress / Slim SEO). Nie instalujemy molocha.
-- [ ] Google Search Console
+Kod rozkłada się na dwa nowe pliki motywu — `inc/seo.php` (znaczniki nagłówka
+i dane strukturalne) oraz `inc/bezpieczenstwo.php` (utwardzenie instalacji) —
+plus kilka filtrów w `functions.php`. Ustawienia, które żyją na serwerze,
+a nie w kodzie, są zebrane na końcu etapu jako gotowe fragmenty `.htaccess`
+do wklejenia przy wdrożeniu.
 
-### Wydajność
-- [ ] Rozmiar CSS i JS pod kontrolą
-- [ ] Brak zewnętrznych zapytań (fonty, biblioteki) — wszystko lokalnie
-- [ ] Optymalizacja obrazów
-- [ ] Cache stron (wtyczka lub cache hostingu)
-- [ ] Kompresja GZIP/Brotli + nagłówki cache w `.htaccess`
-- [ ] Liczba zapytań SQL na stronę — sprawdzić (Query Monitor na czas testów)
-- [ ] Pomiar PageSpeed / Lighthouse — cel: zielone Core Web Vitals
+**Zero nowych wtyczek.** Instalacja nadal ma ich zero.
 
-### Bezpieczeństwo
-- [ ] Aktualny WP, PHP, wtyczki + plan aktualizacji
-- [ ] Mocne hasła; rozważyć 2FA dla administratora
-- [ ] Ograniczenie prób logowania (wtyczka lub `.htaccess`)
-- [ ] `DISALLOW_FILE_EDIT` włączone
-- [ ] Ukrycie wersji WP
-- [ ] XML-RPC wyłączone, jeśli niepotrzebne
-- [ ] Uprawnienia plików: 644 pliki / 755 katalogi
-- [ ] Blokada wykonywania PHP w `wp-content/uploads`
-- [ ] Walidacja i sanityzacja we własnym kodzie (`esc_html`, `esc_url`, `wp_kses_post`, nonces)
-- [ ] Minimum wtyczek — każda ma uzasadnienie
-- [ ] Polityka prywatności + informacja o cookies (RODO)
+### 8.1 SEO
+
+- [x] Poprawne `<title>` — natywne (`add_theme_support( 'title-tag' )`)
+- [x] Meta description — wyliczany z treści, `inc/seo.php`
+- [x] Struktura nagłówków H1→H2→H3 — sprawdzona na wszystkich widokach, poprawiona
+- [x] Przyjazne adresy URL — Etap 4
+- [x] Sitemap XML — natywna `wp-sitemap.xml`, bez sekcji autorów
+- [x] Canonical — natywny `rel_canonical`
+- [x] Open Graph — `inc/seo.php`
+- [x] Dane strukturalne: `Preschool` na stronie głównej, `BlogPosting` na wpisie
+- [x] `robots.txt` — natywny, z odnośnikiem do mapy witryny
+- [x] `alt` przy zdjęciach — wszystkie obrazki na wszystkich widokach mają `alt`
+- [-] **Wtyczka SEO — odrzucona.** Po odjęciu tego, co robi rdzeń, zostały trzy
+      znaczniki w nagłówku
+- [ ] Google Search Console — wymaga działającej domeny → **Etap 9**
+- [ ] Instrukcja opisywania zdjęć dla personelu → **Etap 12**
+
+**Co WordPress umie sam — sprawdzone w wygenerowanym HTML-u, nie założone.**
+`<title>`, `rel=canonical`, `noindex` na wynikach wyszukiwania, mapa witryny,
+`robots.txt` z odnośnikiem do niej, `loading="lazy"`, `srcset`, a od 6.8 także
+reguły wstępnego pobierania (`speculationrules`). Brakowało wyłącznie opisu meta,
+Open Graph i danych strukturalnych — i tylko to dopisujemy.
+
+**Dlaczego bez wtyczki SEO.** Wtyczka (SEOPress, Yoast, Slim SEO) to ekran
+ustawień, własne tabele, pola w edytorze przy każdej podstronie i cykl
+aktualizacji na lata. Jedyna realna korzyść — ręczne nadpisanie opisu — jest
+tu pozorna: nikt w przedszkolu nie będzie wypełniał pola „meta description".
+Opis wyliczamy z treści, a pracownik, który zechce go zmienić, ma natywne pole
+„Fragment" w edytorze. Gdyby kiedyś okazało się to za mało, wtyczka wchodzi
+w miejsce jednego pliku, bez ruszania reszty motywu.
+
+**Opis meta z treści, nie z `wp_trim_excerpt()`.** Rdzeń skleja nagłówek
+z akapitem bez żadnego znaku między nimi („Witamy w naszym przedszkolu Jesteśmy
+miejscem…"). Nagłówki nie kończą się kropką, bo w układzie strony oddziela je
+odstęp — w jednej linijce opisu tego odstępu nie ma, więc kropkę dokładamy sami.
+
+**Typ podwójny `["Preschool", "LocalBusiness"]`.** `Preschool` dziedziczy po
+`EducationalOrganization`, w którym nie ma godzin otwarcia ani współrzędnych —
+te należą do `LocalBusiness`. JSON-LD dopuszcza wiele typów naraz; bez tego
+trzeba by wybrać między „to jest przedszkole" a „to jest miejsce, które ma adres
+i godziny". Dane kontaktowe w postaci dla maszyn stoją w `przedszkole_dane_placowki()`
+(`inc/helpers.php`) — **to druga kopia tych samych informacji** obok wzorca „Dane
+kontaktowe", i zmiana adresu czy telefonu musi trafić w oba miejsca.
+
+**Nagłówek kafelka zależy od tego, co stoi nad nim.** Na liście aktualności
+kafelki idą wprost pod `<h1>`, więc tytuł jest `<h2>`; na stronie głównej
+poprzedza je nagłówek sekcji „Aktualności", więc schodzi na `<h3>`. Wcześniej
+był wszędzie `<h3>` i na trzech widokach powstawał przeskok H1→H3 — brakujący
+poziom, który czytnik ekranu zgłasza jako błąd struktury. Wygląd bez zmian:
+style siedzą na klasie `card__title`, nie na znaczniku.
+
+**Mapa witryny bez autorów.** `wp-sitemap-users-1.xml` wysyłał do Google listę
+kont wraz z nazwami użytkowników — połowę pary potrzebnej do zgadywania hasła.
+Archiwa autorów i tak przekierowujemy (8.3), więc byłaby to mapa nieistniejących
+adresów.
+
+### 8.2 Wydajność
+
+- [x] Rozmiar CSS i JS pod kontrolą — pomiar niżej
+- [x] Brak zewnętrznych zapytań — zweryfikowany na wygenerowanym HTML-u
+- [x] Optymalizacja obrazów — WebP przy wgrywaniu (Etap 7) + logo przerobione
+- [x] Liczba zapytań SQL na stronę — zmierzona, 26–38
+- [x] Jeden `fetchpriority="high"` na stronę, na właściwym obrazku
+- [x] Limit wersji roboczych wpisu — 5, żeby baza nie puchła przez lata
+- [ ] Cache stron → **Etap 9**, decyzja po pomiarze na produkcji
+- [ ] Kompresja i nagłówki cache w `.htaccess` → **Etap 9**, fragment niżej
+- [ ] PageSpeed / Lighthouse → **Etap 9**, pomiar ma sens dopiero po HTTPS
+
+**Pomiar strony głównej, pierwsze wejście (pusty cache):**
+
+| Zasób | Rozmiar | Uwaga |
+|---|---|---|
+| HTML | 12 kB | po kompresji |
+| `style.css` | 23 kB | po kompresji, ze 72 kB źródła |
+| `nav.js` | 0,5 kB | po kompresji |
+| Nunito (woff2) | 35 kB | jeden krój, lokalnie |
+| Ilustracja powitalna | 115 kB | WebP, `srcset` — telefon bierze mniejszą |
+| Zdjęcie w „Skrzydłach" | 66 kB | WebP, `srcset` |
+| Logo | 17 kB | WebP |
+| Reszta (miniatury, zastępnik) | 36 kB | |
+| **Razem** | **303 kB** | 2 arkusze + 1 skrypt + font + obrazki |
+
+Obrazki to 82% wagi strony — i tak ma być. Kodu jest 35 kB, resztę widać.
+
+**Zapytania SQL i czas bazy:** strona główna 38 zapytań / 5 ms, lista
+aktualności 33 / 5 ms, wpis 33 / 5 ms, strona treściowa 26 / 4 ms. TTFB
+lokalnie 35 ms. Mierzone tymczasową wtyczką `mu-plugins` z `SAVEQUERIES`,
+usuniętą po pomiarze — Query Monitor nie jest potrzebny, a na produkcji
+nie ma po nim wchodzić.
+
+**Logo: PNG 34 kB → WebP 17 kB.** Trafiło do biblioteki przed filtrem
+konwertującym wgrywane zdjęcia (Etap 7), więc jako jedyny stały zasób strony
+zostało w starym formacie. Wgrane jeszcze raz, tą samą drogą co wszystko inne.
+Pozostałe pliki JPEG w bibliotece to zastępniki kadry i śmieci testowe —
+znikają w Etapie 9, nie ma czego konwertować.
+
+**Jeden `fetchpriority="high"` na stronę.** WordPress sam wskazuje przeglądarce
+jeden obrazek jako najważniejszy do pobrania i trafiał nim w logo, bo jest
+pierwsze w kodzie. Logo waży kilkanaście kilobajtów i nigdy nie jest największym
+elementem widocznym po wejściu. Samo wycięcie atrybutu nie wystarczyłoby: rdzeń
+trzyma osobną flagę „priorytet przyznany" i zdjąłby ją przy logo, więc kolejne
+obrazki nie dostałyby wskazania tak czy owak. Flagę oddajemy z powrotem —
+i priorytet trafia tam, gdzie trzeba: w ilustrację powitalną na stronie głównej
+i w zdjęcie wyróżniające na wpisie.
+
+**Czego nie robimy.** Minifikacji CSS — plik jest komentowany celowo, a projekt
+nie ma i nie będzie miał kroku budowania; kompresja serwera załatwia 72 kB → 23 kB.
+Łączenia arkuszy — jest jeden. Wtyczki cache na zapas — przy 35 ms TTFB i zerze
+zapytań zewnętrznych nie ma czego przyspieszać, a każda wtyczka cache to nowa
+klasa błędów („dlaczego nie widzę zmian"). Decyzja po pomiarze na produkcji.
+
+### 8.3 Bezpieczeństwo
+
+- [x] `DISALLOW_FILE_EDIT` — w motywie, nie w `wp-config.php`
+- [x] XML-RPC wyłączone — Etap 3
+- [x] Ukrycie wersji WP — Etap 3
+- [x] Hasła aplikacji wyłączone
+- [x] Lista kont w REST API tylko dla zalogowanych
+- [x] Archiwa autorów przekierowane — koniec z `/?author=1`
+- [x] Komunikat błędu logowania bez podpowiedzi
+- [x] Ograniczenie prób logowania — 5 na kwadrans z jednego adresu
+- [x] Awatary wyłączone — koniec z odpytywaniem Gravatara z panelu
+- [x] Walidacja i escapowanie we własnym kodzie — konwencja od Etapu 3
+- [x] Minimum wtyczek — zero
+- [ ] Blokada wykonywania PHP w `wp-content/uploads` → **Etap 9**, fragment niżej
+- [ ] Uprawnienia plików 644/755 → **Etap 9**
+- [ ] Mocne hasła i plan aktualizacji → **Etap 12**
+- [ ] 2FA dla administratora → **decyzja klienta**, patrz niżej
+
+**Model zagrożenia.** Strona placówki publicznej bez sklepu, płatności i kont
+rodziców. Realne zagrożenie to boty, nie napastnik z celem. Boty robią masowo
+trzy rzeczy: zgadują hasła na `wp-login.php`, zbierają nazwy użytkowników
+i szukają dziur we wtyczkach. Na trzecie odpowiada zero wtyczek, na dwa
+pierwsze — ten podetap.
+
+**`DISALLOW_FILE_EDIT` w motywie, wbrew zwyczajowi.** Kanonicznym miejscem jest
+`wp-config.php`, ale ten plik jest poza repozytorium (dane dostępowe do bazy)
+i przy wdrożeniu powstaje na serwerze od nowa — czyli jest to dokładnie ta
+stała, którą najłatwiej zgubić. W motywie jedzie razem z kodem. WordPress
+sprawdza ją przy budowaniu menu panelu i w `map_meta_cap`, długo po wczytaniu
+`functions.php`. Zweryfikowane: `/wp-admin/theme-editor.php` zwraca 403.
+
+**Archiwa autorów: bezpieczeństwo i treść naraz.** `/?author=1` przekierowywało
+na `/author/<login>/` i tym samym zdradzało nazwę konta. Przy okazji: autorem
+bywa konto grupowe („Żabki"), a wpisy tej grupy są już pod adresem kategorii —
+archiwum autora było drugą listą tego samego pod innym adresem. Przekierowanie
+musi mieć priorytet **1**, przed `redirect_canonical` (10); przy domyślnym
+priorytecie rdzeń zdążyłby najpierw przekierować na `/author/<login>/` i login
+wyciekłby nagłówkiem `Location` — czyli dokładnie to, czemu zapobiegamy.
+
+**Ograniczenie prób logowania bez wtyczki.** Pięć nieudanych prób z jednego
+adresu blokuje logowanie na kwadrans. Kilkadziesiąt linijek na liczniku
+w `transient`, bez ekranu ustawień, własnej tabeli i cyklu aktualizacji przez
+najbliższe lata. Trzy rzeczy warte zapamiętania:
+
+1. **Licznik trzyma parę: liczbę prób i moment wygaśnięcia.** Sam licznik nie
+   wystarcza, bo `set_transient` na istniejącym kluczu odmierza czas od nowa —
+   przy ciągłym ostrzale kwadrans nigdy by nie minął, a blokada zostałaby
+   na zawsze.
+2. **Adres bierzemy wyłącznie z `REMOTE_ADDR`.** Nagłówka `X-Forwarded-For`
+   nadaje klient, więc bot ustawiałby sobie nowy przy każdej próbie i licznik
+   nigdy nie doszedłby do limitu. Cena: gdyby przed serwerem stanął kiedyś CDN
+   albo proxy, wszystkie próby zliczą się jako jeden adres i limit zablokuje
+   logowanie wszystkim naraz. Wtedy — i tylko wtedy — ten filtr wymaga poprawki.
+3. **Ogólny komunikat błędu podmienia tylko kody dotyczące danych logowania.**
+   Filtr `login_errors` zastąpiłby wszystko, łącznie z komunikatem o blokadzie:
+   pracownik zobaczyłby „nieprawidłowe hasło" i wpisywał kolejne, zamiast
+   dowiedzieć się, że ma odczekać kwadrans. Dlatego `wp_login_errors`
+   i podmiana po kodzie błędu.
+
+To nie jest zapora. Atak rozproszony po tysiącu adresów przejdzie przez to bez
+przeszkód. To odpowiedź na to, co dzieje się naprawdę: jeden skrypt waląc
+słownikiem w `wp-login.php` całą dobę.
+
+**Awatary wyłączone.** Na froncie nie pokazujemy żadnego (Etap 7), ale panel
+owszem — na liście wpisów i w profilu. Każde wejście wysyłało zahaszowane adresy
+e-mail pracowników do Gravatara. Strona z założenia nie odpytuje nikogo
+na zewnątrz, a tu chodzi dodatkowo o dane pracowników.
+
+**Czego świadomie nie robimy.** Zapory aplikacyjnej (WAF) i skanera plików —
+to wtyczki, które przy pięciu kontach i braku danych osobowych na stronie
+kosztują więcej, niż dają. Ukrywania adresu panelu — bot i tak trafi
+w `wp-login.php`, a pracownik zgubi adres logowania. Usuwania numerów wersji
+z adresów plików — to zabezpieczenie przez zaciemnienie, które przy okazji psuje
+odświeżanie cache po aktualizacji.
+
+**2FA — do decyzji klienta.** WordPress nie ma tego w rdzeniu, więc oznacza
+wtyczkę. Sensowna dla konta administratora, uciążliwa dla nauczycielki, która
+wchodzi raz w miesiącu dodać wpis. Propozycja: 2FA tylko dla administratora,
+reszta na mocnych hasłach. Do rozstrzygnięcia przy szkoleniu (Etap 12).
+
+### 8.4 RODO i dostępność prawna
+
+- [x] Polityka prywatności — strona istnieje, wskazana w Ustawieniach → Prywatność
+- [x] Brak ciasteczek dla niezalogowanego odwiedzającego — zweryfikowane
+- [ ] **Deklaracja dostępności do napisania od nowa** — patrz niżej
+- [ ] Przegląd polityki prywatności pod kątem nowej strony → **Etap 9**
+
+**Baner ciasteczek nie jest potrzebny.** Odpowiedź serwera dla niezalogowanego
+odwiedzającego nie zawiera ani jednego `Set-Cookie`, a strona nie ładuje niczego
+z cudzych serwerów: brak analityki, brak osadzonych map (Etap 7), brak wtyczek
+społecznościowych, font lokalnie. Zgody wymagają ciasteczka inne niż niezbędne —
+tych po prostu nie ma. To wynik decyzji z poprzednich etapów, nie osobna praca.
+**Warunek:** gdy kiedykolwiek dojdzie Google Analytics, osadzony film albo mapa,
+baner staje się obowiązkowy.
+
+**Deklaracja dostępności jest nieaktualna i musi zostać napisana od nowa.**
+Strona `/deklaracja-dostepnosci/` przyszła z migracji i opisuje **starą** stronę:
+oświadczenie sporządzone 23 września 2020 r., data publikacji 1 października
+2016 r., a wśród niezgodności „brak opisów zdjęć, tekstu alternatywnego"
+i „brak możliwości zmiany rozmiaru tekstu" — czyli rzeczy, których nowa strona
+nie ma. Ustawa z 4 kwietnia 2019 r. o dostępności cyfrowej wymaga od podmiotu
+publicznego deklaracji zgodnej ze stanem faktycznym, przeglądanej co roku.
+Do zmiany:
+
+- data publikacji nowej strony i data sporządzenia deklaracji
+- status zgodności wynikający z nowej samooceny (WCAG 2.1 AA)
+- lista niezgodności — obecna dotyczy strony, która przestanie istnieć
+- osoba kontaktowa: dziś wskazany jest prywatny adres `@poczta.fm`,
+  powinien być adres służbowy placówki
+- dostępność architektoniczna — przenieść bez zmian, dotyczy budynku
+
+Treść pisze przedszkole; deklaracja jest oświadczeniem podmiotu publicznego,
+a nie elementem motywu. Z naszej strony: samoocena techniczna (Etap 11).
+
+### Do wklejenia przy wdrożeniu (Etap 9)
+
+Kompresja i nagłówki cache — do głównego `.htaccess`, **poza** blokiem
+`# BEGIN WordPress` (rdzeń nadpisuje tamten blok przy zmianie ustawień
+permalinków):
+
+```apache
+# Kompresja tekstu.
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+		application/javascript application/json image/svg+xml
+</IfModule>
+
+# Cache przegladarki. Zasoby z numerem wersji w adresie moga lezec dlugo,
+# HTML nie lezy wcale.
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType text/css            "access plus 1 year"
+	ExpiresByType application/javascript "access plus 1 year"
+	ExpiresByType image/webp          "access plus 1 year"
+	ExpiresByType image/png           "access plus 1 year"
+	ExpiresByType image/jpeg          "access plus 1 year"
+	ExpiresByType font/woff2          "access plus 1 year"
+	ExpiresByType text/html           "access plus 0 seconds"
+</IfModule>
+```
+
+Blokada wykonywania PHP w katalogu uploadów — plik
+`wp-content/uploads/.htaccess`. Gdyby komukolwiek udało się wgrać tam plik
+z kodem, serwer odda go jako tekst zamiast uruchomić:
+
+```apache
+<FilesMatch "\.(?i:php|phtml|phar)$">
+	Require all denied
+</FilesMatch>
+```
+
+Ochrona plików, które nie są treścią — do głównego `.htaccess`:
+
+```apache
+<FilesMatch "^(wp-config\.php|\.htaccess|readme\.html|license\.txt|xmlrpc\.php)$">
+	Require all denied
+</FilesMatch>
+```
+
+**Kryteria odbioru:** ✅ (część serwerowa przechodzi do Etapu 9)
+— wszystkie widoki mają opis meta, Open Graph i jedno `<h1>` bez przeskoków
+poziomów; mapa witryny bez sekcji autorów; `/?author=1` nie zdradza loginu;
+`/wp-json/wp/v2/users` anonimowo zwraca 404, a po zalogowaniu 200;
+`/wp-admin/theme-editor.php` zwraca 403; szósta nieudana próba logowania jest
+odcinana z komunikatem o kwadransie, a poprawne hasło zeruje licznik; przejście
+po wszystkich widokach nie zostawia nic w `debug.log`; odpowiedź dla
+niezalogowanego nie zawiera `Set-Cookie` ani adresu spoza domeny.
 
 ---
 
@@ -961,6 +1214,10 @@ wyniki wyszukiwania.
 - [ ] **Motyw jako zwykły katalog, nie symlink** — symlink działa tylko lokalnie
 - [ ] `wp-config.php` produkcyjny: dane bazy, nowe klucze (salts), prefiks tabel, `DISALLOW_FILE_EDIT`, `WP_DEBUG` = false
 - [ ] `.htaccess` z regułami permalinków
+- [ ] `.htaccess`: kompresja, nagłówki cache, ochrona plików — fragmenty w Etapie 8
+- [ ] `wp-content/uploads/.htaccess` — blokada wykonywania PHP, fragment w Etapie 8
+- [ ] Uprawnienia plików: 644 pliki / 755 katalogi
+- [ ] `DISABLE_WP_CRON` + cron systemowy co 15 minut (WP-Cron chodzi przy wejściach)
 
 ### 9.4 Usunięcie treści testowej
 
@@ -991,6 +1248,10 @@ ddev exec wp --path=wp post list --post_type=post --fields=ID,post_title
 - [ ] Sprawdzenie, czy zdjęcia się ładują (ścieżki!)
 - [ ] Test formularza kontaktowego na produkcji
 - [ ] `robots.txt` + indeksowanie włączone (WP potrafi blokować — sprawdzić Ustawienia → Czytanie)
+- [ ] Google Search Console: potwierdzenie własności + zgłoszenie `wp-sitemap.xml`
+- [ ] Deklaracja dostępności napisana od nowa (Etap 8.4 — lista zmian)
+- [ ] Przegląd polityki prywatności pod kątem nowej strony
+- [ ] Pomiar PageSpeed / Lighthouse na produkcji — cel: zielone Core Web Vitals
 - [ ] Przekierowania ze starych adresów, jeśli stara strona była indeksowana w Google
 
 **Kryteria odbioru:** strona działa pod docelową domeną po HTTPS, identycznie jak lokalnie,
@@ -1103,6 +1364,18 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-14 | `overflow: clip` zamiast `hidden` w „Na skróty" i „Skrzydłach" | `hidden` tworzy kontener przewijania, względem którego `view()` uznaje zawartość za widoczną od początku |
 | 2026-09-14 | Deseń „Na skróty" w pseudoelemencie zamiast `background-attachment: fixed` | Safari na iOS traktuje `fixed` jak `scroll`, więc na telefonie efektu nie było w ogóle |
 | 2026-09-11 | Próg zmniejszania zdjęć 2048 px, limit uploadu 5 MB | treść ma 1140 px; limit odcina filmy i surowe pliki z aparatu, mieści skan dokumentu i zdjęcie z telefonu |
+| 2026-09-14 | SEO bez wtyczki — trzy znaczniki w `inc/seo.php` | rdzeń daje `title`, canonical, mapę witryny i `robots.txt`; wtyczka to ekran ustawień i pola do wypełniania, z których nikt nie skorzysta |
+| 2026-09-14 | Typ `["Preschool", "LocalBusiness"]` w danych strukturalnych | godziny otwarcia i współrzędne są w `LocalBusiness`, nazwa rzeczy — w `Preschool`; JSON-LD dopuszcza oba naraz |
+| 2026-09-14 | Opis meta liczony z treści, nie przez `wp_trim_excerpt()` | rdzeń skleja nagłówek z akapitem bez znaku między nimi |
+| 2026-09-14 | Poziom nagłówka kafelka zależy od kontekstu (H2 na liście, H3 na stronie głównej) | stały H3 dawał przeskok H1→H3 na trzech widokach — błąd struktury dokumentu |
+| 2026-09-14 | Mapa witryny bez sekcji autorów, archiwa autorów przekierowane | wysyłały do Google nazwy kont i duplikowały listy kategorii |
+| 2026-09-14 | `DISALLOW_FILE_EDIT` w motywie, nie w `wp-config.php` | `wp-config.php` jest poza repo i powstaje na serwerze od nowa — to stała, którą najłatwiej zgubić |
+| 2026-09-14 | Ograniczenie prób logowania własnym kodem, nie wtyczką | kilkadziesiąt linijek bez ekranu ustawień, tabeli w bazie i cyklu aktualizacji; wtyczka wejdzie w to miejsce, gdyby okazało się za słabo |
+| 2026-09-14 | Adres IP wyłącznie z `REMOTE_ADDR`, bez `X-Forwarded-For` | nagłówek nadaje klient, więc bot omijałby licznik; za CDN-em trzeba będzie ten filtr poprawić |
+| 2026-09-14 | Awatary wyłączone | panel wysyłał zahaszowane adresy e-mail pracowników do Gravatara |
+| 2026-09-14 | Bez wtyczki cache i bez minifikacji | 35 ms TTFB, jeden arkusz, zero zapytań zewnętrznych; kompresja serwera daje 72 kB → 23 kB, a projekt nie ma kroku budowania |
+| 2026-09-14 | Bez banera ciasteczek | niezalogowany odwiedzający nie dostaje ani jednego `Set-Cookie`, strona nie ładuje niczego z cudzych serwerów; warunek przestaje obowiązywać przy pierwszej analityce lub osadzonej mapie |
+| 2026-09-14 | Logo przerobione na WebP przez ponowne wgranie | trafiło do biblioteki przed filtrem konwertującym; 34 kB → 17 kB na każdej podstronie |
 | 2026-09-11 | Git wersjonuje tylko motyw | rdzeń WP i wtyczki to cudzy kod; symlink lokalnie, zwykły katalog na serwerze |
 
 ---
@@ -1124,6 +1397,8 @@ bez treści testowej i bez konta `dev`.
 - [ ] Czy stara strona jest zaindeksowana w Google → przekierowania 301?
 - [ ] Czy potrzebna strefa tylko dla rodziców (logowanie)? (domyślnie: nie — komplikuje)
 - [ ] Kto po wdrożeniu odpowiada za aktualizacje?
+- [ ] Czy włączamy 2FA dla konta administratora? (Etap 8.3 — oznacza wtyczkę)
+- [ ] Kto pisze nową deklarację dostępności? (Etap 8.4 — obowiązek ustawowy)
 
 ---
 

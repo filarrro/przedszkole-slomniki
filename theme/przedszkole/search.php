@@ -27,7 +27,7 @@ get_header();
 			<?php
 			while ( have_posts() ) :
 				the_post();
-				get_template_part( 'template-parts/card' );
+				get_template_part( 'template-parts/card', null, array( 'poziom' => 2 ) );
 			endwhile;
 			?>
 		</div>

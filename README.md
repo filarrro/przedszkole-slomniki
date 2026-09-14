@@ -59,7 +59,7 @@ albo dane — nie należą do repozytorium.
 | 5. Gutenberg | ✅ wzorce, warianty stylów, style bloków |
 | 6. Użytkownicy | ✅ role natywne, konta grupowe, panel odchudzony |
 | 7. Frontend | ✅ widoki, skróty, podstrony, mapa, obrazy |
-| 8. SEO / wydajność / bezpieczeństwo | ⬜ |
+| 8. SEO / wydajność / bezpieczeństwo | 🔄 motyw gotowy, ustawienia serwera przy wdrożeniu |
 | 9. Wdrożenie | ⬜ |
 | 10–12 | ⬜ |
 

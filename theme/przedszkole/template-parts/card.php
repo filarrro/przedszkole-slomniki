@@ -11,6 +11,15 @@ defined( 'ABSPATH' ) || exit;
    pionowy, uzywany na stronie glownej i w wynikach wyszukiwania. */
 $uklad = isset( $args['uklad'] ) ? $args['uklad'] : '';
 $klasy = 'pozioma' === $uklad ? array( 'card', 'card--pozioma' ) : array( 'card' );
+
+/* Poziom naglowka kafelka zalezy od tego, co stoi nad nim na stronie.
+   Na liscie aktualnosci kafelki ida wprost pod H1, wiec tytul jest H2.
+   Na stronie glownej poprzedza je naglowek sekcji "Aktualnosci" (H2),
+   wiec tytul schodzi na H3. Przeskok z H1 na H3 to blad struktury
+   dokumentu - czytnik ekranu zglasza brakujacy poziom. Wyglad sie nie
+   zmienia, bo style siedza na klasie `card__title`, nie na znaczniku. */
+$poziom = isset( $args['poziom'] ) ? (int) $args['poziom'] : 3;
+$poziom = min( 6, max( 2, $poziom ) );
 ?>
 <article <?php post_class( $klasy ); ?>>
 
@@ -32,9 +41,9 @@ $klasy = 'pozioma' === $uklad ? array( 'card', 'card--pozioma' ) : array( 'card'
 			<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
 		</div>
 
-		<h3 class="card__title">
+		<h<?php echo (int) $poziom; ?> class="card__title">
 			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-		</h3>
+		</h<?php echo (int) $poziom; ?>>
 
 		<?php if ( has_excerpt() || get_the_excerpt() ) : ?>
 			<p class="card__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></p>

@@ -7,10 +7,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.14.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.15.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
+require_once get_theme_file_path( 'inc/seo.php' );
+require_once get_theme_file_path( 'inc/bezpieczenstwo.php' );
 
 /**
  * Deklaracja możliwości motywu.
@@ -210,6 +212,12 @@ function przedszkole_cleanup() {
 	remove_action( 'wp_head', 'wlwmanifest_link' );          // Windows Live Writer.
 	remove_action( 'wp_head', 'rsd_link' );                  // Really Simple Discovery.
 	remove_action( 'wp_head', 'wp_shortlink_wp_head' );
+
+	/*
+	 * oEmbed: dwa odnośniki na każdej podstronie, po których inny WordPress
+	 * potrafiłby osadzić naszą treść u siebie. Nikt tego nie robi i nie będzie.
+	 */
+	remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
 }
 add_action( 'init', 'przedszkole_cleanup' );
 
@@ -431,3 +439,59 @@ function przedszkole_bez_przedrostka() {
 	return '';
 }
 add_filter( 'get_the_archive_title_prefix', 'przedszkole_bez_przedrostka' );
+
+/**
+ * Limit wersji roboczych wpisu.
+ *
+ * WordPress zapisuje pełną kopię treści przy każdym zapisie — także przy
+ * autozapisie co minutę. Strona, którą personel redaguje przez kilka lat,
+ * potrafi w ten sposób urosnąć o kilkadziesiąt tysięcy wierszy w `wp_posts`,
+ * z których nikt nigdy nie skorzysta. Pięć ostatnich wersji wystarcza,
+ * żeby cofnąć nieudaną zmianę, i tyle właśnie zostaje.
+ *
+ * Przez filtr, nie przez stałą w `wp-config.php`: plik konfiguracyjny jest poza
+ * repozytorium i powstaje na serwerze od nowa (patrz `inc/bezpieczenstwo.php`).
+ *
+ * @param int $ile Domyślna liczba wersji (`true` oznacza „bez limitu”).
+ * @return int
+ */
+function przedszkole_limit_wersji( $ile ) {
+	return 5;
+}
+add_filter( 'wp_revisions_to_keep', 'przedszkole_limit_wersji' );
+
+/**
+ * Logo bez znacznika najwyższego priorytetu pobierania.
+ *
+ * WordPress wskazuje przeglądarce jeden obrazek jako najważniejszy do pobrania
+ * (`fetchpriority="high"`) — i trafia nim w logo, bo jest pierwsze w kodzie.
+ * Logo waży kilkanaście kilobajtów i nigdy nie jest największym elementem
+ * widocznym po wejściu: na stronie głównej jest nim ilustracja w powitaniu,
+ * na wpisie — zdjęcie wyróżniające.
+ *
+ * Samo wycięcie atrybutu z gotowego znacznika nie wystarcza. Rdzeń trzyma
+ * osobną flagę „priorytet już przyznany” i zdejmuje ją przy pierwszym trafieniu,
+ * więc kolejne obrazki nie dostałyby go tak czy owak — usunęlibyśmy wskazanie
+ * z logo i nie dali go nikomu. Dlatego flagę oddajemy z powrotem
+ * (`wp_high_priority_element_flag( true )`), a znacznik zabieramy tylko logo.
+ *
+ * @param array  $atrybuty Atrybuty wyliczone przez rdzeń (`loading`, `fetchpriority`, `decoding`).
+ * @param string $znacznik Nazwa znacznika HTML.
+ * @param array  $obrazek  Atrybuty obrazka.
+ * @return array
+ */
+function przedszkole_logo_bez_priorytetu( $atrybuty, $znacznik, $obrazek ) {
+	if ( empty( $atrybuty['fetchpriority'] ) || 'img' !== $znacznik ) {
+		return $atrybuty;
+	}
+
+	if ( empty( $obrazek['class'] ) || ! str_contains( $obrazek['class'], 'custom-logo' ) ) {
+		return $atrybuty;
+	}
+
+	unset( $atrybuty['fetchpriority'] );
+	wp_high_priority_element_flag( true );
+
+	return $atrybuty;
+}
+add_filter( 'wp_get_loading_optimization_attributes', 'przedszkole_logo_bez_priorytetu', 10, 3 );
