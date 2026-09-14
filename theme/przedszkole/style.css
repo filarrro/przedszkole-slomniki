@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.15.1
+Version: 0.16.2
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -679,6 +679,94 @@ a.pill:hover { filter: brightness(.93); }
 	border-radius: var(--radius-lg);
 }
 .notice h1 { margin-top: 0; }
+
+/* Strona 404 - ilustracja na dwoch plamach w granacie stopki.
+   Mniejsza wychodzi zza lewego gornego rogu, wieksza zza prawego dolnego
+   i siega pod ilustracja do jej srodka. Figura ma szerokosc ilustracji,
+   wiec plamy pozycjonuja sie wzgledem samego obrazka, nie wzgledem kolumny.
+   Kontrast na tle strony (#FDFAF5): naglowek i przycisk (granat) 8,9,
+   tekst pomocniczy 6,4 - ponad wymagane 4.5 (WCAG AA). */
+.blad {
+	text-align: center;
+	padding-block: clamp(1rem, 4vw, 3rem);
+}
+
+.blad__tytul {
+	margin-top: 0;
+	font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+/* Marginesy robia miejsce na plamy wystajace poza obrazek - bez nich
+   dolna wchodzilaby pod tekst. */
+.blad__art {
+	position: relative;
+	width: min(86%, 620px);
+	margin: clamp(1.5rem, 4vw, 2.5rem) auto clamp(3rem, 8vw, 5rem);
+}
+.blad__art::before,
+.blad__art::after {
+	content: "";
+	position: absolute;
+	background: var(--wp--preset--color--primary);
+}
+/* Mniejsza plama: lewy gorny rog. */
+.blad__art::before {
+	width: 34%;
+	aspect-ratio: 1.1;
+	top: -11%;
+	left: -9%;
+	border-radius: 72% 28% 58% 42% / 38% 66% 34% 62%;
+}
+/* Wieksza plama: prawy dolny rog, siega pod obrazek do jego srodka. */
+.blad__art::after {
+	width: 66%;
+	aspect-ratio: 1.25;
+	right: -10%;
+	bottom: -16%;
+	border-radius: 38% 62% 30% 70% / 62% 34% 66% 38%;
+}
+/* `position` + `z-index` konieczne: bez jawnej kolejnosci plamy (pozycjonowane)
+   zakrylyby ilustracje, mimo ze stoja przed nia w kodzie. */
+.blad__art img {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 16% 20% 18% 22% / 30% 26% 32% 28%;
+	box-shadow: 0 18px 50px rgba(43, 39, 51, .10);
+}
+
+.blad__tresc {
+	max-width: 46rem;
+	margin-inline: auto;
+}
+.blad__wiodacy {
+	font-size: var(--wp--preset--font-size--large);
+	font-weight: 700;
+	color: var(--wp--preset--color--ink);
+}
+.blad__tresc p { color: var(--wp--preset--color--ink-soft); }
+
+.blad__powrot { margin-top: 1.75rem; }
+
+/* Obrys zamiast wypelnienia - strona bledu nie powinna krzyczec przyciskiem,
+   a granat na obrysie czyta sie tak samo dobrze jak wypelnienie. */
+.blad__przycisk {
+	display: inline-block;
+	padding: .7rem 1.6rem;
+	font-weight: 700;
+	text-decoration: none;
+	color: var(--wp--preset--color--primary);
+	border: 2px solid var(--wp--preset--color--primary);
+	border-radius: 999px;
+	background: var(--wp--preset--color--surface);
+}
+.blad__przycisk:hover,
+.blad__przycisk:focus-visible {
+	color: #fff;
+	background: var(--wp--preset--color--primary);
+}
 
 /* Formularz wyszukiwania */
 .search-form { display: flex; gap: .5rem; justify-content: center; margin-top: 1.5rem; }
