@@ -92,7 +92,7 @@ if ( $przedszkole_sa_wpisy ) {
 </section>
 
 <?php if ( $przedszkole_sa_wpisy ) : ?>
-	<section class="section--miekka section--chmury">
+	<section class="section--miekka">
 		<div class="wrap">
 			<div class="section__head">
 				<h2><?php esc_html_e( 'Aktualności', 'przedszkole' ); ?></h2>
