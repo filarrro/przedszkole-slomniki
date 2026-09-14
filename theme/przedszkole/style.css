@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.19.1
+Version: 0.19.2
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -83,7 +83,17 @@ body {
 img { max-width: 100%; height: auto; }
 
 a { color: var(--wp--preset--color--primary); }
-a:hover { color: #2E2390; }
+
+/* Przyciemnienie po najechaniu dotyczy tylko zwyklych odnosnikow w tresci.
+   `:where()` zbija wage selektora do samego `a`, wiec kazdy komponent, ktory
+   ustawia wlasny kolor klasa - przycisk, pastylka grupy, kafelek skrotu, menu,
+   stopka - po najechaniu ten kolor zachowuje.
+
+   Bez `:where()` selektor `a:hover` (0,0,1,1) wygrywal z reguła z theme.json,
+   ktora WordPress wypisuje jako `:root :where(.wp-element-button:hover, ...)`
+   (0,0,1,0). Przycisk dostawal wtedy granatowy tekst na granatowym tle -
+   kontrast 1.0, napis znikal. */
+a:where(:hover) { color: #2E2390; }
 
 /* Widoczny focus - wymog dostepnosci. Nie usuwac.
    Granat na jasnym tle daje kontrast 9.2, miod tylko 2.3 - za malo
