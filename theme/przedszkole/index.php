@@ -32,11 +32,11 @@ get_header();
 
 	<?php if ( have_posts() ) : ?>
 
-		<div class="cards">
+		<div class="cards cards--lista">
 			<?php
 			while ( have_posts() ) :
 				the_post();
-				get_template_part( 'template-parts/card' );
+				get_template_part( 'template-parts/card', null, array( 'uklad' => 'pozioma' ) );
 			endwhile;
 			?>
 		</div>

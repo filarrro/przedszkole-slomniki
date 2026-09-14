@@ -6,8 +6,13 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+
+/* Uklad `pozioma` - lista aktualnosci: zdjecie obok tresci. Domyslnie kafelek
+   pionowy, uzywany na stronie glownej i w wynikach wyszukiwania. */
+$uklad = isset( $args['uklad'] ) ? $args['uklad'] : '';
+$klasy = 'pozioma' === $uklad ? array( 'card', 'card--pozioma' ) : array( 'card' );
 ?>
-<article <?php post_class( 'card' ); ?>>
+<article <?php post_class( $klasy ); ?>>
 
 	<?php if ( has_post_thumbnail() ) : ?>
 		<span class="card__media">

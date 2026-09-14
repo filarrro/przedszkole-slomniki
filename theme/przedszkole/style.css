@@ -459,6 +459,61 @@ a:hover { color: #2E2390; }
 
 .card__excerpt { margin: 0; font-size: .9375rem; color: var(--wp--preset--color--ink-soft); }
 
+/* ---- Uklad poziomy: lista aktualnosci --------------------------------- --
+
+   Lista idzie w jednej kolumnie, zdjecie stoi obok tresci. Panel z tekstem
+   jest nizszy od zdjecia i wsuwa sie pod nie, wiec kadr zachodzi na niego
+   gora i dolem - to daje glebie bez dodatkowego obrazka.
+   Ponizej 720px kafelek wraca do ukladu pionowego, bo zdjecie obok tekstu
+   zrobiloby sie waskim paskiem. */
+
+.cards--lista { grid-template-columns: 1fr; gap: 2rem; }
+
+@media (min-width: 720px) {
+
+	.cards--lista { gap: 2.75rem; }
+
+	.card--pozioma {
+		flex-direction: row;
+		align-items: stretch;
+		background: none;
+		border: 0;
+		border-radius: 0;
+		overflow: visible;
+	}
+	/* Cien nalezy do samego zdjecia - na przezroczystej karcie rysowalby sie
+	   wokol niczego. */
+	.card--pozioma:hover, .card--pozioma:focus-within { box-shadow: none; }
+
+	/* Fala zamyka kafelek pionowy. W poziomym przecinalaby panel w poprzek,
+	   a kolor grupy niesie i tak pasek nad trescia.
+	   Podwojona klasa celowo: `.card::after` ma te sama specyficznosc i stoi
+	   dalej w pliku, wiec bez niej wygralaby kolejnoscia. */
+	.card.card--pozioma::after { content: none; }
+
+	.card--pozioma .card__media {
+		flex: 0 0 34%;
+		aspect-ratio: 4 / 3;
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-lift);
+		z-index: 2;
+	}
+
+	.card--pozioma .card__body {
+		margin: 1.75rem 0 1.75rem -2.5rem;
+		padding: 1.6rem 2rem;
+		padding-left: 4.25rem;
+		border-radius: var(--radius-lg);
+		background: var(--karta-panel);
+		justify-content: center;
+		/* Pasek koloru grupy idzie przez cala szerokosc panelu, wiec bez
+		   przyciecia wychodzilby poza jego zaokraglone rogi. */
+		overflow: hidden;
+	}
+
+	.card--pozioma .card__title { font-size: 1.375rem; }
+}
+
 /* Etykieta grupy — kolor z palety grup. */
 .pill {
 	display: inline-block;
@@ -768,6 +823,11 @@ a.pill:hover { filter: brightness(.93); }
 }
 /* Tlo zastepnika zdjecia - kolor zgodny z tlem pliku `brak-zdjecia.webp`. */
 .card { --karta-brak-tlo: #E0D8CD; }
+
+/* Tlo panelu z trescia w ukladzie poziomym. Cieplejsze od czystej szarosci,
+   zeby trzymalo sie kremowego tla strony. Kontrast tekstu pomocniczego
+   (#5F5869) na tym tle: 6.1 - powyzej wymaganych 4.5. */
+.card { --karta-panel: #F6F2EC; }
 
 .card {
 	--karta-fala: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><g fill="black"><path d="M0 0v99.7C62 69 122.4 48.7 205 66c83.8 17.6 160.5 20.4 240-12 54-22 110-26 173-10a392.2 392.2 0 0 0 222-5c55-17 110.3-36.9 160-27.2V0H0Z" opacity=".5"></path><path d="M0 0v74.7C62 44 122.4 28.7 205 46c83.8 17.6 160.5 25.4 240-7 54-22 110-21 173-5 76.5 19.4 146.5 23.3 222 0 55-17 110.3-31.9 160-22.2V0H0Z"></path></g></svg>');
