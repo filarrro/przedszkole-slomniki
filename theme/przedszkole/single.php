@@ -64,7 +64,19 @@ $przedszkole_strona_wpisow = get_option( 'page_for_posts' );
 				<figure class="entry__thumb"><?php the_post_thumbnail( 'large' ); ?></figure>
 			<?php endif; ?>
 
-			<div class="entry__content"><?php the_content(); ?></div>
+			<div class="entry__content">
+				<?php
+				the_content();
+
+				// Wpis podzielony znacznikiem „następna strona” — bez tego nie da się przejść dalej.
+				wp_link_pages(
+					array(
+						'before' => '<nav class="pagination"><div class="nav-links">',
+						'after'  => '</div></nav>',
+					)
+				);
+				?>
+			</div>
 
 		</article>
 

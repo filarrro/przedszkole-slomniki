@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.23.1' );
+define( 'PRZEDSZKOLE_VERSION', '0.24.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
@@ -22,7 +22,7 @@ function przedszkole_setup() {
 
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
-	add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script' ) );
+	add_theme_support( 'html5', array( 'search-form', 'gallery', 'caption', 'style', 'script' ) );
 	add_theme_support( 'responsive-embeds' );
 	add_theme_support( 'editor-styles' );
 	add_theme_support( 'wp-block-styles' );
@@ -48,6 +48,12 @@ function przedszkole_setup() {
 
 	// Rozmiar miniatury dla kafelków aktualności. 3:2, przycinany.
 	add_image_size( 'przedszkole-karta', 640, 427, true );
+
+	// Komentarze wyłączone — panel redakcyjny nie pokazuje pól, których nikt nie używa.
+	remove_post_type_support( 'post', 'comments' );
+	remove_post_type_support( 'post', 'trackbacks' );
+	remove_post_type_support( 'page', 'comments' );
+	remove_post_type_support( 'page', 'trackbacks' );
 }
 add_action( 'after_setup_theme', 'przedszkole_setup' );
 
@@ -242,6 +248,22 @@ add_action( 'init', 'przedszkole_cleanup' );
  * a jest to częsty cel ataków siłowych na hasła.
  */
 add_filter( 'xmlrpc_enabled', '__return_false' );
+
+/**
+ * Komentarze zamknięte po stronie kodu.
+ *
+ * Przedszkole nie prowadzi dyskusji pod wpisami: nie ma kto ich moderować,
+ * a otwarty formularz ściąga spam. W ustawieniach są zamknięte, ale wystarczy
+ * jedno kliknięcie w „Dyskusja”, żeby je otworzyć dla nowych wpisów — a motyw
+ * nie ma `comments.php`, więc front pokazałby wtedy pustkę zamiast formularza.
+ * Filtry przecinają rozjazd: rdzeń widzi komentarze jako zamknięte niezależnie
+ * od tego, co stoi we wpisie.
+ *
+ * Priorytet 20, żeby wejść po ewentualnej wtyczce, nie przed nią.
+ */
+add_filter( 'comments_open', '__return_false', 20 );
+add_filter( 'pings_open', '__return_false', 20 );
+add_filter( 'comments_array', '__return_empty_array', 20 );
 
 /**
  * Skrócenie długości zajawki na listach.

@@ -384,8 +384,10 @@ theme/przedszkole/
 ├── header.php  footer.php
 ├── front-page.php         strona główna: treść z Gutenberga + auto aktualności
 ├── page.php  single.php
-├── archive.php  home.php  index.php
+├── index.php              listy wpisów: aktualności, kategorie, archiwa
 ├── search.php  404.php
+├── screenshot.png         podgląd motywu w panelu (1200×900)
+├── languages/             szablon tłumaczeń (`przedszkole.pot`)
 ├── template-parts/
 │   ├── card.php              kafelek aktualności
 │   ├── chmurki.php           falista krawędź z chmurkami (SVG)
@@ -419,6 +421,17 @@ theme/przedszkole/
 - [x] Nunito hostowane lokalnie, dzielone na zestawy znaków, z preload
 - [x] Pastelowa paleta grup z weryfikacją kontrastu WCAG AA
 - [x] Fala z chmurkami przed stopką na wszystkich podstronach
+- [x] `screenshot.png` — zrzut strony głównej, podgląd motywu w Wyglądzie
+- [x] `languages/przedszkole.pot` — szablon tłumaczeń (110 ciągów).
+      Teksty motywu są po polsku, więc plik istnieje dla porządku:
+      `load_theme_textdomain()` wskazywało na nieistniejący katalog
+- [x] Komentarze zamknięte filtrami w kodzie, nie tylko w ustawieniach —
+      motyw nie ma `comments.php`, więc włączenie dyskusji w panelu dałoby
+      front bez formularza. Pola komentarzy zdjęte też z ekranu edycji
+- [x] Formularz hasła (`.post-password-form`) ostylowany jak wyszukiwarka —
+      strona z widocznością „Chroniona hasłem" nie wygląda już surowo
+- [x] `wp_link_pages()` w `single.php` — wpis podzielony znacznikiem
+      „następna strona" ma nawigację, tak jak strony w `page.php`
 
 ### Do dokończenia
 - [x] Wypełnienie widgetów stopki — adres, telefon, e-mail i godziny otwarcia

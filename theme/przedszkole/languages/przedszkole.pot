@@ -1,0 +1,511 @@
+# Copyright (C) 2026 —
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Przedszkole 0.23.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/theme/przedszkole\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-15T11:40:29+02:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: przedszkole\n"
+
+#. Theme Name of the theme
+#: style.css
+#: functions.php:124
+msgid "Przedszkole"
+msgstr ""
+
+#. Theme URI of the theme
+#: style.css
+msgid "https://przedszkoleslomniki.pl/"
+msgstr ""
+
+#. Description of the theme
+#: style.css
+msgid "Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności."
+msgstr ""
+
+#. Author of the theme
+#: style.css
+msgid "—"
+msgstr ""
+
+#: 404.php:19
+msgid "Ups! Coś poszło nie tak…"
+msgstr ""
+
+#: 404.php:26
+msgid "Rudy kotek turla się ze śmiechu na podłodze, a myszka obok zaśmiewa się w głos"
+msgstr ""
+
+#: 404.php:30
+msgid "Szukanej strony tutaj niestety nie ma."
+msgstr ""
+
+#: 404.php:31
+msgid "Mogła zostać przeniesiona, zmienić adres albo już jej nie publikujemy. Zdarza się też, że w adresie zabrakło jednej literki. Wróć na stronę główną i poszukaj stamtąd — albo zadzwoń do nas, jeśli czegoś nie możesz znaleźć."
+msgstr ""
+
+#: 404.php:35
+msgid "Wróć na stronę główną"
+msgstr ""
+
+#: footer.php:34
+#: functions.php:44
+msgid "Menu w stopce"
+msgstr ""
+
+#: footer.php:35
+#: template-parts/skroty.php:41
+msgid "Na skróty"
+msgstr ""
+
+#: footer.php:50
+msgid "Godziny otwarcia"
+msgstr ""
+
+#: front-page.php:79
+msgid "Dzieci w kręgu, każde z pluszakiem: misiem, zajączkiem, żabką, kotkiem, jeżykiem i wiewiórką"
+msgstr ""
+
+#: front-page.php:101
+msgid "Aktualności"
+msgstr ""
+
+#: front-page.php:109
+msgid "Zobacz wszystkie"
+msgstr ""
+
+#: functions.php:43
+#: header.php:55
+msgid "Menu główne"
+msgstr ""
+
+#: functions.php:45
+msgid "Na skróty (strona główna)"
+msgstr ""
+
+#: functions.php:140
+msgid "Link do albumu"
+msgstr ""
+
+#: functions.php:148
+msgid "Wyróżnienie"
+msgstr ""
+
+#: functions.php:156
+msgid "Kafelek osoby"
+msgstr ""
+
+#: functions.php:164
+msgid "Spis treści"
+msgstr ""
+
+#: functions.php:172
+msgid "Numer konta"
+msgstr ""
+
+#: functions.php:201
+msgid "Stopka — kontakt"
+msgstr ""
+
+#: functions.php:203
+msgid "Adres, telefon, e-mail."
+msgstr ""
+
+#: functions.php:212
+msgid "Stopka — godziny"
+msgstr ""
+
+#: functions.php:214
+msgid "Godziny otwarcia przedszkola."
+msgstr ""
+
+#: functions.php:447
+msgid "(album w serwisie Google Zdjęcia)"
+msgstr ""
+
+#: functions.php:457
+msgid "(otwiera się w nowej karcie)"
+msgstr ""
+
+#: header.php:20
+msgid "Przejdź do treści"
+msgstr ""
+
+#: header.php:52
+msgid "Menu"
+msgstr ""
+
+#: inc/bezpieczenstwo.php:125
+msgid "Nieprawidłowa nazwa użytkownika lub hasło."
+msgstr ""
+
+#: inc/bezpieczenstwo.php:236
+msgid "Za dużo nieudanych prób logowania. Spróbuj ponownie za kwadrans."
+msgstr ""
+
+#. translators: %1$s: nazwa kategorii, %2$s: nazwa witryny.
+#: inc/seo.php:57
+#, php-format
+msgid "Aktualności z kategorii %1$s — %2$s."
+msgstr ""
+
+#: inc/seo.php:99
+msgid "Dzieci w kręgu, każde z pluszakiem"
+msgstr ""
+
+#: index.php:65
+msgid "← Poprzednie"
+msgstr ""
+
+#: index.php:66
+msgid "Następne →"
+msgstr ""
+
+#: index.php:67
+msgid "Nawigacja po stronach"
+msgstr ""
+
+#: index.php:75
+msgid "Brak wpisów"
+msgstr ""
+
+#: index.php:76
+msgid "Nie ma tu jeszcze żadnych treści."
+msgstr ""
+
+#: patterns/dane-kontaktowe.php
+msgctxt "Pattern title"
+msgid "Dane kontaktowe"
+msgstr ""
+
+#: patterns/dane-kontaktowe.php
+msgctxt "Pattern description"
+msgid "Adres, telefon i godziny pracy sekretariatu w dwóch kolumnach."
+msgstr ""
+
+#: patterns/galeria-google.php
+msgctxt "Pattern title"
+msgid "Link do albumu w Google Photos"
+msgstr ""
+
+#: patterns/galeria-google.php
+msgctxt "Pattern description"
+msgid "Zajawka wydarzenia z odnośnikiem do albumu ze zdjęciami."
+msgstr ""
+
+#: patterns/kafelek-osoby-zdjecie.php
+msgctxt "Pattern title"
+msgid "Kafelek osoby — ze zdjęciem"
+msgstr ""
+
+#: patterns/kafelek-osoby-zdjecie.php
+msgctxt "Pattern description"
+msgid "Biogram pracownika z okrągłym zdjęciem. Zdjęcie wstawia się w lewej kolumnie; kadr obcina je do kółka."
+msgstr ""
+
+#: patterns/kafelek-osoby.php
+msgctxt "Pattern title"
+msgid "Kafelek osoby — inicjały"
+msgstr ""
+
+#: patterns/kafelek-osoby.php
+msgctxt "Pattern description"
+msgid "Biogram pracownika z inicjałami w kółku. Dla osób, których zdjęcia jeszcze nie mamy. Inicjały stoją w treści dwa razy — drugi raz jako powiększony znak wodny; zmieniając je, popraw oba."
+msgstr ""
+
+#: patterns/karta-grupy.php
+msgctxt "Pattern title"
+msgid "Wizytówka grupy"
+msgstr ""
+
+#: patterns/karta-grupy.php
+msgctxt "Pattern description"
+msgid "Nagłówek strony grupy — nazwa, wiek dzieci, wychowawczynie i pomoc."
+msgstr ""
+
+#: patterns/lista-dokumentow.php
+msgctxt "Pattern title"
+msgid "Lista dokumentów do pobrania"
+msgstr ""
+
+#: patterns/lista-dokumentow.php
+msgctxt "Pattern description"
+msgid "Nagłówek sekcji i pliki PDF wybierane z biblioteki mediów."
+msgstr ""
+
+#: patterns/mapa-dojazd.php
+msgctxt "Pattern title"
+msgid "Mapa dojazdu"
+msgstr ""
+
+#: patterns/mapa-dojazd.php
+msgctxt "Pattern description"
+msgid "Statyczny wycinek mapy ze znacznikiem przedszkola i odnośnik do nawigacji."
+msgstr ""
+
+#: patterns/numer-konta.php
+msgctxt "Pattern title"
+msgid "Numer konta"
+msgstr ""
+
+#: patterns/numer-konta.php
+msgctxt "Pattern description"
+msgid "Wyróżnione pole z numerem rachunku do wpłat."
+msgstr ""
+
+#: patterns/wyroznienie.php
+msgctxt "Pattern title"
+msgid "Wyróżniona informacja"
+msgstr ""
+
+#: patterns/wyroznienie.php
+msgctxt "Pattern description"
+msgid "Ramka na ogłoszenie, którego nie można przeoczyć."
+msgstr ""
+
+#. translators: %s: wyszukiwana fraza.
+#: search.php:19
+#, php-format
+msgid "Wyniki dla: %s"
+msgstr ""
+
+#: search.php:47
+msgid "Nic nie znaleziono"
+msgstr ""
+
+#: search.php:48
+msgid "Spróbuj wpisać inne słowo."
+msgstr ""
+
+#: single.php:18
+#: template-parts/sciezka.php:20
+msgid "Ścieżka"
+msgstr ""
+
+#. translators: %s: nazwa autora wpisu.
+#: single.php:54
+#, php-format
+msgid "napisali: %s"
+msgstr ""
+
+#: single.php:91
+msgid "Poprzedni wpis"
+msgstr ""
+
+#: single.php:92
+msgid "Następny wpis"
+msgstr ""
+
+#: single.php:93
+#: single.php:94
+msgid "Sąsiednie wpisy"
+msgstr ""
+
+#: template-parts/aktualnosci-grupy.php:48
+msgid "Aktualności grupy"
+msgstr ""
+
+#: template-parts/aktualnosci-grupy.php:50
+msgid "Zobacz więcej"
+msgstr ""
+
+#: template-parts/dlaczego-my.php:29
+msgid "Dogodne godziny otwarcia"
+msgstr ""
+
+#: template-parts/dlaczego-my.php:30
+msgid "Codzienna opieka od 6:30 do 17:00 przez cały rok szkolny."
+msgstr ""
+
+#: template-parts/dlaczego-my.php:37
+msgid "Nauka angielskiego"
+msgstr ""
+
+#: template-parts/dlaczego-my.php:38
+msgid "Zajęcia z języka angielskiego dwa razy w tygodniu, dostosowane do wieku dziecka."
+msgstr ""
+
+#: template-parts/dlaczego-my.php:45
+msgid "Blisko przyrody"
+msgstr ""
+
+#: template-parts/dlaczego-my.php:46
+msgid "Spokojne otoczenie wśród zieleni i własny ogród z placem zabaw."
+msgstr ""
+
+#: template-parts/dlaczego-my.php:53
+msgid "Zdrowe posiłki"
+msgstr ""
+
+#: template-parts/dlaczego-my.php:54
+msgid "Pełne wyżywienie przez cały dzień, z uwzględnieniem diet poszczególnych dzieci."
+msgstr ""
+
+#: template-parts/dlaczego-my.php:66
+msgid "Dlaczego my?"
+msgstr ""
+
+#: template-parts/dlaczego-my.php:69
+msgid "Dzieci uczą się u nas przez zabawę, w bezpiecznym miejscu i pod opieką osób, które znają je po imieniu. Oto, co wyróżnia nasze przedszkole."
+msgstr ""
+
+#: template-parts/filtr-kategorii.php:48
+msgid "Filtrowanie aktualności po kategorii"
+msgstr ""
+
+#: template-parts/filtr-kategorii.php:54
+msgid "Wszystkie"
+msgstr ""
+
+#: template-parts/podstrony.php:41
+msgid "W tym dziale"
+msgstr ""
+
+#: template-parts/skrzydla.php:42
+msgid "Uśmiechnięte dziecko w stroju ptaka z kartonowymi skrzydłami, na tle ściany z narysowanymi kredą chmurami i słońcem"
+msgstr ""
+
+#: template-parts/skrzydla.php:48
+msgid "Pomagamy dzieciom"
+msgstr ""
+
+#: template-parts/skrzydla.php:51
+msgid "rozwijać skrzydła"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "Bardzo mały"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "Mały"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "Średni"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "Duży"
+msgstr ""
+
+#: theme.json
+msgctxt "Space size name"
+msgid "Bardzo duży"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tło (ciepła biel)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Karta (biel)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tekst"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tekst pomocniczy"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Granat"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Granat jasny"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Akcent (miód)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Akcent jasny"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Obramowanie"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Wiewiórki (pomarańcz)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Żabki (zielony)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Zajączki (błękit)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Misie (różowy)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Kotki (żółty)"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Jeżyki (czerwony)"
+msgstr ""
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Tekst"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Mały"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Podstawowy"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Duży"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Nagłówek"
+msgstr ""
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Duży nagłówek"
+msgstr ""
