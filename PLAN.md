@@ -51,7 +51,10 @@ w [MIGRACJA.md](MIGRACJA.md).
 - ~~Jakie sekcje na stronie głównej poza aktualnościami~~ — **zamknięte**
   2026-09-15: treść strony głównej potwierdzona jako docelowa
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
-- Zakres zgód rodziców na publikację zdjęć dzieci
+- ~~Zakres zgód rodziców na publikację zdjęć dzieci~~ — **zamknięte
+  2026-09-15**: zgody zbiera i dokumentuje przedszkole ręcznie, poza stroną.
+  Strona nie przechowuje ani nie weryfikuje zgód — publikujemy tylko to, co
+  personel wgra, a odpowiedzialność za podkładkę leży po stronie placówki
 - ~~**Zdjęcia kadry.** Zostały dwa stockowe portrety ze znakiem wodnym~~ —
   **zamknięte 2026-09-15**: usunięte razem z plikami, kafelki Agaty Dudek
   i Marty Gądek wróciły do inicjałów. Wszystkie 14 osób ma teraz inicjały,
@@ -1090,7 +1093,7 @@ klasa błędów („dlaczego nie widzę zmian"). Decyzja po pomiarze na produkcj
 - [ ] Blokada wykonywania PHP w `wp-content/uploads` → **Etap 9**, fragment niżej
 - [ ] Uprawnienia plików 644/755 → **Etap 9**
 - [ ] Mocne hasła i plan aktualizacji → **Etap 12**
-- [ ] 2FA dla administratora → **decyzja klienta**, patrz niżej
+- [-] **2FA — odrzucone** decyzją klienta 2026-09-15, patrz niżej
 
 **Model zagrożenia.** Strona placówki publicznej bez sklepu, płatności i kont
 rodziców. Realne zagrożenie to boty, nie napastnik z celem. Boty robią masowo
@@ -1149,10 +1152,16 @@ w `wp-login.php`, a pracownik zgubi adres logowania. Usuwania numerów wersji
 z adresów plików — to zabezpieczenie przez zaciemnienie, które przy okazji psuje
 odświeżanie cache po aktualizacji.
 
-**2FA — do decyzji klienta.** WordPress nie ma tego w rdzeniu, więc oznacza
-wtyczkę. Sensowna dla konta administratora, uciążliwa dla nauczycielki, która
-wchodzi raz w miesiącu dodać wpis. Propozycja: 2FA tylko dla administratora,
-reszta na mocnych hasłach. Do rozstrzygnięcia przy szkoleniu (Etap 12).
+**2FA — odrzucone, decyzja klienta 2026-09-15.** WordPress nie ma tego
+w rdzeniu, więc oznacza wtyczkę: kolejny ekran ustawień, cykl aktualizacji
+na lata i kod logowania do odzyskania, gdy komuś padnie telefon. Przy pięciu
+kontach grupowych i braku danych osobowych na stronie koszt przewyższa zysk.
+Zostaje to, co już działa: mocne hasła (Etap 12) i blokada po pięciu nieudanych
+próbach z jednego adresu.
+
+**Warunek ponownego rozważenia:** gdyby strona kiedyś zaczęła trzymać dane
+osobowe (strefa dla rodziców, formularze z danymi dzieci), 2FA dla konta
+administratora wraca na stół.
 
 ### 8.4 RODO i dostępność prawna
 
@@ -1873,6 +1882,8 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-14 | Bez banera ciasteczek | niezalogowany odwiedzający nie dostaje ani jednego `Set-Cookie`, strona nie ładuje niczego z cudzych serwerów; warunek przestaje obowiązywać przy pierwszej analityce lub osadzonej mapie |
 | 2026-09-14 | Logo przerobione na WebP przez ponowne wgranie | trafiło do biblioteki przed filtrem konwertującym; 34 kB → 17 kB na każdej podstronie |
 | 2026-09-11 | Git wersjonuje tylko motyw | rdzeń WP i wtyczki to cudzy kod; symlink lokalnie, zwykły katalog na serwerze |
+| 2026-09-15 | Bez 2FA dla administratora | oznacza wtyczkę z ekranem ustawień i cyklem aktualizacji; przy pięciu kontach grupowych i braku danych osobowych na stronie zostają mocne hasła i blokada prób logowania |
+| 2026-09-15 | Zgody rodziców na zdjęcia dzieci zbierane ręcznie, poza stroną | dokumentacja zgód to proces placówki, nie funkcja strony; własny rejestr zgód oznaczałby przechowywanie danych osobowych dzieci w WordPressie |
 
 ---
 
@@ -1881,7 +1892,8 @@ bez treści testowej i bez konta `dev`.
 - [ ] Jaki dokładnie hosting i jakie parametry? (Etap 1)
 - [ ] Czy klient ma logo, kolory, materiały graficzne? (część może być na starej stronie — odzyskać przed usunięciem)
 - [ ] Do kogo należy konto Google z albumami zdjęć? Czy jest do niego dostęp?
-- [ ] Jaki jest zakres zgód rodziców na publikację zdjęć dzieci?
+- [x] Jaki jest zakres zgód rodziców na publikację zdjęć dzieci? → **zgody
+      zbierane i dokumentowane ręcznie przez przedszkole, poza stroną**
 - [ ] Czy są gotowe teksty, czy trzeba je napisać? (sprawdzić starą stronę)
 - [ ] Która z 2 baz danych należy do starej strony?
 - [x] Ile grup i jakie nazwy? → **6: Wiewiórki, Żabki, Zajączki, Misie, Kotki, Jeżyki**
@@ -1893,7 +1905,7 @@ bez treści testowej i bez konta `dev`.
 - [ ] Czy stara strona jest zaindeksowana w Google → przekierowania 301?
 - [ ] Czy potrzebna strefa tylko dla rodziców (logowanie)? (domyślnie: nie — komplikuje)
 - [ ] Kto po wdrożeniu odpowiada za aktualizacje?
-- [ ] Czy włączamy 2FA dla konta administratora? (Etap 8.3 — oznacza wtyczkę)
+- [x] Czy włączamy 2FA dla konta administratora? → **nie** (Etap 8.3)
 - [ ] Kto pisze nową deklarację dostępności? (Etap 8.4 — obowiązek ustawowy)
 
 ---
