@@ -10,10 +10,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Slugi grup przedszkolnych. Każda ma własny kolor w palecie.
  *
+ * Kolejność jest ta sama co w menu głównym i na kafelkach podstron —
+ * od najmłodszej grupy do najstarszej. Filtr nad listą aktualności
+ * wypisuje grupy w tej kolejności, więc zmiana tu przestawia filtr.
+ *
  * @return string[]
  */
 function przedszkole_grupy() {
-	return array( 'wiewiorki', 'zabki', 'zajaczki', 'misie', 'kotki', 'jezyki' );
+	return array( 'misie', 'zajaczki', 'zabki', 'kotki', 'wiewiorki', 'jezyki' );
 }
 
 /**
