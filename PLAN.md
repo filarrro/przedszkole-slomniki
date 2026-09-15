@@ -52,11 +52,12 @@ w [MIGRACJA.md](MIGRACJA.md).
   2026-09-15: treść strony głównej potwierdzona jako docelowa
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
 - Zakres zgód rodziców na publikację zdjęć dzieci
-- **Zdjęcia kadry.** Zostały dwa stockowe portrety ze znakiem wodnym (Agata Dudek,
-  Marta Gądek); trzy ilustrowane awatary usunięte 2026-09-14, bo podpisane imieniem
-  i nazwiskiem wyglądały jak portret tej osoby. Dwanaście osób ma inicjały.
-  Potrzebne prawdziwe zdjęcia pracownic wraz z ich zgodą na publikację —
-  bez nich zostają inicjały, które są poprawnym stanem końcowym, nie brakiem
+- ~~**Zdjęcia kadry.** Zostały dwa stockowe portrety ze znakiem wodnym~~ —
+  **zamknięte 2026-09-15**: usunięte razem z plikami, kafelki Agaty Dudek
+  i Marty Gądek wróciły do inicjałów. Wszystkie 14 osób ma teraz inicjały,
+  biblioteka mediów nie trzyma już żadnego zdjęcia stockowego.
+  Nadal potrzebne prawdziwe zdjęcia pracownic wraz z ich zgodą na publikację —
+  bez nich inicjały zostają, i jest to poprawny stan końcowy, nie brak
 - ~~Godziny otwarcia — w sekcji „Dlaczego my" stoi tymczasowe 6:30–17:00~~ —
   **potwierdzone** ramowym rozkładem dnia ze starej strony: schodzenie się dzieci
   od 6:30, zajęcia do 17:00. Do potwierdzenia, czy nadal aktualne
@@ -1212,13 +1213,19 @@ przeszukiwał treść w bazie, a wniosek dotyczył wyrenderowanej strony.
 Wniosek na przyszłość: audyt dostępności liczy się na wyjściu HTML, nie na
 treści w bazie. Znacznik w bazie nie mówi, co zobaczy użytkownik.
 
-**Dwa stockowe portrety na stronie Kadra — do decyzji.** `awatar-4.jpg`
-i `awatar-5.jpg` to zdjęcia obcych osób z widocznym znakiem wodnym serwisu
-stockowego, postawione przy nagłówkach „mgr Agata Dudek" i „mgr Marta Gądek".
-To ten sam przypadek, dla którego 2026-09-14 usunięto trzy ilustrowane
-awatary: generyczny obrazek podpisany imieniem i nazwiskiem czyta się jak
-portret tej osoby. Opis alternatywny tego nie naprawia — każdy byłby albo
-nieprawdą, albo pytaniem, po co to zdjęcie stoi przy tym nazwisku.
+**Dwa stockowe portrety na stronie Kadra — usunięte 2026-09-15.**
+`awatar-4.jpg` i `awatar-5.jpg` były zdjęciami obcych osób z widocznym znakiem
+wodnym serwisu stockowego, postawionymi przy nagłówkach „mgr Agata Dudek"
+i „mgr Marta Gądek". Ten sam przypadek, dla którego 2026-09-14 usunięto trzy
+ilustrowane awatary: generyczny obrazek podpisany imieniem i nazwiskiem czyta
+się jak portret tej osoby. Opis alternatywny tego nie naprawiał — każdy byłby
+albo nieprawdą, albo pytaniem, po co to zdjęcie stoi przy tym nazwisku.
+Kafelki wróciły do inicjałów (AD, MG), pliki skasowane z dysku i z bazy.
+
+**Do sprawdzenia przy okazji:** w bibliotece mediów jest PDF „Jadłospis
+wrzesień 2026". Dostępność dokumentów PDF to osobny obowiązek — plik powinien
+mieć warstwę tekstową i strukturę, a nie być skanem. Do zweryfikowania przed
+wdrożeniem.
 
 Nowa sekcja „Udogodnienia" wymienia pasek dostępności z 8.5, skip link,
 obsługę klawiaturą, ograniczanie animacji i działanie przy powiększeniu 200%.
@@ -1641,7 +1648,9 @@ Nie może trafić na produkcję.
       z biblioteki mediów. W bazie zostało 428 wpisów, wszystkie z migracji
       (każdy ma metadaną `_joomla_id`)
 - [x] ~~3 ilustrowane awatary w kafelkach kadry~~ — usunięte 2026-09-14,
-      kafelki wróciły do inicjałów. Zostają 2 stockowe portrety
+      kafelki wróciły do inicjałów
+- [x] ~~2 stockowe portrety ze znakiem wodnym (Agata Dudek, Marta Gądek)~~ —
+      usunięte 2026-09-15 razem z plikami. Wszystkie 14 kafelków ma inicjały
 - [x] ~~Strona „O przedszkolu" z treścią wypełniaczową~~ — usunięta 2026-09-14
       razem ze stroną „Oferta" i memem z biblioteki mediów. Biblioteka trzyma
       już tylko logo i dwa stockowe zastępniki kadry
