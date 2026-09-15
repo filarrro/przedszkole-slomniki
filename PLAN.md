@@ -1258,6 +1258,40 @@ nagłówka. Instrukcja obsługi powinna je wymieniać wprost.
 Nowa sekcja „Udogodnienia" wymienia pasek dostępności z 8.5, skip link,
 obsługę klawiaturą, ograniczanie animacji i działanie przy powiększeniu 200%.
 
+**Układ strony — 2026-09-15.** Deklaracja dostała wygląd spójny ze stronami
+„Opłaty" i „Dofinansowanie", które trzymają się schematu: sekcje `h2`, tabele
+na dane, jedno wyróżnione pole na najważniejszą informację.
+
+- **Spis treści** na górze — wariant `is-style-spis-tresci` (pastylki-kotwice).
+  Motyw ma go zrobionego dokładnie pod długą stronę, a deklaracja jest
+  najdłuższą na serwisie: osiem sekcji, ponad 4000 px
+- **Daty** — z listy punktowanej na tabelę, z podpisem o samoocenie
+  i corocznym przeglądzie w `figcaption`
+- **Status zgodności** — do pola `is-style-wyroznienie`, tak jak numer konta
+  na „Opłatach" dostaje własne pole zamiast tonąć w akapicie
+- **Dane kontaktowe** — z akapitu na tabelę (osoba / e-mail / telefon)
+- Niezgodności i uwagi zeszły pod `h3` wewnątrz sekcji statusu, zamiast
+  wisieć jako akapity z pogrubieniem
+
+**Zero nowego CSS.** Wszystko na wariantach bloków, które motyw już rejestruje,
+więc pracownik złoży to samo z edytora. To także powód, dla którego układ
+działa w wysokim kontraście bez żadnej dodatkowej pracy — nowe elementy biorą
+kolory z tych samych tokenów.
+
+Sprawdzone po zmianie:
+
+| Kontrola | Tryb zwykły | Wysoki kontrast |
+|---|---|---|
+| Elementów z tekstem | 101 | 101 |
+| Poniżej progu WCAG | 0 | 0 |
+| Barw spoza palety | — | 0 |
+| Pastylka spisu treści | granat na jasnym granacie | żółć na czerni |
+| Nagłówek tabeli | biel na granacie | czerń na żółci |
+
+Wszystkie osiem kotwic ma cel, a cel ląduje 92 px od góry okna — dokładnie
+`scroll-padding-top` motywu (76 px nagłówka + 1rem), więc przypięty nagłówek
+niczego nie zasłania.
+
 Sprawdzone po zapisie: strona zwraca 200, ma jedno `<h1>` i osiem `<h2>`
 w logicznej kolejności, zero nieprzetworzonych komentarzy bloków Gutenberga.
 Audyt kontrastu w trybie wysokiego kontrastu: 85 elementów z tekstem,
