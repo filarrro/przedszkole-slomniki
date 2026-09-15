@@ -1187,6 +1187,126 @@ Do zmiany:
 Treść pisze przedszkole; deklaracja jest oświadczeniem podmiotu publicznego,
 a nie elementem motywu. Z naszej strony: samoocena techniczna (Etap 11).
 
+### 8.5 Rozmiar tekstu i wysoki kontrast
+
+**To nie jest wymóg ustawy.** WCAG 2.1 AA wymaga kryterium 1.4.4 (treść użyteczna
+przy powiększeniu 200%, co zapewnia zwykły zoom przeglądarki) i 1.4.3 (kontrast
+4,5:1, już spełniony). Przełącznik „A / A+ / A++" i tryb wysokiego kontrastu to
+konwencja polskiego sektora publicznego, nie przepis. Robimy, bo jest powszechnie
+oczekiwana, audytorzy z listą kontrolną o nią pytają, a stara deklaracja wprost
+wymieniała jej brak jako niezgodność.
+
+#### Co sprzyja w obecnym motywie
+
+- **Zero rozmiarów czcionki w `px`** — 38 deklaracji `font-size`, wszystkie `rem`
+  albo preset. Skalowanie przez `html { font-size }` zadziała bez wyjątków
+- Płynna typografia z `theme.json` ma granice w `rem`, więc też się skaluje.
+  Sprawdzone na wygenerowanym CSS żywej instalacji:
+  `--wp--preset--font-size--medium: clamp(1rem, 1rem + ((1vw - 0.2rem) * 0.123), 1.0625rem)`
+- **144 użycia `--wp--preset--color--*`** — redefinicja 15 zmiennych w jednym
+  bloku przykrywa większość motywu
+- `"custom": false` i `"defaultPalette": false` w `theme.json` — redaktor **nie może**
+  wybrać dowolnego koloru, więc treść z Gutenberga idzie przez presety.
+  Wysoki kontrast obejmie wpisy i strony za darmo
+
+#### Co przeszkadza
+
+- **68 zaszytych hexów + 12 `rgba()`** w `style.css`. Z tego ~33 to duplikaty
+  palety: `#fff` ×18, `#2E2390` ×6 (hover granatu), `#ECEAFB` ×3, `#5F5869` ×3,
+  `#3D2FB5` ×2
+- **`--header-h: 76px`** sztywne. Przy 150% tekstu nagłówek urośnie, a
+  `scroll-padding-top` i `max-height: calc(100svh - var(--header-h))` panelu
+  mobilnego rozjadą się z rzeczywistością
+- **8 `data:image/svg`** w CSS z wtopionymi kolorami, plus inline SVG
+  w `template-parts/dlaczego-my.php`, `fala.php`, `chmurki.php`
+- `contentSize: 760px` sztywne — przy dużym tekście linijka robi się krótsza
+
+#### Decyzje
+
+**Stan na `<html>`, nie na `<body>`** — atrybuty `data-rozmiar` i `data-kontrast`.
+`html { font-size }` jest korzeniem skalowania, a wczesny skrypt działa w `<head>`,
+gdy `<body>` jeszcze nie istnieje.
+
+**`localStorage`, nie ciasteczko.** Sekcja 8.4 opiera brak banera cookies na
+zweryfikowanym fakcie: zero `Set-Cookie` dla niezalogowanego. Ciasteczko preferencji
+byłoby prawdopodobnie zwolnione ze zgody jako niezbędne, ale nie ma powodu
+podważać czystego ustalenia.
+
+**Blokujący skrypt inline w `wp_head`.** Bez niego strona maluje się w normalnych
+barwach i dopiero potem przeskakuje na czarne tło. Miganie jest gorsze niż brak
+funkcji dla osoby światłoczułej. Świadomy wyjątek od zasady „bez inline",
+z komentarzem uzasadniającym w kodzie. Kilkanaście linii, zero zapytań.
+
+**`prefers-contrast: more` uruchamia ten sam blok** — kto ma wysoki kontrast
+ustawiony w systemie, dostaje go bez klikania.
+
+#### Etapy
+
+**A. Tokenizacja kolorów — bez zmian wizualnych** ✅ 2026-09-15
+- [x] 26 zaszytych hexów w deklaracjach → tokeny. Szacunek „33" był zawyżony:
+      `#ECEAFB` ×3, `#5F5869` ×3, `#3D2FB5` ×2, `#2B2733`, `#FDFAF5` siedzą
+      **wyłącznie w komentarzach** dokumentujących policzone kontrasty — zostają,
+      to informacja, nie kod
+- [x] `--primary-hover: #2E2390` — 6 użyć (`theme.json` ustawia hover na przycisku
+      bloku, ale nie wystawia go jako presetu)
+- [x] `--tekst-na-ciemnym: #FFFFFF` — 17 użyć. Osobno od `--surface`, bo to rola
+      tekstu, nie tła: etap D przestawia jedno bez drugiego
+- [x] `--tekst-na-ciemnym-slaby: #EDEBF8` — tekst stopki na granacie
+- [x] Dwa `#fff`/`#FFFFFF` w roli tła (plama pod ilustracją, gradient karty)
+      → `--wp--preset--color--surface`
+- [x] Zostaje ~35 hexów faktycznie unikalnych: pastele grup i kolory ilustracji
+
+**Odbiór:** zamiast zrzutów — dowód mechaniczny. Rozwinięcie nowych tokenów
+z powrotem do wartości daje plik **bajt w bajt identyczny** z oryginałem,
+więc zmiana jest wizualnie neutralna z definicji, nie z oględzin.
+
+**B. Jednostki odporne na skalowanie tekstu**
+- [ ] `--header-h` → `rem`, sprawdzenie obu miejsc, które z niego liczą
+- [ ] Przegląd odstępów w `px`, które trzymają tekst
+- [ ] Punkty łamania zostają w `px` — celowo, żeby powiększenie tekstu
+      nie przerzucało układu na mobilny
+
+**Odbiór:** `html { font-size: 150% }` w devtools — nic nie ucieka, nic nie nachodzi,
+brak poziomego paska przewijania przy 320px.
+
+**C. Przełącznik rozmiaru tekstu**
+- [ ] Pasek narzędzi w `header.php`, nad `.site-header`, po `skip-link`
+- [ ] Trzy przyciski `A` / `A+` / `A++`, `aria-pressed` na aktywnym,
+      całość w `role="group"` z `aria-label`
+- [ ] `assets/js/dostepnosc.js` — czysty JS, wzorowany na `nav.js`
+- [ ] `przedszkole_dostepnosc_skrypt_wczesny()` wpięty w `wp_head`
+- [ ] Skoki 100% / 125% / 150%
+
+**D. Wysoki kontrast**
+- [ ] Przycisk przełącznika obok rozmiaru, `aria-pressed`
+- [ ] Paleta: tło `#000000`, tekst `#FFFFFF` (21:1), linki i akcenty `#FFFF00`
+      (19,6:1), obramowania `#FFFFFF`
+- [ ] **Linki zawsze podkreślone** — w monochromie kolor nie może być
+      jedynym wyróżnikiem
+- [ ] Dekoracje (fale, chmurki, skrzydła, plamy 404) ukryte; wszystkie mają już
+      `aria-hidden="true"`, więc nic nie ginie z treści
+- [ ] Kolory grup zwijają się do monochromu — grupy są i tak podpisane tekstem
+- [ ] Pierścień focusa żółty, grubszy
+
+**E. Testy i domknięcie**
+- [ ] **Policzenie kontrastów**, nie oszacowanie
+- [ ] Klawiatura, czytnik ekranu, zoom przeglądarki 200% osobno
+      (to jest właściwe kryterium 1.4.4)
+- [ ] Odświeżenie `languages/przedszkole.pot` o nowe ciągi
+- [ ] `Version:` w `style.css` i `PRZEDSZKOLE_VERSION` podbite razem
+- [ ] Wynik wchodzi do samooceny pod deklarację dostępności (8.4)
+
+#### Ryzyka
+
+| Ryzyko | Odpowiedź |
+|---|---|
+| Skrypt inline łamie konwencję | Jedyny sposób na brak migania; komentarz z uzasadnieniem w kodzie |
+| Wysoki kontrast nie działa w edytorze | Celowo — to funkcja frontu, nie podglądu redaktora |
+| Zdjęcia w wysokim kontraście | Zostają bez filtra, dostają obrys; przygaszanie fotografii pogarsza czytelność |
+| Pasek narzędzi psuje układ nagłówka na telefonie | Etap B przed C — najpierw odporność na skalowanie, potem nowy element |
+
+Etapy A i B nie zmieniają niczego widocznego, więc idą osobnymi commitami.
+
 ### Do wklejenia przy wdrożeniu (Etap 9)
 
 Kompresja i nagłówki cache — do głównego `.htaccess`, **poza** blokiem

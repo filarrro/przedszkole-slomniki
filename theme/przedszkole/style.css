@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.24.0
+Version: 0.25.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -49,6 +49,16 @@ Text Domain: przedszkole
 	--shadow-lift:   0 2px 4px rgba(43, 39, 51, .06), 0 14px 34px rgba(43, 39, 51, .10);
 	--header-h:      76px;
 	--ease:          cubic-bezier(.2, .7, .3, 1);
+
+	/* Hover granatu. `theme.json` ustawia go na przycisku bloku, ale nie
+	   wystawia jako presetu - wiec token wlasny. */
+	--primary-hover: #2E2390;
+
+	/* Tekst lezacy na ciemnym albo nasyconym tle: granat stopki, kolory grup,
+	   wypelnione przyciski. Osobno od `--surface`, bo to rola tekstu, nie tla -
+	   tryb wysokiego kontrastu (8.5) przestawia jedno bez drugiego. */
+	--tekst-na-ciemnym:       #FFFFFF;
+	--tekst-na-ciemnym-slaby: #EDEBF8;
 
 	/* Kolory grup w trzech odcieniach.
 	   Odcien sredni jest w theme.json (dostepny w edytorze).
@@ -100,7 +110,7 @@ a { color: var(--wp--preset--color--primary); }
    ktora WordPress wypisuje jako `:root :where(.wp-element-button:hover, ...)`
    (0,0,1,0). Przycisk dostawal wtedy granatowy tekst na granatowym tle -
    kontrast 1.0, napis znikal. */
-a:where(:hover) { color: #2E2390; }
+a:where(:hover) { color: var(--primary-hover); }
 
 /* Widoczny focus - wymog dostepnosci. Nie usuwac.
    Granat na jasnym tle daje kontrast 9.2, miod tylko 2.3 - za malo
@@ -111,7 +121,7 @@ a:where(:hover) { color: #2E2390; }
 	outline-offset: 3px;
 	border-radius: 4px;
 }
-.site-footer :focus-visible { outline-color: #fff; }
+.site-footer :focus-visible { outline-color: var(--tekst-na-ciemnym); }
 
 /* Link pomijajacy nawigacje, widoczny dopiero po sfokusowaniu klawiatura. */
 .skip-link {
@@ -121,11 +131,11 @@ a:where(:hover) { color: #2E2390; }
 	z-index: 999;
 	padding: .75rem 1.25rem;
 	background: var(--wp--preset--color--primary);
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	border-radius: 0 0 var(--radius) 0;
 	text-decoration: none;
 }
-.skip-link:focus { left: 0; color: #fff; }
+.skip-link:focus { left: 0; color: var(--tekst-na-ciemnym); }
 
 .screen-reader-text {
 	position: absolute !important;
@@ -350,9 +360,9 @@ body:not(.home) main + .fala { background: transparent; }
 .site-footer {
 	margin-top: clamp(3rem, 7vw, 5rem);
 	background: var(--wp--preset--color--primary);
-	color: #EDEBF8;
+	color: var(--tekst-na-ciemnym-slaby);
 }
-.site-footer a { color: #fff; }
+.site-footer a { color: var(--tekst-na-ciemnym); }
 .site-footer a:hover { color: var(--wp--preset--color--accent-soft); }
 
 .site-footer__inner {
@@ -368,7 +378,7 @@ body:not(.home) main + .fala { background: transparent; }
 .site-footer h2 {
 	margin: 0 0 .75rem;
 	font-size: 1rem;
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	text-transform: uppercase;
 	letter-spacing: .06em;
 }
@@ -644,7 +654,7 @@ a.pill:hover { filter: brightness(.93); }
 .pagination .page-numbers.current {
 	background: var(--wp--preset--color--primary);
 	border-color: var(--wp--preset--color--primary);
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 }
 .pagination a.page-numbers:hover { background: var(--wp--preset--color--primary-soft); }
 
@@ -781,7 +791,7 @@ a.pill:hover { filter: brightness(.93); }
 }
 .blad__przycisk:hover,
 .blad__przycisk:focus-visible {
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	background: var(--wp--preset--color--primary);
 }
 
@@ -800,13 +810,13 @@ a.pill:hover { filter: brightness(.93); }
 	padding: .7rem 1.4rem;
 	font: inherit;
 	font-weight: 700;
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	background: var(--wp--preset--color--primary);
 	border: 0;
 	border-radius: 999px;
 	cursor: pointer;
 }
-.search-form input[type="submit"]:hover { background: #2E2390; }
+.search-form input[type="submit"]:hover { background: var(--primary-hover); }
 
 /* Formularz hasla - strona z widocznoscia "Chroniona haslem" w edytorze.
    Znaczniki rysuje rdzen: akapit z wyjasnieniem, potem etykieta z polem
@@ -843,13 +853,13 @@ a.pill:hover { filter: brightness(.93); }
 	padding: .7rem 1.4rem;
 	font: inherit;
 	font-weight: 700;
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	background: var(--wp--preset--color--primary);
 	border: 0;
 	border-radius: 999px;
 	cursor: pointer;
 }
-.post-password-form input[type="submit"]:hover { background: #2E2390; }
+.post-password-form input[type="submit"]:hover { background: var(--primary-hover); }
 
 /* ==========================================================================
    13. Hero na stronie glownej
@@ -919,7 +929,7 @@ a.pill:hover { filter: brightness(.93); }
 	width: min(100%, 640px);
 	aspect-ratio: 1.32;
 	border-radius: 72% 28% 58% 42% / 36% 64% 34% 66%;
-	background: #fff;
+	background: var(--wp--preset--color--surface);
 	box-shadow: 0 18px 50px rgba(43, 39, 51, .08);
 }
 .hero__art img {
@@ -975,7 +985,7 @@ a.pill:hover { filter: brightness(.93); }
 .section--miekka > .wrap { padding-block: clamp(2rem, 5vw, 3.5rem); }
 
 /* Delikatny gradient na kartach — mniej plasko, bez krzykliwosci. */
-.card__body { background: linear-gradient(180deg, #FFFFFF 0%, #FDFBF7 100%); }
+.card__body { background: linear-gradient(180deg, var(--wp--preset--color--surface) 0%, #FDFBF7 100%); }
 
 /* Kolor grupy w jednej zmiennej - ten sam pasek na gorze i fala na dole. */
 .card                    { --karta-kolor: var(--wp--preset--color--primary-soft); }
@@ -1248,7 +1258,7 @@ main + .fala { background: var(--wp--preset--color--base); }
 	width: fit-content;
 	padding: clamp(.25rem, .8cqw, 1.2rem) clamp(.6rem, 1.8cqw, 2.6rem);
 	background: var(--wp--preset--color--primary);
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	/* Dolna granica, bo na telefonie 2,5% z 335 px to 8 px - nieczytelnie;
 	   ponizej okna 608 px napis stoi na 15 px i nie maleje dalej.
 	   Gorna, zeby na monitorze 2560 px nie urosl do 64 px. */
@@ -1327,14 +1337,14 @@ main + .fala { background: var(--wp--preset--color--base); }
 .wp-block-file > :first-child { font-weight: 600; }
 .wp-block-file__button {
 	background: var(--wp--preset--color--primary);
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	border-radius: 999px;
 	padding: .4rem 1rem;
 	font-size: .9375rem;
 	font-weight: 700;
 	text-decoration: none;
 }
-.wp-block-file__button:hover { background: #2E2390; color: #fff; }
+.wp-block-file__button:hover { background: var(--primary-hover); color: var(--tekst-na-ciemnym); }
 /* Dokument otwiera sie w nowej karcie - uprzedzamy o tym przed kliknieciem.
    Czytnik ekranu dostaje te sama informacje slowami (filtr w functions.php). */
 .wp-block-file > a:first-child::after {
@@ -1375,7 +1385,7 @@ main + .fala { background: var(--wp--preset--color--base); }
 /* Naglowek w granacie stopki. Biel na #3D2FB5 daje kontrast 9.3:1. */
 .wp-block-table table thead th {
 	background: var(--wp--preset--color--primary);
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	text-transform: uppercase;
 	letter-spacing: .04em;
 	font-size: .9375rem;
@@ -1440,7 +1450,7 @@ main + .fala { background: var(--wp--preset--color--base); }
    strony przelaczenia z zapasem ponad 4.5 (WCAG AA). */
 .wp-block-list.is-style-spis-tresci a:where(:hover, :focus-visible) {
 	background: var(--wp--preset--color--primary);
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 }
 
 /* --- Separator --- */
@@ -1761,7 +1771,7 @@ main + .fala { background: var(--wp--preset--color--base); }
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	/* Rozjaśnione tło grupy, nie osobny kolor - ikona zostaje w rodzinie karty. */
 	background: rgba(255, 255, 255, .25);
 }
@@ -1771,7 +1781,7 @@ main + .fala { background: var(--wp--preset--color--base); }
 	font-weight: 700;
 	font-size: var(--wp--preset--font-size--large);
 	line-height: 1.2;
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 }
 
 /* --- Dół: opis na bieli, oddzielony falą --- */
@@ -2133,12 +2143,12 @@ main + .fala { background: var(--wp--preset--color--base); }
 .filtr__link.is-aktywny {
 	background: var(--wp--preset--color--primary);
 	border-color: var(--wp--preset--color--primary);
-	color: #fff;
+	color: var(--tekst-na-ciemnym);
 	font-weight: 800;
 }
 /* Granat ciemnieje tylko tam, gdzie granat byl: "Wszystkie" i kategorie bez
    wlasnego koloru. Kafelki grup maja swoj hover nizej. */
-.filtr__link.is-aktywny:hover { background: #2E2390; border-color: #2E2390; }
+.filtr__link.is-aktywny:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
 
 /* Wybrana grupa dostaje swoj kolor z palety - ten sam, ktory ma etykieta
    na kafelkach. Pary tlo/tekst maja sprawdzony kontrast >= 4.5.
