@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.22.0
+Version: 0.23.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -2241,3 +2241,46 @@ main + .fala { background: var(--wp--preset--color--base); }
 /* Pierwszy blok po karcie dostaje wiecej powietrza - karta jest
    naglowkiem strony, a nie akapitem w srodku tresci. */
 .entry__content > .karta-grupy + * { margin-top: 2.5rem; }
+
+/* ==========================================================================
+   26. Numer konta (wariant grupy)
+
+   Numer rachunku to najwazniejsza informacja na stronie „Oplaty” - dostaje
+   wlasne pole zamiast tonac w akapicie. Wariant zwyklej grupy, wiec pracownik
+   wstawia go z edytora (wzorzec „Numer konta”), nie pisze HTML-a.
+
+   Uklad w srodku jest pozycyjny: pierwszy akapit to podpis, drugi - numer.
+   Tak wyglada wzorzec i tak trzeba go zostawic przy edycji.
+
+   Kontrast: podpis #5F5869 na #ECEAFB = 5,7; numer #3D2FB5 na #ECEAFB = 7,8.
+   Obie wartosci ponad 4.5 (WCAG 2.1 AA).
+   ========================================================================== */
+
+.wp-block-group.is-style-numer-konta {
+	padding: 1.25rem 1.5rem;
+	background: var(--wp--preset--color--primary-soft);
+	border-radius: var(--radius-lg);
+}
+.wp-block-group.is-style-numer-konta > * { margin: 0; }
+
+/* Podpis nad numerem - etykieta, nie zdanie. */
+.wp-block-group.is-style-numer-konta > p:first-child {
+	color: var(--wp--preset--color--ink-soft);
+	font-size: .8125rem;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+/* Numer: cyfry rownej szerokosci i rozstrzelenie, zeby dalo sie go
+   przepisac bez gubienia miejsca. `overflow-wrap` - na waskim ekranie
+   lamie sie miedzy grupami cyfr zamiast rozpychac strone. */
+.wp-block-group.is-style-numer-konta > p + p {
+	margin-top: .35rem;
+	color: var(--wp--preset--color--primary);
+	font-size: clamp(1.125rem, 4vw, 1.5rem);
+	font-weight: 700;
+	letter-spacing: .02em;
+	font-variant-numeric: tabular-nums;
+	overflow-wrap: anywhere;
+}
