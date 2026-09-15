@@ -1948,3 +1948,77 @@ main + .fala { background: var(--wp--preset--color--base); }
 @keyframes przedszkole-pasek-lewo  { from { opacity: 0; translate: -30% 0; } to { opacity: 1; translate: 0; } }
 @keyframes przedszkole-pasek-prawo { from { opacity: 0; translate: 30% 0; }  to { opacity: 1; translate: 0; } }
 @keyframes przedszkole-cien        { from { opacity: 0; }                    to { opacity: 1; } }
+
+/* ==========================================================================
+   24. Filtr kategorii nad lista aktualnosci
+   ========================================================================== */
+
+.filtr { margin-bottom: clamp(1.25rem, 3vw, 2rem); }
+
+.filtr__lista {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* Wysokosc 44px - minimalny cel dotykowy, ten sam co w paginacji. */
+.filtr__link {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 1rem;
+	border-radius: 999px;
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	color: var(--wp--preset--color--ink);
+	text-decoration: none;
+	font-weight: 600;
+	font-size: .9375rem;
+	transition: background-color .15s var(--ease), border-color .15s var(--ease);
+}
+
+.filtr__link:hover {
+	background: var(--wp--preset--color--primary-soft);
+	border-color: var(--wp--preset--color--primary-soft);
+}
+
+/* Stan wybrany: obok koloru takze pogrubienie i `aria-current` w znacznikach -
+   sam kolor nie moze byc jedynym nosnikiem informacji (WCAG 1.4.1). */
+.filtr__link.is-aktywny {
+	background: var(--wp--preset--color--primary);
+	border-color: var(--wp--preset--color--primary);
+	color: #fff;
+	font-weight: 800;
+}
+/* Granat ciemnieje tylko tam, gdzie granat byl: "Wszystkie" i kategorie bez
+   wlasnego koloru. Kafelki grup maja swoj hover nizej. */
+.filtr__link.is-aktywny:hover { background: #2E2390; border-color: #2E2390; }
+
+/* Wybrana grupa dostaje swoj kolor z palety - ten sam, ktory ma etykieta
+   na kafelkach. Pary tlo/tekst maja sprawdzony kontrast >= 4.5.
+   Pastelowe tlo samo w sobie za slabo odroznia sie od bialego kafelka
+   nieaktywnego, wiec obwodka idzie w ciemnym odcieniu grupy. */
+.filtr__link--misie.is-aktywny     { background: var(--misie-tlo);     border-color: var(--misie-tekst);     color: var(--misie-tekst); }
+.filtr__link--wiewiorki.is-aktywny { background: var(--wiewiorki-tlo); border-color: var(--wiewiorki-tekst); color: var(--wiewiorki-tekst); }
+.filtr__link--zajaczki.is-aktywny  { background: var(--zajaczki-tlo);  border-color: var(--zajaczki-tekst);  color: var(--zajaczki-tekst); }
+.filtr__link--zabki.is-aktywny     { background: var(--zabki-tlo);     border-color: var(--zabki-tekst);     color: var(--zabki-tekst); }
+.filtr__link--jezyki.is-aktywny    { background: var(--jezyki-tlo);    border-color: var(--jezyki-tekst);    color: var(--jezyki-tekst); }
+.filtr__link--kotki.is-aktywny     { background: var(--kotki-tlo);     border-color: var(--kotki-tekst);     color: var(--kotki-tekst); }
+
+/* Hover na wybranej grupie zostaje w kolorze grupy. Tlo trzeba tu powtorzyc:
+   `.filtr__link.is-aktywny:hover` to trzy selektory, a `.filtr__link--zabki
+   .is-aktywny` tylko dwa, wiec bez powtorzenia granat wygrywa kaskade i siada
+   pod tekstem w kolorze grupy - kontrast spada do 1,3. Sama zmiana `filter`
+   tego nie cofa, bo filtr dziala na to, co juz zostalo pomalowane.
+
+   Przyciemnienie idzie przez `brightness` na calym kafelku - tlo i tekst
+   schodza rowno, wiec sprawdzony kontrast pary zostaje zachowany. */
+.filtr__link--misie.is-aktywny:hover     { background: var(--misie-tlo);     border-color: var(--misie-tekst);     filter: brightness(.95); }
+.filtr__link--wiewiorki.is-aktywny:hover { background: var(--wiewiorki-tlo); border-color: var(--wiewiorki-tekst); filter: brightness(.95); }
+.filtr__link--zajaczki.is-aktywny:hover  { background: var(--zajaczki-tlo);  border-color: var(--zajaczki-tekst);  filter: brightness(.95); }
+.filtr__link--zabki.is-aktywny:hover     { background: var(--zabki-tlo);     border-color: var(--zabki-tekst);     filter: brightness(.95); }
+.filtr__link--jezyki.is-aktywny:hover    { background: var(--jezyki-tlo);    border-color: var(--jezyki-tekst);    filter: brightness(.95); }
+.filtr__link--kotki.is-aktywny:hover     { background: var(--kotki-tlo);     border-color: var(--kotki-tekst);     filter: brightness(.95); }

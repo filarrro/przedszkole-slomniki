@@ -30,6 +30,15 @@ get_header();
 		<?php the_archive_description( '<p>', '</p>' ); ?>
 	</header>
 
+	<?php
+	/* Filtr tylko na liscie aktualnosci i archiwach kategorii. W wynikach
+	   wyszukiwania czy archiwum daty odsylalby do innego zestawu wpisow,
+	   niz ten, ktory wlasnie widac - to mylace. */
+	if ( is_home() || is_category() ) {
+		get_template_part( 'template-parts/filtr-kategorii' );
+	}
+	?>
+
 	<?php if ( have_posts() ) : ?>
 
 		<div class="cards cards--lista">
