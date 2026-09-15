@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.21.0
+Version: 0.21.1
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -1293,20 +1293,63 @@ main + .fala { background: var(--wp--preset--color--base); }
 }
 
 /* --- Tabela --- */
+/* Szeroka tabela przewija sie sama, zamiast rozpychac strone.
+   `overflow-x` przycina tez rogi do promienia - naglowek nie wystaje. */
+.wp-block-table {
+	overflow-x: auto;
+	border-radius: var(--radius);
+}
 .wp-block-table table {
 	width: 100%;
 	border-collapse: collapse;
 	background: var(--wp--preset--color--surface);
 }
-.wp-block-table th,
-.wp-block-table td {
-	padding: .7rem .9rem;
-	border: 1px solid var(--wp--preset--color--border);
+/* Rdzen WP rysuje siatke (`.wp-block-table td,.wp-block-table th{border:1px solid}`)
+   i gruba kreske pod naglowkiem - selektor z `table` bije je specyficznoscia,
+   niezaleznie od kolejnosci arkuszy. */
+.wp-block-table table th,
+.wp-block-table table td {
+	padding: .85rem 1.1rem;
 	text-align: left;
+	border: 0;
 }
-.wp-block-table th { background: var(--wp--preset--color--primary-soft); }
-/* Szeroka tabela przewija sie sama, zamiast rozpychac strone. */
-.wp-block-table { overflow-x: auto; }
+.wp-block-table table thead,
+.wp-block-table table tfoot { border: 0; }
+/* Naglowek w granacie stopki. Biel na #3D2FB5 daje kontrast 9.3:1. */
+.wp-block-table table thead th {
+	background: var(--wp--preset--color--primary);
+	color: #fff;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	font-size: .9375rem;
+}
+.wp-block-table thead tr { border: 0; }
+/* Zebra zamiast siatki - co drugi wiersz na jasnym granacie.
+   Tekst #2B2733 na #ECEAFB to kontrast 12.4:1. */
+.wp-block-table tbody tr { border: 0; }
+.wp-block-table tbody tr:nth-child(even) {
+	background: var(--wp--preset--color--primary-soft);
+}
+/* Pierwsza kolumna bywa naglowkiem wiersza - ma byc czescia zebry,
+   nie osobnym paskiem. */
+.wp-block-table table tbody th { background: transparent; }
+/* Wariant "paski" z rdzenia WP maluje nieparzyste wiersze na szarosci -
+   sprowadzamy go do tej samej zebry, zeby nie bylo dwoch rytmow naraz. */
+.wp-block-table.is-style-stripes tbody tr:nth-child(odd) { background: transparent; }
+.wp-block-table.is-style-stripes tbody tr:nth-child(even) {
+	background: var(--wp--preset--color--primary-soft);
+}
+/* Na telefonie luzny padding kosztuje szerokosc - tabela i tak sie przewija,
+   ale mniej ciasne komorki mieszcza wiecej tresci bez przewijania. */
+@media (max-width: 600px) {
+	.wp-block-table table th,
+	.wp-block-table table td { padding: .65rem .8rem; }
+}
+.wp-block-table figcaption {
+	margin-top: .6rem;
+	color: var(--wp--preset--color--ink-soft);
+	font-size: .9375rem;
+}
 
 /* --- Separator --- */
 .wp-block-separator {
