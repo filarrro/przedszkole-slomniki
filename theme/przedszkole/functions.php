@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.21.1' );
+define( 'PRZEDSZKOLE_VERSION', '0.22.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
@@ -148,6 +148,14 @@ function przedszkole_style_blokow() {
 		array(
 			'name'  => 'kafelek-osoby',
 			'label' => __( 'Kafelek osoby', 'przedszkole' ),
+		)
+	);
+
+	register_block_style(
+		'core/list',
+		array(
+			'name'  => 'spis-tresci',
+			'label' => __( 'Spis treści', 'przedszkole' ),
 		)
 	);
 }

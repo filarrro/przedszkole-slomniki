@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.21.1
+Version: 0.22.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -68,6 +68,13 @@ Text Domain: przedszkole
    ========================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Skok do kotwicy w tresci zatrzymuje sie pod przypietym naglowkiem,
+   inaczej naglowek zaslania cel skoku. `smooth` wylacza sekcja 7. */
+html {
+	scroll-padding-top: calc(var(--header-h) + 1rem);
+	scroll-behavior: smooth;
+}
 
 body {
 	margin: 0;
@@ -1349,6 +1356,37 @@ main + .fala { background: var(--wp--preset--color--base); }
 	margin-top: .6rem;
 	color: var(--wp--preset--color--ink-soft);
 	font-size: .9375rem;
+}
+
+/* --- Lista w wariancie "Spis tresci" --- */
+/* Skroty do naglowkow na dlugiej stronie. Pastylki zamiast punktorow,
+   zeby lista czytala sie jak nawigacja, a nie jak tresc.
+   Semantycznie zostaje `<ul>` - czytnik zapowiada liczbe pozycji. */
+.wp-block-list.is-style-spis-tresci {
+	list-style: none;
+	margin: 0 0 2rem;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5rem;
+}
+.wp-block-list.is-style-spis-tresci li { margin: 0; }
+.wp-block-list.is-style-spis-tresci a {
+	display: inline-block;
+	background: var(--wp--preset--color--primary-soft);
+	color: var(--wp--preset--color--primary);
+	border-radius: 999px;
+	padding: .45rem 1.1rem;
+	font-weight: 700;
+	font-size: .9375rem;
+	text-decoration: none;
+	transition: background .2s var(--ease), color .2s var(--ease);
+}
+/* Granat na jasnym granacie to kontrast 7.8, biel na granacie 9.3 - obie
+   strony przelaczenia z zapasem ponad 4.5 (WCAG AA). */
+.wp-block-list.is-style-spis-tresci a:where(:hover, :focus-visible) {
+	background: var(--wp--preset--color--primary);
+	color: #fff;
 }
 
 /* --- Separator --- */
