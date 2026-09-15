@@ -1191,12 +1191,34 @@ wszystkie zmierzone kryteria (tabela wyżej), ale treść przeniesiona z Joomli
 nie została sprawdzona sztuka po sztuce. Wpisanie pełnej zgodności byłoby
 dokładnie tym błędem, który miała stara deklaracja.
 
-Niezgodności wypisano na podstawie **przeliczenia bazy**, nie oględzin —
-448 publikacji, z czego: 2 obrazki bez tekstu alternatywnego (na 3 obrazki
-w treści w ogóle), 7 publikacji z własnym `<h1>` dublującym nagłówek strony,
-0 odnośników typu „kliknij tutaj". 383 publikacje linkują do albumów
-w Google Photos — opisane jako uwaga, bo dostępność cudzego serwisu jest
-poza kontrolą przedszkola.
+Niezgodności sprowadzają się do jednej pozycji: 448 publikacji przeniesionych
+z Joomli nie zostało sprawdzonych pozycja po pozycji. 383 z nich linkują do
+albumów w Google Photos — opisane jako uwaga, bo dostępność cudzego serwisu
+jest poza kontrolą przedszkola.
+
+**Sprostowanie z 2026-09-15.** Pierwsza wersja deklaracji wymieniała dwie
+niezgodności, których nie ma. Obie wzięły się z tego samego błędu: skrypt
+przeszukiwał treść w bazie, a wniosek dotyczył wyrenderowanej strony.
+
+- „7 publikacji z własnym `<h1>` dublującym nagłówek strony" — **nieprawda**.
+  `page.php` celowo pomija swój `<h1>`, gdy treść niesie kartę grupy; jest
+  tam komentarz, który to wyjaśnia. Na `front-page.php` treść strony wchodzi
+  w hero. Sprawdzone na wyrenderowanym HTML: każda z tych stron ma dokładnie
+  jeden `<h1>`, czyli stan poprawny
+- „2 obrazki bez tekstu alternatywnego" — **nie jest to usterka WCAG**.
+  `alt=""` to prawidłowy zapis dla obrazu dekoracyjnego. Problem z tymi
+  dwoma zdjęciami leży gdzie indziej — patrz niżej
+
+Wniosek na przyszłość: audyt dostępności liczy się na wyjściu HTML, nie na
+treści w bazie. Znacznik w bazie nie mówi, co zobaczy użytkownik.
+
+**Dwa stockowe portrety na stronie Kadra — do decyzji.** `awatar-4.jpg`
+i `awatar-5.jpg` to zdjęcia obcych osób z widocznym znakiem wodnym serwisu
+stockowego, postawione przy nagłówkach „mgr Agata Dudek" i „mgr Marta Gądek".
+To ten sam przypadek, dla którego 2026-09-14 usunięto trzy ilustrowane
+awatary: generyczny obrazek podpisany imieniem i nazwiskiem czyta się jak
+portret tej osoby. Opis alternatywny tego nie naprawia — każdy byłby albo
+nieprawdą, albo pytaniem, po co to zdjęcie stoi przy tym nazwisku.
 
 Nowa sekcja „Udogodnienia" wymienia pasek dostępności z 8.5, skip link,
 obsługę klawiaturą, ograniczanie animacji i działanie przy powiększeniu 200%.
