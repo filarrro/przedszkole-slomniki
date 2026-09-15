@@ -56,6 +56,19 @@ defined( 'ABSPATH' ) || exit;
 			}
 			?>
 		</div>
+
+		<?php
+		/*
+		 * `aria-pressed` wychodzi z serwera na „false" z tego samego powodu
+		 * co przy rozmiarze: strona jest cache'owalna. Prostuje je skrypt.
+		 * Tekst przycisku nie zmienia sie po wlaczeniu - „Wysoki kontrast"
+		 * nazywa funkcje, a stan niesie `aria-pressed` i wyglad przycisku.
+		 */
+		?>
+		<button type="button" class="kontrast" data-przedszkole-kontrast="wysoki" aria-pressed="false">
+			<span class="kontrast__ikona" aria-hidden="true"></span>
+			<?php esc_html_e( 'Wysoki kontrast', 'przedszkole' ); ?>
+		</button>
 	</div>
 </div>
 

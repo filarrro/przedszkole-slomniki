@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.26.0
+Version: 0.27.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -2445,5 +2445,210 @@ html[data-rozmiar="duzy"] .rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="du
 html[data-rozmiar="bardzo-duzy"] .rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="bardzo-duzy"] {
 	background: var(--wp--preset--color--primary);
 	border-color: var(--wp--preset--color--primary);
+	color: var(--tekst-na-ciemnym);
+}
+
+/* ==========================================================================
+   28. Wysoki kontrast
+   Tryb wisi na jednym atrybucie `data-kontrast="wysoki"` na <html>. Preferencje
+   systemowa (`prefers-contrast: more`) czyta skrypt w naglowku i ustawia ten sam
+   atrybut - dzieki temu jest tu jeden blok zamiast dwoch kopii, a wybor
+   uzytkownika bierze gore nad ustawieniem systemu.
+
+   Paleta (policzone, nie oszacowane):
+     biel  #FFFFFF na czerni #000000 = 21,00:1
+     zolc  #FFFF00 na czerni #000000 = 19,56:1
+     czern #000000 na zolci  #FFFF00 = 19,56:1
+   WCAG AA wymaga 4,5 dla tekstu - kazda para ma zapas i miesci sie w AAA.
+
+   Rola kolorow: czern to tlo, biel to tekst zwykly, zolc to wszystko klikalne
+   i wyrozniowe (odnosniki, naglowki, stany wybrane). Blok w zolci ma tekst
+   czarny - i dlatego `--tekst-na-ciemnym` byl w etapie A oddzielony
+   od `--surface`: oba mialy wtedy te sama biel, a tutaj ida w przeciwne strony.
+   ========================================================================== */
+
+/* --- Przycisk przelacznika (wyglad w obu trybach) --- */
+
+.kontrast {
+	display: inline-flex;
+	align-items: center;
+	gap: .45rem;
+	min-height: 44px;
+	margin-left: .75rem;
+	padding: 0 .9rem;
+	font: inherit;
+	font-size: .8125rem;
+	font-weight: 700;
+	color: var(--wp--preset--color--ink);
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: 999px;
+	cursor: pointer;
+	transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+.kontrast:hover {
+	border-color: var(--wp--preset--color--primary);
+	color: var(--wp--preset--color--primary);
+}
+/* Kolo do polowy wypelnione - ikona kontrastu bez pliku graficznego. */
+.kontrast__ikona {
+	width: 1em;
+	height: 1em;
+	border: 1px solid currentColor;
+	border-radius: 50%;
+	background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+.kontrast[aria-pressed="true"] {
+	background: var(--wp--preset--color--primary);
+	border-color: var(--wp--preset--color--primary);
+	color: var(--tekst-na-ciemnym);
+}
+/* Na telefonie zostaje sama ikona - napis zabralby cala szerokosc paska.
+   `font-size: 0` chowa go dla oka, ale nie usuwa z drzewa dostepnosci:
+   nazwa przycisku dla czytnika ekranu nadal brzmi „Wysoki kontrast". */
+@media (max-width: 559px) {
+	.kontrast {
+		gap: 0;
+		padding: 0 .8rem;
+		font-size: 0;
+	}
+	.kontrast__ikona {
+		width: 1.15rem;
+		height: 1.15rem;
+	}
+}
+
+/* --- Przestawienie palety --- */
+
+html[data-kontrast="wysoki"] {
+	--wp--preset--color--base:          #000000;
+	--wp--preset--color--surface:       #000000;
+	--wp--preset--color--ink:           #FFFFFF;
+	--wp--preset--color--ink-soft:      #FFFFFF;
+	--wp--preset--color--primary:       #FFFF00;
+	--wp--preset--color--primary-soft:  #000000;
+	--wp--preset--color--accent:        #FFFF00;
+	--wp--preset--color--accent-soft:   #000000;
+	--wp--preset--color--border:        #FFFFFF;
+
+	/* Kolory grup przestaja rozrozniac grupy - w monochromie nie ma na to
+	   miejsca. Nic nie ginie: kazda grupa jest podpisana nazwa, kolor byl
+	   dodatkiem, a nie jedynym nosnikiem informacji (WCAG 1.4.1). */
+	--wp--preset--color--wiewiorki:     #FFFFFF;
+	--wp--preset--color--zabki:         #FFFFFF;
+	--wp--preset--color--zajaczki:      #FFFFFF;
+	--wp--preset--color--misie:         #FFFFFF;
+	--wp--preset--color--kotki:         #FFFFFF;
+	--wp--preset--color--jezyki:        #FFFFFF;
+
+	--misie-tlo:     #000000;  --misie-tekst:     #FFFF00;
+	--wiewiorki-tlo: #000000;  --wiewiorki-tekst: #FFFF00;
+	--zajaczki-tlo:  #000000;  --zajaczki-tekst:  #FFFF00;
+	--zabki-tlo:     #000000;  --zabki-tekst:     #FFFF00;
+	--jezyki-tlo:    #000000;  --jezyki-tekst:    #FFFF00;
+	--kotki-tlo:     #000000;  --kotki-tekst:     #FFFF00;
+
+	--primary-hover:          #FFFFFF;
+	--tekst-na-ciemnym:       #000000;
+	--tekst-na-ciemnym-slaby: #000000;
+
+	/* Te trzy siedza przy komponentach, nie w `:root`, wiec latwo je przeoczyc.
+	   `--skrot-kolor` to siodmy zestaw kolorow grup - bez niego kafelki „Na
+	   skroty" zostawaly kolorowe posrodku czarnej strony. */
+	--karta-brak-tlo: #000000;
+	--karta-panel:    #000000;
+
+	/* Cien na czerni jest niewidoczny, a rozmywa krawedzie. Rozgraniczenie
+	   przejmuja obramowania, ktore sa teraz biale. */
+	--shadow:      none;
+	--shadow-lift: none;
+	--rainbow-h:   0px;
+}
+
+/* --- Tla zaszyte na sztywno, poza paleta --- */
+
+/* Gradienty i desenie chodza obok zmiennych - trzeba je zgasic osobno,
+   inaczej zostalyby jasne plamy na czarnej stronie. */
+html[data-kontrast="wysoki"] body,
+html[data-kontrast="wysoki"] body:not(.home),
+html[data-kontrast="wysoki"] .hero,
+html[data-kontrast="wysoki"] .section--miekka,
+html[data-kontrast="wysoki"] .card__body,
+html[data-kontrast="wysoki"] .skroty,
+html[data-kontrast="wysoki"] .site-header,
+html[data-kontrast="wysoki"] .skrot__ikona {
+	background-color: var(--wp--preset--color--base);
+	background-image: none;
+}
+/* `--skrot-kolor` jest przypisany do klas `.skrot--*`, a nie do `:root`,
+   wiec nadpisanie w bloku palety by go nie siegnelo - stad osobna regula.
+   Biale kafelki z czarnym napisem: 21:1. */
+html[data-kontrast="wysoki"] [class*="skrot--"] { --skrot-kolor: #FFFFFF; }
+
+/* Ostatni zaszyty kolor poza paleta: podpis praw autorskich w stopce. */
+html[data-kontrast="wysoki"] .site-footer__bottom { color: var(--wp--preset--color--ink); }
+
+/* Przezroczysty naglowek przepuszczalby pod soba tresc. */
+html[data-kontrast="wysoki"] .site-header { backdrop-filter: none; }
+html[data-kontrast="wysoki"] .skrot__ikona { border: 1px solid var(--wp--preset--color--border); }
+
+/* --- Dekoracje --- */
+
+/* Fale, chmurki, plamy i tecza. Wszystkie sa `aria-hidden`, wiec dla czytnika
+   ekranu nie istnialy juz wczesniej - tutaj znikaja takze dla oka. W monochromie
+   nie niosa nic poza szumem, a bialy ksztalt na pol ekranu meczy wzrok. */
+html[data-kontrast="wysoki"] .rainbow-bar,
+html[data-kontrast="wysoki"] .fala,
+html[data-kontrast="wysoki"] .chmurki,
+html[data-kontrast="wysoki"] .skrot__fala,
+html[data-kontrast="wysoki"] .hero::before,
+html[data-kontrast="wysoki"] .hero::after,
+html[data-kontrast="wysoki"] .hero__art::before,
+html[data-kontrast="wysoki"] .card::after,
+html[data-kontrast="wysoki"] .card__body::before,
+html[data-kontrast="wysoki"] .skroty::before,
+html[data-kontrast="wysoki"] .skrzydla__kadr::before,
+html[data-kontrast="wysoki"] .blad__art::before,
+html[data-kontrast="wysoki"] .blad__art::after,
+html[data-kontrast="wysoki"] .site-header::after {
+	display: none;
+}
+
+/* --- Odnosniki, zdjecia, focus --- */
+
+/* W monochromie sam kolor nie odroznia odnosnika od tekstu - stad podkreslenie
+   (WCAG 1.4.1). Dotyczy tresci i stopki; odnosniki w menu, kartach i kafelkach
+   sa calymi blokami z obramowaniem, wiec podkreslenie tylko zasmiecaloby je. */
+html[data-kontrast="wysoki"] .entry__content a,
+html[data-kontrast="wysoki"] .site-footer a {
+	text-decoration: underline;
+}
+
+/* Zdjecie bez obramowania zlewa sie z czarnym tlem na swoich ciemnych brzegach. */
+html[data-kontrast="wysoki"] .entry__content :is( img, video ) {
+	border: 1px solid var(--wp--preset--color--border);
+}
+
+/* Stopka zostaje czarna zamiast zoltej - pelna szerokosc zolci meczy wzrok,
+   a to sam dol strony, nie element do klikniecia. */
+html[data-kontrast="wysoki"] .site-footer {
+	background: var(--wp--preset--color--base);
+	color: var(--wp--preset--color--ink);
+	border-top: 2px solid var(--wp--preset--color--border);
+}
+html[data-kontrast="wysoki"] .site-footer a,
+html[data-kontrast="wysoki"] .site-footer h2 { color: var(--wp--preset--color--primary); }
+/* Bez tego obrys focusa w stopce bralby `--tekst-na-ciemnym`, czyli czern na czerni. */
+html[data-kontrast="wysoki"] .site-footer :focus-visible { outline-color: var(--wp--preset--color--primary); }
+
+/* `theme.json` wpisuje tekst przycisku jako literalne #FFFFFF, a hover jako
+   #2E2390 - obie wartosci chodza obok palety. Biel na zoltym tle to kontrast
+   1,07, czyli napis nieczytelny. Stad jawne nadpisanie. */
+html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ) {
+	background-color: var(--wp--preset--color--primary);
+	color: var(--tekst-na-ciemnym);
+}
+html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):is( :hover, :focus ) {
+	background-color: var(--primary-hover);
 	color: var(--tekst-na-ciemnym);
 }

@@ -1,8 +1,9 @@
 /**
- * Pasek dostepnosci: rozmiar tekstu.
+ * Pasek dostepnosci: rozmiar tekstu i wysoki kontrast.
  * Czysty JavaScript, bez zaleznosci.
  *
- * Stan siedzi w atrybucie `data-rozmiar` na <html> i w `localStorage`.
+ * Stan siedzi w atrybutach `data-rozmiar` i `data-kontrast` na <html>
+ * oraz w `localStorage`.
  * Atrybut ustawia juz krotki skrypt w naglowku (`functions.php`), zeby strona
  * nie mrugnela domyslnym rozmiarem przed odczytem preferencji. Tutaj zostaje
  * obsluga klikniec i prostowanie `aria-pressed`, ktore serwer wysyla zawsze
@@ -65,4 +66,42 @@
 	} );
 
 	odswiezPrzyciski();
+
+	/* --- Wysoki kontrast --- */
+
+	var KLUCZ_KONTRAST = 'przedszkole-kontrast';
+	var przelacznik    = document.querySelector( '[data-przedszkole-kontrast]' );
+
+	if ( ! przelacznik ) {
+		return;
+	}
+
+	function kontrastWlaczony() {
+		return 'wysoki' === korzen.getAttribute( 'data-kontrast' );
+	}
+
+	function odswiezPrzelacznik() {
+		przelacznik.setAttribute( 'aria-pressed', kontrastWlaczony() ? 'true' : 'false' );
+	}
+
+	przelacznik.addEventListener( 'click', function () {
+		var wlaczamy = ! kontrastWlaczony();
+
+		if ( wlaczamy ) {
+			korzen.setAttribute( 'data-kontrast', 'wysoki' );
+		} else {
+			// Zamiast kasowac atrybut zapisujemy jawne „zwykly". Bez tego osoba,
+			// ktora ma wysoki kontrast wlaczony w systemie, nie moglaby go tutaj
+			// wylaczyc - regula `prefers-contrast` wrocilaby po odswiezeniu.
+			korzen.setAttribute( 'data-kontrast', 'zwykly' );
+		}
+
+		try {
+			localStorage.setItem( KLUCZ_KONTRAST, wlaczamy ? 'wysoki' : 'zwykly' );
+		} catch ( e ) {}
+
+		odswiezPrzelacznik();
+	} );
+
+	odswiezPrzelacznik();
 }() );

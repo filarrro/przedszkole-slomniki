@@ -1337,24 +1337,67 @@ Drugi fałszywy trop: panel podglądu potrafi pokazać nieaktualną klatkę —
 `getComputedStyle` zwracał poprawne kolory, gdy zrzut ekranu wciąż miał stare.
 Rozstrzyga wymuszenie przemalowania przed zrzutem.
 
-**D. Wysoki kontrast**
-- [ ] Rozszerzyć `przedszkole_dostepnosc_wczesnie()` i `dostepnosc.js`
-      o drugi atrybut — szkielet z etapu C jest gotowy
-- [ ] Przycisk przełącznika obok rozmiaru, `aria-pressed`
-- [ ] Paleta: tło `#000000`, tekst `#FFFFFF` (21:1), linki i akcenty `#FFFF00`
-      (19,6:1), obramowania `#FFFFFF`
-- [ ] **Linki zawsze podkreślone** — w monochromie kolor nie może być
-      jedynym wyróżnikiem
-- [ ] Dekoracje (fale, chmurki, skrzydła, plamy 404) ukryte; wszystkie mają już
-      `aria-hidden="true"`, więc nic nie ginie z treści
-- [ ] Kolory grup zwijają się do monochromu — grupy są i tak podpisane tekstem
-- [ ] Pierścień focusa żółty, grubszy
+**D. Wysoki kontrast** ✅ 2026-09-15
+- [x] `przedszkole_dostepnosc_wczesnie()` i `dostepnosc.js` obsługują drugi
+      atrybut `data-kontrast`
+- [x] Przycisk obok rozmiaru, `aria-pressed`, ikona z gradientu (bez pliku)
+- [x] Paleta policzona: biel na czerni **21,00:1**, żółć na czerni **19,56:1**,
+      czerń na żółci **19,56:1** — każda para w AAA
+- [x] Linki w treści i stopce zawsze podkreślone (WCAG 1.4.1)
+- [x] Dekoracje ukryte — 15 selektorów: tęcza, fale, chmurki, plamy hero i 404,
+      deseń „Na skróty", cień nagłówka. Wszystkie miały `aria-hidden="true"`
+- [x] Kolory grup zwijają się do monochromu; grupy są podpisane nazwą, więc
+      kolor był dodatkiem, nie jedynym nośnikiem informacji
+- [x] Obrys focusa żółty, 3px; w stopce nadpisany osobno, bo brałby
+      `--tekst-na-ciemnym`, czyli czerń na czerni
+
+**Decyzja: `prefers-contrast: more` czyta skrypt, nie CSS.** Pierwotny plan
+zakładał regułę w media query, co oznaczałoby dwie kopie całego bloku palety.
+Wykrycie preferencji systemowej w skrypcie wczesnym daje jeden atrybut i jeden
+blok CSS. Wybór użytkownika ma pierwszeństwo — preferencję systemową bierzemy
+tylko wtedy, gdy nic nie zapisano. Stąd zapis jawnego `"zwykly"`: bez niego
+osoba z wysokim kontrastem w systemie nie mogłaby go tu wyłączyć.
+
+**Odbiór — audyt policzony na żywej stronie**, nie oszacowany. Skrypt przeszedł
+po każdym elemencie z własnym tekstem, wyznaczył realne tło (wspinaczka po
+przodkach do pierwszego nieprzezroczystego) i policzył kontrast wg WCAG:
+
+| Strona | Elementów z tekstem | Poniżej progu | Barw spoza palety |
+|---|---|---|---|
+| Strona główna | 64 | **0** | **0** |
+| Lista aktualności | 83 | **0** | **0** |
+
+Próg liczony zgodnie z WCAG: 3:1 dla dużego tekstu, 4,5:1 dla reszty.
+„Barwy spoza palety" to kontrola szczelności — czy gdzieś nie został kolor
+inny niż czerń, biel albo żółć.
+
+Pozostałe sprawdzenia: przełącznik przechodzi wysoki → zwykły → wysoki razem
+z `aria-pressed` i zapisem; po przeładowaniu tryb wraca z `<head>`, bez błysku
+bieli; na 320px brak przewijania poziomego, przycisk 46×44, napis schowany
+wizualnie, ale nazwa dla czytnika ekranu nadal brzmi „Wysoki kontrast".
+
+**Co audyt wyłapał, a czego nie było w planie:**
+- `theme.json` wpisuje tekst przycisku jako literalne `#FFFFFF` — na żółtym tle
+  dałoby to **1,07:1**, czyli napis nieczytelny. Nadpisane jawnie
+- **Siódmy zestaw kolorów grup**, `--skrot-kolor`, przypisany do klas
+  `.skrot--*`, a nie do `:root` — kafelki „Na skróty" zostawały kolorowe
+  pośrodku czarnej strony. Wyszło dopiero z kontroli barw spoza palety
+- `--karta-brak-tlo`, `--karta-panel` i twardy `#C9C4E4` w stopce — ta sama
+  kategoria: kolory mieszkające przy komponentach, nie w palecie
+
+**Pułapka narzędziowa, trzecia z rzędu:** `getComputedStyle` odczytany w tym
+samym wywołaniu, w którym ustawiono atrybut na `<html>`, potrafi zwrócić
+wartości sprzed zmiany — wymuszenie reflow nie wystarcza. Pierwszy przebieg
+audytu pokazał przez to osiem fałszywych błędów (biel na bieli w filtrze
+kategorii). Atrybut trzeba ustawić w jednym wywołaniu, a mierzyć w następnym.
 
 **E. Testy i domknięcie**
 - [ ] **Policzenie kontrastów**, nie oszacowanie
 - [ ] Klawiatura, czytnik ekranu, zoom przeglądarki 200% osobno
       (to jest właściwe kryterium 1.4.4)
-- [ ] Odświeżenie `languages/przedszkole.pot` o nowe ciągi
+- [ ] Odświeżenie `languages/przedszkole.pot` o nowe ciągi — z etapów C i D:
+      „Rozmiar tekstu", „Standardowy rozmiar tekstu", „Większy tekst",
+      „Największy tekst", „Wysoki kontrast"
 - [ ] `Version:` w `style.css` i `PRZEDSZKOLE_VERSION` podbite razem
 - [ ] Wynik wchodzi do samooceny pod deklarację dostępności (8.4)
 

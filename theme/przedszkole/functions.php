@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.26.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.27.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
@@ -87,14 +87,24 @@ function przedszkole_assets() {
 add_action( 'wp_enqueue_scripts', 'przedszkole_assets' );
 
 /**
- * Preferencja rozmiaru tekstu, odczytana przed pierwszym malowaniem.
+ * Preferencje dostepnosci, odczytane przed pierwszym malowaniem.
  *
  * Jedyny skrypt w tym motywie wstawiony w tresci strony, i to swiadomie.
- * Preferencja siedzi w `localStorage`, a nie w ciasteczku - serwer jej nie zna,
- * wiec ustawic ja moze dopiero przegladarka. Skrypt odroczony zrobilby to
- * po pierwszym malowaniu: strona blysnelaby domyslnym rozmiarem i dopiero
- * przeskoczyla na wybrany. Kilkanascie znakow w naglowku kosztuje mniej niz
- * to mrugniecie, a zewnetrznego zapytania nie dokłada zadnego.
+ * Preferencje siedza w `localStorage`, a nie w ciasteczku - serwer ich nie zna,
+ * wiec ustawic je moze dopiero przegladarka. Skrypt odroczony zrobilby to
+ * po pierwszym malowaniu: strona blysnelaby domyslnym rozmiarem i bialym tlem,
+ * a dopiero potem przeskoczyla na wybrane. Przy wysokim kontrascie to nie
+ * kosmetyka - blysk bieli w oczy osobie swiatloczulej jest dokladnie tym,
+ * przed czym ten tryb ma chronic. Kilkadziesiat znakow w naglowku kosztuje
+ * mniej niz to mrugniecie, a zewnetrznego zapytania nie doklada zadnego.
+ *
+ * Preferencje systemowa (`prefers-contrast: more`) czyta ten sam skrypt, a nie
+ * osobna regula w CSS. Dzieki temu caly tryb wisi na jednym atrybucie i CSS ma
+ * jeden blok zamiast dwoch kopii. Wybor uzytkownika jest wazniejszy: preferencje
+ * systemowa bierzemy pod uwage tylko wtedy, gdy nic nie zapisano.
+ *
+ * Zapisane „zwykly" jest tak samo wazne jak „wysoki": bez niego osoba, ktora
+ * ma wysoki kontrast wlaczony w systemie, nie moglaby go tu wylaczyc.
  *
  * `localStorage`, nie ciasteczko, takze dlatego, ze odpowiedz serwera zostaje
  * bez `Set-Cookie` - na tym opiera sie brak banera zgod (Etap 8.4).
@@ -105,7 +115,11 @@ add_action( 'wp_enqueue_scripts', 'przedszkole_assets' );
 function przedszkole_dostepnosc_wczesnie() {
 	$przedszkole_skrypt = "(function(){var d=document.documentElement;d.classList.add('ma-js');"
 		. "try{var r=localStorage.getItem('przedszkole-rozmiar');"
-		. "if('duzy'===r||'bardzo-duzy'===r){d.setAttribute('data-rozmiar',r);}}catch(e){}}());";
+		. "if('duzy'===r||'bardzo-duzy'===r){d.setAttribute('data-rozmiar',r);}"
+		. "var k=localStorage.getItem('przedszkole-kontrast');"
+		. "if('wysoki'===k||'zwykly'===k){d.setAttribute('data-kontrast',k);}"
+		. "else if(window.matchMedia&&matchMedia('(prefers-contrast: more)').matches)"
+		. "{d.setAttribute('data-kontrast','wysoki');}}catch(e){}}());";
 
 	wp_print_inline_script_tag( $przedszkole_skrypt );
 }
