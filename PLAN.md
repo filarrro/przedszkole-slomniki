@@ -1301,15 +1301,45 @@ paska tęczy nad nagłówkiem. Identycznie przy 100% i 150%, więc to stan
 zastany, nie regres. Do osobnej poprawki — tutaj zostawione, żeby etap B
 nie zmieniał wyglądu.
 
-**C. Przełącznik rozmiaru tekstu**
-- [ ] Pasek narzędzi w `header.php`, nad `.site-header`, po `skip-link`
-- [ ] Trzy przyciski `A` / `A+` / `A++`, `aria-pressed` na aktywnym,
-      całość w `role="group"` z `aria-label`
-- [ ] `assets/js/dostepnosc.js` — czysty JS, wzorowany na `nav.js`
-- [ ] `przedszkole_dostepnosc_skrypt_wczesny()` wpięty w `wp_head`
-- [ ] Skoki 100% / 125% / 150%
+**C. Przełącznik rozmiaru tekstu** ✅ 2026-09-15
+- [x] Pasek w `header.php`, nad `.site-header`, po pasku tęczy
+- [x] Trzy przyciski `A` / `A+` / `A++` w `role="group"` z `aria-label`,
+      opisy dla czytnika w `.screen-reader-text`, cele dotykowe 44×44
+- [x] `assets/js/dostepnosc.js` — czysty JS, wzorowany na `nav.js`
+- [x] `przedszkole_dostepnosc_wczesnie()` w `wp_head` z priorytetem 1,
+      przez `wp_print_inline_script_tag()` (WordPress ma to gotowe)
+- [x] Skoki 100% / 125% / 150% jako `font-size` w **procentach** na `<html>`,
+      nie w px — kto powiększył czcionkę w przeglądarce, zachowuje swoją podstawę
+- [x] Klasa `ma-js` odsłania pasek; bez JavaScriptu przyciski by nie działały,
+      a przycisk, który nic nie robi, jest gorszy niż jego brak
+- [x] Stan widoczny rysuje kaskada z `data-rozmiar`, więc pasek nie mruga złym
+      stanem przed wykonaniem skryptu; `aria-pressed` prostuje `dostepnosc.js`,
+      bo serwer wysyła zawsze „normalny" — strona jest cache'owalna
+- [x] Przy okazji: panel menu mobilnego przestał wychodzić 5px poniżej okna —
+      `--rainbow-h` w zmiennej i odjęty w `max-height`
+
+**Odbiór — zmierzone i obejrzane:**
+
+| Sprawdzenie | Wynik |
+|---|---|
+| Korzeń dokumentu po kliknięciach A / A+ / A++ | 16 → 20 → 24 → 16 px |
+| `aria-pressed` | dokładnie jeden przycisk `true`, śledzi wybór |
+| `localStorage` | zapisuje i odczytuje; zapis w `try/catch` |
+| Po przeładowaniu | atrybut ustawiony w `<head>`, czyli przed pierwszym malowaniem |
+| 320px, wszystkie trzy kroki | brak przewijania poziomego, prawa krawędź max 300px |
+| Cele dotykowe, wszystkie kroki | każdy przycisk ≥ 44×44 |
+
+**Pułapka przy testach, do zapamiętania:** `tools/podglad.py` zamienia
+`<script src defer>` na skrypt wstawiony w treści, przez co ten traci `defer`
+i wykonuje się w `<head>`, zanim istnieją przyciski — wtedy wychodzi przez
+`return` i przełącznik wygląda na zepsuty. To artefakt narzędzia, nie kodu.
+Drugi fałszywy trop: panel podglądu potrafi pokazać nieaktualną klatkę —
+`getComputedStyle` zwracał poprawne kolory, gdy zrzut ekranu wciąż miał stare.
+Rozstrzyga wymuszenie przemalowania przed zrzutem.
 
 **D. Wysoki kontrast**
+- [ ] Rozszerzyć `przedszkole_dostepnosc_wczesnie()` i `dostepnosc.js`
+      o drugi atrybut — szkielet z etapu C jest gotowy
 - [ ] Przycisk przełącznika obok rozmiaru, `aria-pressed`
 - [ ] Paleta: tło `#000000`, tekst `#FFFFFF` (21:1), linki i akcenty `#FFFF00`
       (19,6:1), obramowania `#FFFFFF`

@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.25.0
+Version: 0.26.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -55,6 +55,9 @@ Text Domain: przedszkole
 	   znaczy kotwice nieco nizej niz trzeba - odwrotny blad chowalby
 	   naglowek sekcji pod paskiem. */
 	--header-h:      4.75rem;
+	/* Pasek teczy nad naglowkiem. W zmiennej, bo panel menu mobilnego musi
+	   odjac i jego wysokosc - bez tego siegal 5px ponizej dolnej krawedzi okna. */
+	--rainbow-h:     5px;
 	--ease:          cubic-bezier(.2, .7, .3, 1);
 
 	/* Hover granatu. `theme.json` ustawia go na przycisku bloku, ale nie
@@ -208,7 +211,7 @@ body:not(.home) main + .fala { background: transparent; }
    ========================================================================== */
 
 .rainbow-bar {
-	height: 5px;
+	height: var(--rainbow-h);
 	background: linear-gradient(90deg,
 		var(--wp--preset--color--jezyki)    0%,
 		var(--wp--preset--color--wiewiorki) 20%,
@@ -322,7 +325,9 @@ body:not(.home) main + .fala { background: transparent; }
 		background: var(--wp--preset--color--surface);
 		border-bottom: 1px solid var(--wp--preset--color--border);
 		box-shadow: var(--shadow);
-		max-height: calc(100svh - var(--header-h));
+		/* Tecza stoi nad naglowkiem, wiec panel zaczyna sie o nia nizej.
+		   Bez tego skladnika dol panelu wychodzil poza okno. */
+		max-height: calc(100svh - var(--header-h) - var(--rainbow-h));
 		overflow-y: auto;
 	}
 	.main-nav.is-open { display: block; }
@@ -2357,4 +2362,88 @@ main + .fala { background: var(--wp--preset--color--base); }
 	letter-spacing: .02em;
 	font-variant-numeric: tabular-nums;
 	overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
+   27. Pasek dostepnosci: rozmiar tekstu
+   Skoki na korzeniu dokumentu, w procentach domyslnego rozmiaru przegladarki -
+   nie w px. Kto ustawil sobie wieksza czcionke w przegladarce, zachowuje swoja
+   podstawe, a przelacznik doklada sie do niej zamiast ja nadpisywac.
+   Caly motyw ma rozmiary w `rem` i zero `font-size` w `px` (etap A/B sekcji 8.5),
+   wiec skalowanie korzenia przenosi sie na wszystko.
+   ========================================================================== */
+
+html[data-rozmiar="duzy"]        { font-size: 125%; }
+html[data-rozmiar="bardzo-duzy"] { font-size: 150%; }
+
+/* Bez JavaScriptu pasek nie ma sensu - odslania go klasa z naglowka. */
+.pasek-dostepnosci { display: none; }
+.ma-js .pasek-dostepnosci { display: block; }
+
+.pasek-dostepnosci {
+	background: var(--wp--preset--color--primary-soft);
+	border-bottom: 1px solid var(--wp--preset--color--border);
+}
+.pasek-dostepnosci__inner {
+	display: flex;
+	justify-content: flex-end;
+	padding-block: .35rem;
+}
+
+.rozmiar-tekstu {
+	display: flex;
+	align-items: center;
+	gap: .4rem;
+}
+.rozmiar-tekstu__etykieta {
+	font-size: .8125rem;
+	font-weight: 600;
+	color: var(--wp--preset--color--primary);
+}
+/* Na waskim ekranie etykieta ustepuje miejsca przyciskom. Znaczenie niesie
+   `aria-label` grupy, wiec dla czytnika ekranu nic nie ginie. */
+@media (max-width: 559px) {
+	.rozmiar-tekstu__etykieta { display: none; }
+}
+
+/* 44px - ten sam minimalny cel dotykowy co w paginacji i filtrze kategorii.
+   `min-height`, nie `height`: przy powiekszonym tekscie przycisk ma rosnac. */
+.rozmiar-tekstu__przycisk {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 .5rem;
+	font: inherit;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--wp--preset--color--ink);
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: 999px;
+	cursor: pointer;
+	transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+}
+/* Rozmiar litery zapowiada skutek klikniecia - „A" rosnie razem z krokiem. */
+.rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="normalny"]    { font-size: .8125rem; }
+.rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="duzy"]        { font-size: 1rem; }
+.rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="bardzo-duzy"] { font-size: 1.1875rem; }
+
+.rozmiar-tekstu__przycisk:hover {
+	background: var(--wp--preset--color--surface);
+	border-color: var(--wp--preset--color--primary);
+	color: var(--wp--preset--color--primary);
+}
+
+/* Stan wybrany rysuje kaskada z atrybutu na <html>, a nie klasa dopisywana
+   skryptem odroczonym - dzieki temu pasek nie mruga zlym stanem przed
+   wykonaniem JS. `aria-pressed` prostuje `dostepnosc.js`.
+   Biel na granacie to kontrast 9,3 (WCAG AA wymaga 4,5). */
+html:not([data-rozmiar]) .rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="normalny"],
+html[data-rozmiar="duzy"] .rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="duzy"],
+html[data-rozmiar="bardzo-duzy"] .rozmiar-tekstu__przycisk[data-przedszkole-rozmiar="bardzo-duzy"] {
+	background: var(--wp--preset--color--primary);
+	border-color: var(--wp--preset--color--primary);
+	color: var(--tekst-na-ciemnym);
 }

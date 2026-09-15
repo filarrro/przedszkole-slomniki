@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.25.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.26.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
@@ -75,8 +75,41 @@ function przedszkole_assets() {
 		PRZEDSZKOLE_VERSION,
 		array( 'strategy' => 'defer' )
 	);
+
+	wp_enqueue_script(
+		'przedszkole-dostepnosc',
+		get_theme_file_uri( 'assets/js/dostepnosc.js' ),
+		array(),
+		PRZEDSZKOLE_VERSION,
+		array( 'strategy' => 'defer' )
+	);
 }
 add_action( 'wp_enqueue_scripts', 'przedszkole_assets' );
+
+/**
+ * Preferencja rozmiaru tekstu, odczytana przed pierwszym malowaniem.
+ *
+ * Jedyny skrypt w tym motywie wstawiony w tresci strony, i to swiadomie.
+ * Preferencja siedzi w `localStorage`, a nie w ciasteczku - serwer jej nie zna,
+ * wiec ustawic ja moze dopiero przegladarka. Skrypt odroczony zrobilby to
+ * po pierwszym malowaniu: strona blysnelaby domyslnym rozmiarem i dopiero
+ * przeskoczyla na wybrany. Kilkanascie znakow w naglowku kosztuje mniej niz
+ * to mrugniecie, a zewnetrznego zapytania nie dokłada zadnego.
+ *
+ * `localStorage`, nie ciasteczko, takze dlatego, ze odpowiedz serwera zostaje
+ * bez `Set-Cookie` - na tym opiera sie brak banera zgod (Etap 8.4).
+ *
+ * Klasa `ma-js` odslania pasek. Bez JavaScriptu przyciski nic by nie robily,
+ * a przycisk, ktory nic nie robi, jest gorszy niz jego brak.
+ */
+function przedszkole_dostepnosc_wczesnie() {
+	$przedszkole_skrypt = "(function(){var d=document.documentElement;d.classList.add('ma-js');"
+		. "try{var r=localStorage.getItem('przedszkole-rozmiar');"
+		. "if('duzy'===r||'bardzo-duzy'===r){d.setAttribute('data-rozmiar',r);}}catch(e){}}());";
+
+	wp_print_inline_script_tag( $przedszkole_skrypt );
+}
+add_action( 'wp_head', 'przedszkole_dostepnosc_wczesnie', 1 );
 
 /**
  * Wstępne wczytanie kroju pisma.

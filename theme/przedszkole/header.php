@@ -21,6 +21,44 @@ defined( 'ABSPATH' ) || exit;
 
 <div class="rainbow-bar" aria-hidden="true"></div>
 
+<?php
+/*
+ * Pasek dostepnosci. Ukryty, dopoki skrypt w naglowku nie oznaczy dokumentu
+ * klasa `ma-js` - bez JavaScriptu przyciski nic by nie robily, a przycisk,
+ * ktory nic nie robi, jest gorszy niz jego brak.
+ */
+?>
+<div class="pasek-dostepnosci">
+	<div class="wrap pasek-dostepnosci__inner">
+		<div class="rozmiar-tekstu" role="group" aria-label="<?php esc_attr_e( 'Rozmiar tekstu', 'przedszkole' ); ?>">
+			<span class="rozmiar-tekstu__etykieta" aria-hidden="true"><?php esc_html_e( 'Rozmiar tekstu', 'przedszkole' ); ?></span>
+			<?php
+			/*
+			 * `aria-pressed` wychodzi z serwera zawsze na „normalny", bo strona
+			 * jest cache'owalna i serwer nie zna preferencji przegladarki.
+			 * Stan widoczny rysuje CSS z atrybutu `data-rozmiar` na <html>
+			 * (sekcja 27), wiec nic nie mruga; `aria-pressed` prostuje skrypt.
+			 */
+			$przedszkole_rozmiary = array(
+				'normalny'    => array( 'A', __( 'Standardowy rozmiar tekstu', 'przedszkole' ) ),
+				'duzy'        => array( 'A+', __( 'Większy tekst', 'przedszkole' ) ),
+				'bardzo-duzy' => array( 'A++', __( 'Największy tekst', 'przedszkole' ) ),
+			);
+
+			foreach ( $przedszkole_rozmiary as $przedszkole_klucz => $przedszkole_opis ) {
+				printf(
+					'<button type="button" class="rozmiar-tekstu__przycisk" data-przedszkole-rozmiar="%1$s" aria-pressed="%2$s"><span aria-hidden="true">%3$s</span><span class="screen-reader-text">%4$s</span></button>',
+					esc_attr( $przedszkole_klucz ),
+					'normalny' === $przedszkole_klucz ? 'true' : 'false',
+					esc_html( $przedszkole_opis[0] ),
+					esc_html( $przedszkole_opis[1] )
+				);
+			}
+			?>
+		</div>
+	</div>
+</div>
+
 <header class="site-header">
 	<div class="wrap site-header__inner">
 
