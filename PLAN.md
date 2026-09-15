@@ -1168,7 +1168,58 @@ tych po prostu nie ma. To wynik decyzji z poprzednich etapów, nie osobna praca.
 **Warunek:** gdy kiedykolwiek dojdzie Google Analytics, osadzony film albo mapa,
 baner staje się obowiązkowy.
 
-**Deklaracja dostępności jest nieaktualna i musi zostać napisana od nowa.**
+#### Deklaracja napisana od nowa — 2026-09-15 ✅
+
+Strona `/deklaracja-dostepnosci/` (ID 52) dostała nową treść. Poprzednia wersja
+została w rewizjach WordPressa, więc jest odwracalna. Treść mieszka w bazie,
+nie w repozytorium — jedzie na produkcję razem ze zrzutem bazy (Etap 9.3).
+
+Co ustalono i wpisano:
+
+| Element | Wartość |
+|---|---|
+| Data publikacji strony | 15 września 2026 r. |
+| Data ostatniej istotnej aktualizacji | 15 września 2026 r. |
+| Data sporządzenia deklaracji | 15 września 2026 r. |
+| Metoda | samoocena przeprowadzona przez podmiot publiczny |
+| Status | **częściowo zgodna** |
+| Koordynator / kontakt | Barbara Stanek — bez zmian |
+| Dostępność architektoniczna | przeniesiona bez zmian, potwierdzona jako aktualna |
+
+**Status „częściowo zgodna", nie „zgodna"** — świadomie. Motyw przechodzi
+wszystkie zmierzone kryteria (tabela wyżej), ale treść przeniesiona z Joomli
+nie została sprawdzona sztuka po sztuce. Wpisanie pełnej zgodności byłoby
+dokładnie tym błędem, który miała stara deklaracja.
+
+Niezgodności wypisano na podstawie **przeliczenia bazy**, nie oględzin —
+448 publikacji, z czego: 2 obrazki bez tekstu alternatywnego (na 3 obrazki
+w treści w ogóle), 7 publikacji z własnym `<h1>` dublującym nagłówek strony,
+0 odnośników typu „kliknij tutaj". 383 publikacje linkują do albumów
+w Google Photos — opisane jako uwaga, bo dostępność cudzego serwisu jest
+poza kontrolą przedszkola.
+
+Nowa sekcja „Udogodnienia" wymienia pasek dostępności z 8.5, skip link,
+obsługę klawiaturą, ograniczanie animacji i działanie przy powiększeniu 200%.
+
+Sprawdzone po zapisie: strona zwraca 200, ma jedno `<h1>` i osiem `<h2>`
+w logicznej kolejności, zero nieprzetworzonych komentarzy bloków Gutenberga.
+Audyt kontrastu w trybie wysokiego kontrastu: 85 elementów z tekstem,
+zero poniżej progu, zero barw spoza palety, odnośniki w treści podkreślone.
+
+**Do sprawdzenia przed wdrożeniem:**
+- [ ] **Adres do zgłoszeń** — zostawiony bez zmian (`Basik_S@poczta.fm`),
+      ale to adres prywatny. Docelowo powinien być służbowy adres placówki.
+      Do potwierdzenia z przedszkolem, czy zostaje, czy się zmienia
+- [ ] Czy Barbara Stanek nadal pełni tę funkcję
+- [ ] Czy dane teleadresowe i opis budynku są nadal aktualne
+- [ ] Dyrektor musi treść zatwierdzić — deklaracja jest oświadczeniem
+      podmiotu publicznego, odpowiedzialność jest po stronie placówki
+- [ ] Po wdrożeniu: podmiana daty publikacji, jeśli start wypadnie w innym dniu
+- [ ] Przegląd deklaracji co roku do 31 marca
+
+---
+
+**Materiał źródłowy — dlaczego stara deklaracja nie nadawała się do poprawek.**
 Strona `/deklaracja-dostepnosci/` przyszła z migracji i opisuje **starą** stronę:
 oświadczenie sporządzone 23 września 2020 r., data publikacji 1 października
 2016 r., a wśród niezgodności „brak opisów zdjęć, tekstu alternatywnego"
@@ -1184,8 +1235,8 @@ Do zmiany:
   powinien być adres służbowy placówki
 - dostępność architektoniczna — przenieść bez zmian, dotyczy budynku
 
-Treść pisze przedszkole; deklaracja jest oświadczeniem podmiotu publicznego,
-a nie elementem motywu. Z naszej strony: samoocena techniczna (niżej).
+Deklaracja jest oświadczeniem podmiotu publicznego, a nie elementem motywu —
+treść przygotowana, zatwierdza dyrektor. Samoocena techniczna niżej.
 
 #### Samoocena techniczna — stan na 2026-09-15
 
