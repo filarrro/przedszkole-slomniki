@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.23.0
+Version: 0.23.1
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -1317,8 +1317,15 @@ main + .fala { background: var(--wp--preset--color--base); }
 .wp-block-table table th,
 .wp-block-table table td {
 	padding: .85rem 1.1rem;
-	text-align: left;
 	border: 0;
+}
+/* Wyrownanie do lewej tylko tam, gdzie pracownik nie ustawil wlasnego.
+   Rdzen znakuje wyrownana komorke klasa `has-text-align-*` (specyficznosc
+   0,1,0) - bez `:not()` selektor z `table` (0,2,2) bilby ja i przycisk
+   „wysrodkuj" w edytorze nie robilby nic na stronie. */
+.wp-block-table table th:not([class*="has-text-align"]),
+.wp-block-table table td:not([class*="has-text-align"]) {
+	text-align: left;
 }
 .wp-block-table table thead,
 .wp-block-table table tfoot { border: 0; }
@@ -1352,10 +1359,14 @@ main + .fala { background: var(--wp--preset--color--base); }
 	.wp-block-table table th,
 	.wp-block-table table td { padding: .65rem .8rem; }
 }
+/* Podpis tabeli - wysrodkowany, tak jak podpis obrazu i tak, jak pokazuje
+   go edytor. Rdzen nie stylizuje go na froncie, wiec bez tej reguly podpis
+   siedzial po lewej i rozjezdzal sie z podgladem w panelu. */
 .wp-block-table figcaption {
 	margin-top: .6rem;
 	color: var(--wp--preset--color--ink-soft);
 	font-size: .9375rem;
+	text-align: center;
 }
 
 /* --- Lista w wariancie "Spis tresci" --- */
