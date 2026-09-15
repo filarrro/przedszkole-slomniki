@@ -1185,7 +1185,48 @@ Do zmiany:
 - dostępność architektoniczna — przenieść bez zmian, dotyczy budynku
 
 Treść pisze przedszkole; deklaracja jest oświadczeniem podmiotu publicznego,
-a nie elementem motywu. Z naszej strony: samoocena techniczna (Etap 11).
+a nie elementem motywu. Z naszej strony: samoocena techniczna (niżej).
+
+#### Samoocena techniczna — stan na 2026-09-15
+
+**Ustawa nie wymaga uprawnionego audytora.** Dopuszcza wprost samoocenę
+podmiotu publicznego; zewnętrzny audyt to opcja, nie obowiązek. Deklaracja ma
+pole „metoda przygotowania" — wpisujemy samoocenę.
+
+Co da się w deklaracji napisać zgodnie z prawdą, bo zostało **zmierzone**,
+a nie oszacowane:
+
+| Kryterium WCAG 2.1 | Stan | Dowód |
+|---|---|---|
+| 1.4.3 Kontrast minimalny (AA) | spełnione | Audyt skryptem po każdym elemencie z tekstem: 64 na stronie głównej, 83 na liście aktualności, zero poniżej progu |
+| 1.4.4 Zmiana rozmiaru tekstu (AA) | spełnione | Zoom 200% (viewport 640px) bez utraty treści i bez przewijania poziomego; to samo przy 200% + własny krok A++ |
+| 1.4.10 Reflow (AA) | spełnione | 320px, wszystkie trzy kroki rozmiaru, brak przewijania poziomego |
+| 1.4.1 Użycie koloru (A) | spełnione | Odnośniki podkreślone w trybie kontrastu; stan wybrany filtra niesie też `aria-current` i pogrubienie; grupy podpisane nazwą, nie samym kolorem |
+| 2.4.1 Pomijanie bloków (A) | spełnione | Skip link, pierwszy w kolejności tabulacji |
+| 2.4.7 Widoczny focus (AA) | spełnione | Obrys 3px, zmierzony; w stopce i trybie kontrastu nadpisany osobno |
+| 2.5.3 Etykieta w nazwie (AA) | spełnione | Nazwy przycisków zawierają widoczną etykietę: „A+ większy tekst" |
+| 2.5.8 Rozmiar celu (AA, 2.2) | spełnione | Każdy przycisk paska ≥ 44×44 w każdym kroku rozmiaru |
+
+**Ponad wymagania ustawy:** przełącznik rozmiaru tekstu (100/125/150%)
+i tryb wysokiego kontrastu. Żadnego z nich WCAG nie wymaga — zoom przeglądarki
+wystarcza do 1.4.4 — ale stara deklaracja wymieniała ich brak jako niezgodność
+i audytorzy z listą kontrolną o nie pytają.
+
+**Czego samoocena NIE obejmuje** i co trzeba sprawdzić ręcznie przed
+napisaniem deklaracji (Etap 11):
+- Czytnik ekranu na żywo (NVDA/VoiceOver) — drzewo dostępności sprawdzone
+  programowo, ale odsłuch to co innego
+- Aktywacja przycisków klawiszem Enter i spacja. Natywny `<button>` gwarantuje
+  to na poziomie przeglądarki, a motyw nie dokłada żadnej obsługi `keydown`,
+  która mogłaby to zepsuć — ale **w panelu podglądu nie dało się tego
+  potwierdzić**: syntetyczne klawisze przesuwają fokus (Tab działa), lecz nie
+  wyzwalają natywnej aktywacji. Próba kontrolna na świeżo utworzonym, zwykłym
+  `<button>` zachowała się tak samo, więc to ograniczenie środowiska, nie kodu.
+  Do odhaczenia na prawdziwej przeglądarce
+- Treść redakcyjna: teksty alternatywne zdjęć, opisowe nazwy odnośników,
+  poprawna hierarchia nagłówków we wpisach. To pisze personel, nie motyw
+- Dokumenty PDF — 118 załączników przepadło ze starym serwerem; te, które
+  powstaną w przyszłości, muszą być dostępne same z siebie
 
 ### 8.5 Rozmiar tekstu i wysoki kontrast
 
@@ -1391,15 +1432,35 @@ wartości sprzed zmiany — wymuszenie reflow nie wystarcza. Pierwszy przebieg
 audytu pokazał przez to osiem fałszywych błędów (biel na bieli w filtrze
 kategorii). Atrybut trzeba ustawić w jednym wywołaniu, a mierzyć w następnym.
 
-**E. Testy i domknięcie**
-- [ ] **Policzenie kontrastów**, nie oszacowanie
-- [ ] Klawiatura, czytnik ekranu, zoom przeglądarki 200% osobno
-      (to jest właściwe kryterium 1.4.4)
-- [ ] Odświeżenie `languages/przedszkole.pot` o nowe ciągi — z etapów C i D:
-      „Rozmiar tekstu", „Standardowy rozmiar tekstu", „Większy tekst",
-      „Największy tekst", „Wysoki kontrast"
-- [ ] `Version:` w `style.css` i `PRZEDSZKOLE_VERSION` podbite razem
-- [ ] Wynik wchodzi do samooceny pod deklarację dostępności (8.4)
+**E. Testy i domknięcie** ✅ 2026-09-15
+- [x] Kontrasty policzone — audyt z etapu D, zero elementów poniżej progu
+- [x] Zoom przeglądarki 200% jako osobne kryterium 1.4.4: viewport 640px
+      (odpowiednik 1280px przy 200%), bez utraty treści i bez przewijania
+      poziomego. To samo przy 200% + własny krok A++, czyli efektywnie 300%
+- [x] Kolejność tabulacji: zero dodatnich `tabindex`, więc kolejność idzie
+      za DOM-em. Pasek stoi zaraz po skip linku, przed logo i menu
+- [x] Obrys focusa zmierzony: 3px, widoczny w obu trybach
+- [x] `languages/przedszkole.pot` odświeżony — 110 → 115 ciągów
+- [x] `Version:` i `PRZEDSZKOLE_VERSION` podbite razem do 0.28.0
+- [x] Samoocena techniczna wpisana do 8.4 jako podstawa deklaracji
+
+**Znalezione i naprawione w tym etapie: WCAG 2.5.3 Etykieta w nazwie (AA).**
+Przyciski rozmiaru miały widoczną etykietę „A+", a nazwę dla technologii
+asystujących „Większy tekst" — nazwa nie zawierała etykiety. Osoba sterująca
+głosem powiedziałaby „kliknij A plus" i nic by się nie stało. Litera przestała
+być `aria-hidden`, dopisek zaczyna się małą literą, nazwa brzmi teraz
+„A+ większy tekst".
+
+**Fałszywy trop, czwarty:** `read_page` nie pokazywał nazw przycisków rozmiaru,
+co wyglądało na brak etykiety. Nazwa była obecna — `.screen-reader-text` ma
+`display: block` i `visibility: visible`, jest tylko przycięty do 1px, więc
+zostaje w drzewie dostępności. Narzędzie nie renderuje tekstu przyciętego
+wizualnie. Prawdziwy problem (2.5.3) leżał gdzie indziej i wyszedł dopiero
+z ręcznego odczytu nazw.
+
+**Nie do potwierdzenia w tym środowisku:** aktywacja przycisków Enterem
+i spacją — szczegóły i uzasadnienie w samoocenie (8.4). Do odhaczenia
+na prawdziwej przeglądarce w Etapie 11.
 
 #### Ryzyka
 
@@ -1575,6 +1636,8 @@ bez treści testowej i bez konta `dev`.
 - [ ] Wyszukiwarka
 - [ ] Linki wewnętrzne — brak martwych
 - [ ] Lighthouse: wydajność / dostępność / SEO
+- [ ] Pasek dostępności (8.5) na prawdziwej przeglądarce: aktywacja przycisków
+      Enterem i spacją, odsłuch czytnikiem ekranu (NVDA/VoiceOver)
 - [ ] Test ról: każde konto widzi to, co powinno
 - [ ] Odtworzenie backupu
 - [ ] Poprawne wyświetlanie polskich znaków

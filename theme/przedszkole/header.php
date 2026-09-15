@@ -39,15 +39,22 @@ defined( 'ABSPATH' ) || exit;
 			 * Stan widoczny rysuje CSS z atrybutu `data-rozmiar` na <html>
 			 * (sekcja 27), wiec nic nie mruga; `aria-pressed` prostuje skrypt.
 			 */
+			/*
+			 * Litera NIE jest `aria-hidden`, a dopisek zaczyna sie mala litera:
+			 * nazwa przycisku sklada sie na „A+ wiekszy tekst", czyli zawiera
+			 * widoczna etykiete. Tego wymaga WCAG 2.5.3 (Label in Name) -
+			 * inaczej osoba sterujaca glosem mowi „kliknij A plus" i nic
+			 * sie nie dzieje, bo nazwa brzmiala tylko „Większy tekst".
+			 */
 			$przedszkole_rozmiary = array(
-				'normalny'    => array( 'A', __( 'Standardowy rozmiar tekstu', 'przedszkole' ) ),
-				'duzy'        => array( 'A+', __( 'Większy tekst', 'przedszkole' ) ),
-				'bardzo-duzy' => array( 'A++', __( 'Największy tekst', 'przedszkole' ) ),
+				'normalny'    => array( 'A', __( 'standardowy rozmiar tekstu', 'przedszkole' ) ),
+				'duzy'        => array( 'A+', __( 'większy tekst', 'przedszkole' ) ),
+				'bardzo-duzy' => array( 'A++', __( 'największy tekst', 'przedszkole' ) ),
 			);
 
 			foreach ( $przedszkole_rozmiary as $przedszkole_klucz => $przedszkole_opis ) {
 				printf(
-					'<button type="button" class="rozmiar-tekstu__przycisk" data-przedszkole-rozmiar="%1$s" aria-pressed="%2$s"><span aria-hidden="true">%3$s</span><span class="screen-reader-text">%4$s</span></button>',
+					'<button type="button" class="rozmiar-tekstu__przycisk" data-przedszkole-rozmiar="%1$s" aria-pressed="%2$s">%3$s<span class="screen-reader-text"> %4$s</span></button>',
 					esc_attr( $przedszkole_klucz ),
 					'normalny' === $przedszkole_klucz ? 'true' : 'false',
 					esc_html( $przedszkole_opis[0] ),
