@@ -54,6 +54,8 @@ get_header();
 
 		</article>
 
+		<?php get_template_part( 'template-parts/aktualnosci-grupy', null, array( 'slug' => get_post_field( 'post_name' ) ) ); ?>
+
 		<?php get_template_part( 'template-parts/podstrony', null, array( 'rodzic' => get_the_ID() ) ); ?>
 		<?php
 	endwhile;
