@@ -81,6 +81,5 @@ Do dokończenia ręcznie:
 - 11 wpisów z treścią, ale bez dokumentu
 - przekierowania 301 ze starych adresów
 - zdjęcia kadry — 12 osób ma inicjały, 2 stockowe zastępniki czekają na podmianę
-- treść zastępcza na stronie głównej i 4 puste strony
 
 Listy z nazwami plików: [MIGRACJA.md](MIGRACJA.md), sekcja „Do dokończenia ręcznie".

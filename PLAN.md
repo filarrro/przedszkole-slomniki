@@ -9,42 +9,47 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 
 ---
 
-## Stan na 2026-09-14
+## Stan na 2026-09-15
 
 | Etap | Stan | Uwagi |
 |---|---|---|
 | 1. Analiza hostingu | ✅ | cyber_Folks, brak blokerów |
 | 2. Środowisko lokalne | ✅ | DDEV + WordPress 7.1 + PHP 8.5 |
-| 2b. Migracja z Joomli | 🔄 | analiza gotowa, **czeka na pliki z FTP** |
+| 2b. Migracja z Joomli | ✅ | 16 stron + 428 wpisów; pliki ze starego serwera przepadły |
 | 3. Motyw | ✅ | szkielet, szablony, identyfikacja wizualna |
 | 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
 | 6. Użytkownicy | ✅ | role natywne, konta grupowe, panel odchudzony |
-| 7. Frontend | ✅ | widoki gotowe; lista dokumentów czeka na PDF-y z FTP |
+| 7. Frontend | ✅ | widoki gotowe; lista dokumentów bez PDF-ów — przepadły ze starym serwerem |
 | 8. SEO / wydajność / bezpieczeństwo | 🔄 | motyw gotowy; `.htaccess`, cache i Search Console przy wdrożeniu |
 | 9. Wdrożenie | ⬜ | |
 | 10–12 | ⬜ | |
 
 ### Co blokuje postęp
 
-**Pliki ze starego serwera.** Zdjęcia i dokumenty nie są w zrzucie bazy.
-Do pobrania z `/home/icrdslom/domains/przedszkoleslomniki.pl/public_html/`:
-katalogi `images/` i `attachments/`. Szczegóły w [MIGRACJA.md](MIGRACJA.md).
+**Nic po stronie kodu.** Motyw gotowy, treść na miejscu. Następny krok to Etap 9 —
+wdrożenie na cyber_Folks.
 
-### Co można robić bez tych plików
+**Pliki ze starego serwera przepadły bezpowrotnie.** Hosting wyłączył starą
+witrynę: domena oddaje 403, ścieżki do plików 404, FTP niedostępny. 407 obrazków
+wyróżniających i 118 załączników (PDF-y, wnioski, zarządzenia) nie ma skąd wziąć.
+To nie jest blokada, tylko trwała strata — planujemy bez nich. Szczegóły
+w [MIGRACJA.md](MIGRACJA.md).
 
-- ~~Etap 6 — role i uprawnienia~~ — **zrobione**
-- ~~Etap 7 — frontend~~ — **zrobione**, poza listą dokumentów (potrzebne PDF-y)
-- Skrypt migracyjny — treść da się przenieść bez zdjęć, obrazki dołożyć później
-- ~~Etap 8 — SEO, wydajność, bezpieczeństwo~~ — **zrobione** w części, która
-  mieści się w kodzie; reszta to ustawienia serwera (Etap 9)
+### Dług treściowy do domknięcia przed startem
+
+- 7 wpisów, które na starej stronie były samą zajawką dla pliku PDF
+- 11 wpisów z treścią, ale bez dokumentu
+- zdjęcia kadry — 12 osób ma inicjały, 2 stockowe zastępniki czekają na podmianę
+- przekierowania 301 ze starych adresów, jeśli stara strona była indeksowana
 
 ### Decyzje czekające na klienta
 
 - ~~Dane do stopki: adres, telefon, godziny otwarcia~~ — **odzyskane ze zrzutu**
   (Etap 2b): ul. św. Jadwigi Królowej 4, 32-090 Słomniki, tel. 510 217 005,
   sekretariat@przedszkoleslomniki.pl. Do potwierdzenia, czy nadal aktualne
-- Jakie sekcje na stronie głównej poza aktualnościami
+- ~~Jakie sekcje na stronie głównej poza aktualnościami~~ — **zamknięte**
+  2026-09-15: treść strony głównej potwierdzona jako docelowa
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
 - Zakres zgód rodziców na publikację zdjęć dzieci
 - **Zdjęcia kadry.** Zostały dwa stockowe portrety ze znakiem wodnym (Agata Dudek,
@@ -1281,12 +1286,14 @@ Nie może trafić na produkcję.
 - [x] ~~Strona „O przedszkolu" z treścią wypełniaczową~~ — usunięta 2026-09-14
       razem ze stroną „Oferta" i memem z biblioteki mediów. Biblioteka trzyma
       już tylko logo i dwa stockowe zastępniki kadry
-- [ ] 4 strony nadal puste (Grupy, Dla rodziców, Aktualności, Strona główna
-      jako treść) — każda musi dostać realną treść albo zniknąć przed
-      wdrożeniem. Puste strony w menu to błąd dostępności.
-- [ ] Strony wypełnione migracją zawierają dane z 2025/2026 (jadłospis na konkretny
-      tydzień, harmonogramy logopedy) — sprawdzić aktualność przed startem
-- [ ] Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")
+- [x] ~~4 strony puste (Grupy, Dla rodziców, Aktualności, Strona główna)~~ —
+      potwierdzone 2026-09-15: wszystkie mają docelową treść, żadna nie jest
+      pusta. Menu bez martwych pozycji
+- [x] ~~Strony z jadłospisem i harmonogramem logopedy zawierają dane z 2025/2026~~ —
+      decyzja 2026-09-15: to treść bieżąca, którą personel aktualizuje sam
+      po wdrożeniu. Nie blokuje startu
+- [x] ~~Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")~~ —
+      potwierdzona 2026-09-15 jako docelowa
 - [ ] Konto `dev` — **usunąć**, nie przenosić na produkcję
 - [ ] Baza robocza `joomla` — nie migruje na serwer, zostaje lokalnie
 
@@ -1446,7 +1453,7 @@ bez treści testowej i bez konta `dev`.
 - [ ] Czy są gotowe teksty, czy trzeba je napisać? (sprawdzić starą stronę)
 - [ ] Która z 2 baz danych należy do starej strony?
 - [x] Ile grup i jakie nazwy? → **6: Wiewiórki, Żabki, Zajączki, Misie, Kotki, Jeżyki**
-- [ ] Czy jadłospis to PDF, czy treść wpisywana co tydzień?
+- [x] Czy jadłospis to PDF, czy treść wpisywana co tydzień? → **treść na stronie**, aktualizowana przez personel po wdrożeniu
 - [ ] Czy potrzebne komentarze pod aktualnościami? (domyślnie: nie)
 - [ ] Domena — istniejąca czy nowa?
 - [x] Zakres migracji → **lata szkolne 2023/24–2025/26, 440 wpisów**
