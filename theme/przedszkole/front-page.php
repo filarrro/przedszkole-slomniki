@@ -21,9 +21,12 @@ defined( 'ABSPATH' ) || exit;
 
 get_header();
 
+// Na stronie głównej pokazujemy wyłącznie ogłoszenia — wpisy grup mają
+// własne strony i zalewałyby tę listę.
 $przedszkole_aktualnosci = new WP_Query(
 	array(
 		'post_type'           => 'post',
+		'category_name'       => 'ogloszenia',
 		'posts_per_page'      => 3,
 		'ignore_sticky_posts' => true,
 		'no_found_rows'       => true,
@@ -97,10 +100,12 @@ if ( $przedszkole_sa_wpisy ) {
 			<div class="section__head">
 				<h2><?php esc_html_e( 'Aktualności', 'przedszkole' ); ?></h2>
 				<?php
-				$przedszkole_strona_wpisow = get_option( 'page_for_posts' );
-				if ( $przedszkole_strona_wpisow ) :
+				// Link prowadzi tam, skąd pochodzą kafelki — do archiwum ogłoszeń,
+				// nie do listy wszystkich wpisów.
+				$przedszkole_kategoria = get_category_by_slug( 'ogloszenia' );
+				if ( $przedszkole_kategoria ) :
 					?>
-					<a href="<?php echo esc_url( get_permalink( $przedszkole_strona_wpisow ) ); ?>">
+					<a href="<?php echo esc_url( get_category_link( $przedszkole_kategoria ) ); ?>">
 						<?php esc_html_e( 'Zobacz wszystkie', 'przedszkole' ); ?> →
 					</a>
 				<?php endif; ?>
