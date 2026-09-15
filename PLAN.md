@@ -1260,14 +1260,46 @@ ustawiony w systemie, dostaje go bez klikania.
 z powrotem do wartości daje plik **bajt w bajt identyczny** z oryginałem,
 więc zmiana jest wizualnie neutralna z definicji, nie z oględzin.
 
-**B. Jednostki odporne na skalowanie tekstu**
-- [ ] `--header-h` → `rem`, sprawdzenie obu miejsc, które z niego liczą
-- [ ] Przegląd odstępów w `px`, które trzymają tekst
-- [ ] Punkty łamania zostają w `px` — celowo, żeby powiększenie tekstu
+**B. Jednostki odporne na skalowanie tekstu** ✅ 2026-09-15
+- [x] `--header-h: 76px` → `4.75rem`. Trzy miejsca liczą z tej zmiennej:
+      `scroll-padding-top`, `min-height` nagłówka, `max-height` panelu mobilnego.
+      Zmierzone: nagłówek 76 → 95 → 114 px przy 100/125/150%, `scroll-padding-top`
+      92 → 138 px, `max-height` panelu 644 → 606 px. Wszystko śledzi skalę
+- [x] `.pagination .page-numbers`: `height: 44px` → `min-height: 44px`.
+      44px to minimalny cel dotykowy (WCAG 2.5.8), czyli **dolna granica**,
+      a nie rozmiar na sztywno
+- [x] `.search-form label`: `max-width: 320px` → `20rem`, żeby pole mieściło
+      tyle samo znaków przy powiększonym tekście
+- [x] Punkty łamania zostają w `px` — celowo, żeby powiększenie tekstu
       nie przerzucało układu na mobilny
+- [x] Rozmiary ikon, logo i fal zostają w `px` — to grafika, nie tekst
 
-**Odbiór:** `html { font-size: 150% }` w devtools — nic nie ucieka, nic nie nachodzi,
-brak poziomego paska przewijania przy 320px.
+**Czego nie ruszono świadomie:** `max-width: 760px` na kolumnach tekstu
+(lustro `contentSize` z `theme.json`). Przy powiększeniu linijka robi się
+krótsza, ale nic się nie przycina ani nie wystaje — a rozejście się z
+`theme.json` kosztowałoby więcej, niż daje.
+
+**Odbiór — zmierzone, nie obejrzane.** Sekcja 8.5 wymagała braku przycięć
+i braku poziomego paska; oba sprawdzone skryptem w przeglądarce na stronie
+głównej i liście aktualności:
+
+| Sprawdzenie | 100% | 150% |
+|---|---|---|
+| `scrollWidth` vs okno przy 320px (przejazd całej strony) | 320 = 320 | 320 = 320 |
+| Poziomy pasek przewijania, 320px i 1280px | brak | brak |
+| Paginacja i filtr kategorii — przycięcie | brak | brak |
+| Kolizja menu z nazwą strony, 1280px | brak | brak |
+
+Dowód, że `min-height` faktycznie działa — pomiar przy 200%, gdzie treść
+przekracza 44px: po zmianie box rośnie do 55px, przed zmianą stał na 44px,
+czyli obcinał cyfry o 11px. Przy 100% oba warianty dają identyczne 44px,
+więc zmiana nic nie psuje w domyślnym widoku.
+
+**Znaleziona przy okazji usterka, niezwiązana ze skalowaniem:** panel menu
+mobilnego sięga 5px poniżej dolnej krawędzi okna, bo `--header-h` nie liczy
+paska tęczy nad nagłówkiem. Identycznie przy 100% i 150%, więc to stan
+zastany, nie regres. Do osobnej poprawki — tutaj zostawione, żeby etap B
+nie zmieniał wyglądu.
 
 **C. Przełącznik rozmiaru tekstu**
 - [ ] Pasek narzędzi w `header.php`, nad `.site-header`, po `skip-link`

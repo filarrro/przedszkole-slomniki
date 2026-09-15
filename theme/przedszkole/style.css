@@ -47,7 +47,14 @@ Text Domain: przedszkole
 	--radius-lg:     22px;
 	--shadow:        0 1px 2px rgba(43, 39, 51, .04), 0 8px 24px rgba(43, 39, 51, .06);
 	--shadow-lift:   0 2px 4px rgba(43, 39, 51, .06), 0 14px 34px rgba(43, 39, 51, .10);
-	--header-h:      76px;
+	/* Wysokosc naglowka w `rem`, nie w `px`: przy powiekszonym tekscie (8.5)
+	   naglowek rosnie, a `scroll-padding-top` i panel mobilny licza z tej
+	   zmiennej. 4.75rem to te same 76px przy domyslnych 16px korzenia.
+	   Wartosc celowo troche zawyza: tekst skaluje sie w calosci, logo ma
+	   sztywne `max-height`, wiec prawdziwy naglowek rosnie wolniej. Zapas
+	   znaczy kotwice nieco nizej niz trzeba - odwrotny blad chowalby
+	   naglowek sekcji pod paskiem. */
+	--header-h:      4.75rem;
 	--ease:          cubic-bezier(.2, .7, .3, 1);
 
 	/* Hover granatu. `theme.json` ustawia go na przycisku bloku, ale nie
@@ -642,8 +649,11 @@ a.pill:hover { filter: brightness(.93); }
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	/* `min-height`, nie `height`: 44px to minimalny cel dotykowy (WCAG 2.5.8),
+	   czyli dolna granica, a nie rozmiar na sztywno. Przy powiekszonym tekscie
+	   sztywna wysokosc przycinala cyfry. */
 	min-width: 44px;
-	height: 44px;
+	min-height: 44px;
 	padding: 0 .8rem;
 	border-radius: 999px;
 	background: var(--wp--preset--color--surface);
@@ -797,7 +807,7 @@ a.pill:hover { filter: brightness(.93); }
 
 /* Formularz wyszukiwania */
 .search-form { display: flex; gap: .5rem; justify-content: center; margin-top: 1.5rem; }
-.search-form label { flex: 1; max-width: 320px; }
+.search-form label { flex: 1; max-width: 20rem; }
 .search-form input[type="search"] {
 	width: 100%;
 	padding: .7rem 1.1rem;
