@@ -1192,10 +1192,32 @@ wszystkie zmierzone kryteria (tabela wyżej), ale treść przeniesiona z Joomli
 nie została sprawdzona sztuka po sztuce. Wpisanie pełnej zgodności byłoby
 dokładnie tym błędem, który miała stara deklaracja.
 
-Niezgodności sprowadzają się do jednej pozycji: 448 publikacji przeniesionych
-z Joomli nie zostało sprawdzonych pozycja po pozycji. 383 z nich linkują do
-albumów w Google Photos — opisane jako uwaga, bo dostępność cudzego serwisu
-jest poza kontrolą przedszkola.
+Niezgodności — cztery pozycje. Trzy pierwsze dopisane 2026-09-15 na wniosek
+klienta, świadomie w trybie warunkowym:
+
+- niektóre z załączników mogą nie spełniać wszystkich przepisów z zakresu
+  dostępności cyfrowej
+- niektóre z grafik nie posiadają tekstów alternatywnych
+- w niektórych dokumentach może nie być zachowana hierarchiczność nagłówków
+- treść przeniesiona z Joomli (448 publikacji) nie została sprawdzona
+  pozycja po pozycji
+
+**Dlaczego tryb warunkowy, a nie stan na dziś.** Strona jest redagowana przez
+personel przez panel WordPressa. Jednorazowy audyt opisuje stan z dnia badania,
+a nie to, co powstanie w przyszłym tygodniu: redaktorka wstawi zdjęcie bez
+opisu alternatywnego, dołączy skan PDF bez warstwy tekstowej albo zbuduje
+podstronę na samych pogrubieniach zamiast nagłówków. Deklaracja ma pokrywać
+także takie przypadki — inaczej byłaby nieaktualna następnego dnia po
+opublikowaniu. To standardowa praktyka w deklaracjach podmiotów publicznych
+prowadzących stronę w CMS.
+
+Dopisane też zdanie o staraniach redakcji — **było w poprzedniej wersji
+deklaracji**, więc nie jest nowym zobowiązaniem, a równoważy listę warunkową:
+braki są usuwane po zgłoszeniu, adres do zgłoszeń stoi niżej na stronie.
+Do skreślenia, gdyby placówka uznała inaczej.
+
+383 publikacje linkują do albumów w Google Photos — opisane jako uwaga,
+bo dostępność cudzego serwisu jest poza kontrolą przedszkola.
 
 **Sprostowanie z 2026-09-15.** Pierwsza wersja deklaracji wymieniała dwie
 niezgodności, których nie ma. Obie wzięły się z tego samego błędu: skrypt
@@ -1224,8 +1246,14 @@ Kafelki wróciły do inicjałów (AD, MG), pliki skasowane z dysku i z bazy.
 
 **Do sprawdzenia przy okazji:** w bibliotece mediów jest PDF „Jadłospis
 wrzesień 2026". Dostępność dokumentów PDF to osobny obowiązek — plik powinien
-mieć warstwę tekstową i strukturę, a nie być skanem. Do zweryfikowania przed
-wdrożeniem.
+mieć warstwę tekstową i strukturę, a nie być skanem. Deklaracja obejmuje ten
+przypadek zapisem warunkowym o załącznikach, ale zapis nie zwalnia z poprawiania
+konkretnych plików. Do zweryfikowania przed wdrożeniem.
+
+**Temat na szkolenie personelu (Etap 12):** trzy warunkowe niezgodności opisują
+dokładnie te trzy rzeczy, które redaktor może zepsuć jednym kliknięciem — brak
+opisu alternatywnego, skan zamiast PDF-a z tekstem, pogrubienie zamiast
+nagłówka. Instrukcja obsługi powinna je wymieniać wprost.
 
 Nowa sekcja „Udogodnienia" wymienia pasek dostępności z 8.5, skip link,
 obsługę klawiaturą, ograniczanie animacji i działanie przy powiększeniu 200%.
