@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.19.2
+Version: 0.21.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -2030,3 +2030,133 @@ main + .fala { background: var(--wp--preset--color--base); }
 .filtr__link--zabki.is-aktywny:hover     { background: var(--zabki-tlo);     border-color: var(--zabki-tekst);     filter: brightness(.95); }
 .filtr__link--jezyki.is-aktywny:hover    { background: var(--jezyki-tlo);    border-color: var(--jezyki-tekst);    filter: brightness(.95); }
 .filtr__link--kotki.is-aktywny:hover     { background: var(--kotki-tlo);     border-color: var(--kotki-tekst);     filter: brightness(.95); }
+
+/* ==========================================================================
+   25. Karta grupy (strony grup)
+
+   Naglowek strony grupy jest karta: nazwa, pastylka z wiekiem, kadra.
+   Karta siedzi w tresci strony jako zwykle bloki z klasami, wiec
+   pracownik poprawia nazwiska w edytorze, a nie w kodzie. Wzorzec
+   „Wizytowka grupy” wstawia gotowy szkielet.
+
+   Kolory biore z pary sprawdzonej przy etykietach grup (pastel + ciemny
+   tekst, kontrast >= 4.5). Domyslnie granat - dla strony, ktora grupa
+   jeszcze nie jest.
+   ========================================================================== */
+
+.karta-grupy {
+	--grupa-tlo:    var(--wp--preset--color--primary-soft);
+	--grupa-tekst:  var(--wp--preset--color--primary);
+	--grupa-kolor:  var(--wp--preset--color--primary);
+
+	position: relative;
+	overflow: hidden;
+	padding: clamp(1.4rem, 4vw, 2.2rem);
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-lift);
+}
+
+/* Pasek koloru grupy na gorze karty - ten sam sygnal, co na kafelkach
+   aktualnosci i podstron. Dekoracja: wiek i tak stoi slowem w pastylce. */
+.karta-grupy::before {
+	content: "";
+	position: absolute;
+	inset: 0 0 auto;
+	height: 6px;
+	background: var(--grupa-kolor);
+}
+
+.karta-grupy--misie     { --grupa-tlo: var(--misie-tlo);     --grupa-tekst: var(--misie-tekst);     --grupa-kolor: var(--wp--preset--color--misie); }
+.karta-grupy--wiewiorki { --grupa-tlo: var(--wiewiorki-tlo); --grupa-tekst: var(--wiewiorki-tekst); --grupa-kolor: var(--wp--preset--color--wiewiorki); }
+.karta-grupy--zajaczki  { --grupa-tlo: var(--zajaczki-tlo);  --grupa-tekst: var(--zajaczki-tekst);  --grupa-kolor: var(--wp--preset--color--zajaczki); }
+.karta-grupy--zabki     { --grupa-tlo: var(--zabki-tlo);     --grupa-tekst: var(--zabki-tekst);     --grupa-kolor: var(--wp--preset--color--zabki); }
+.karta-grupy--jezyki    { --grupa-tlo: var(--jezyki-tlo);    --grupa-tekst: var(--jezyki-tekst);    --grupa-kolor: var(--wp--preset--color--jezyki); }
+.karta-grupy--kotki     { --grupa-tlo: var(--kotki-tlo);     --grupa-tekst: var(--kotki-tekst);     --grupa-kolor: var(--wp--preset--color--kotki); }
+
+/* Odstepy wewnatrz karty ustawiam sam - `the_content()` w klasycznym
+   szablonie nie dostaje ukladu przeplywowego, wiec bloki w grupie
+   nie maja blockGap. */
+.karta-grupy > * + * { margin-top: 1.5rem; }
+
+/* --- Naglowek: nazwa i wiek --- */
+
+.karta-grupy__naglowek {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .6rem 1rem;
+}
+.karta-grupy__naglowek > * + * { margin-top: 0; }
+
+.karta-grupy__nazwa { margin: 0; }
+
+/* Pastylka z wiekiem. Wiekszy krewny `.pill` - tu jest to glowna
+   informacja obok nazwy, a nie etykieta w rogu kafelka. */
+.karta-grupy__wiek {
+	margin: 0;
+	padding: .35rem 1rem;
+	border-radius: 999px;
+	background: var(--grupa-tlo);
+	color: var(--grupa-tekst);
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1.5;
+	white-space: nowrap;
+}
+
+/* --- Etykiety rol --- */
+
+/* Naglowek „Wychowawczynie” jest w drzewie h2, ale wizualnie ma byc
+   podpisem sekcji, a nie drugim tytulem strony. */
+.karta-grupy__etykieta,
+.karta-grupy__rola {
+	margin: 0;
+	font-size: .8125rem;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: var(--wp--preset--color--ink-soft);
+}
+.karta-grupy__etykieta { margin-bottom: .75rem; }
+
+/* --- Kadra: nauczycielki obok siebie --- */
+
+.karta-grupy__kadra {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+	gap: 1rem;
+}
+.karta-grupy__kadra > * + * { margin-top: 0; }
+
+.karta-grupy__kadra .karta-grupy__osoba {
+	margin: 0;
+	padding: .9rem 1.1rem;
+	background: var(--wp--preset--color--base);
+	border: 1px solid var(--wp--preset--color--border);
+	border-left: 4px solid var(--grupa-kolor);
+	border-radius: var(--radius);
+	font-weight: 700;
+}
+
+/* --- Wsparcie: pomoc wychowawcy --- */
+
+/* Nizej i na spokojniejszym tle - hierarchia rol ma byc widoczna
+   bez czytania. Tekst zostaje w kolorach o pelnym kontrascie
+   (ink-soft na tle #F2EDE6: 5,9), przygaszone jest samo tlo. */
+.karta-grupy__wsparcie {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .5rem .9rem;
+	padding: .85rem 1.1rem;
+	background: color-mix(in srgb, var(--wp--preset--color--border) 55%, var(--wp--preset--color--base));
+	border-radius: var(--radius);
+}
+.karta-grupy__wsparcie > * + * { margin-top: 0; }
+.karta-grupy__wsparcie .karta-grupy__osoba { margin: 0; font-weight: 700; }
+
+/* Pierwszy blok po karcie dostaje wiecej powietrza - karta jest
+   naglowkiem strony, a nie akapitem w srodku tresci. */
+.entry__content > .karta-grupy + * { margin-top: 2.5rem; }
