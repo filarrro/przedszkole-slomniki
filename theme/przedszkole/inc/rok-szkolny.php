@@ -204,3 +204,45 @@ function przedszkole_zakres_roku( $slug ) {
 		),
 	);
 }
+
+/**
+ * Czy bieżący widok podlega cięciu po roczniku.
+ *
+ * Wydzielone, bo odpowiedzi potrzebują też przełącznik lat i komunikat
+ * o pustym roczniku — a warunek musi być w trzech miejscach ten sam.
+ *
+ * @return bool
+ */
+function przedszkole_rok_aktywny() {
+	if ( is_category( PRZEDSZKOLE_LOGOPEDA ) ) {
+		return false;
+	}
+
+	return is_home() || is_category();
+}
+
+/**
+ * Ogranicza listy wpisów do jednego rocznika.
+ *
+ * Wchodzi wyłącznie na listę aktualności i archiwa kategorii. Wyszukiwarka,
+ * archiwa dat i pojedyncze wpisy zostają nietknięte — tam cięcie tylko
+ * przeszkadzałoby. Panel również, bo redaktor musi widzieć całość.
+ *
+ * @param WP_Query $zapytanie Modyfikowane zapytanie.
+ */
+function przedszkole_tnij_po_roku( $zapytanie ) {
+	if ( is_admin() || ! $zapytanie->is_main_query() ) {
+		return;
+	}
+
+	if ( ! $zapytanie->is_home() && ! $zapytanie->is_category() ) {
+		return;
+	}
+
+	if ( $zapytanie->is_category( PRZEDSZKOLE_LOGOPEDA ) ) {
+		return;
+	}
+
+	$zapytanie->set( 'date_query', przedszkole_zakres_roku( przedszkole_rok_z_zapytania() ) );
+}
+add_action( 'pre_get_posts', 'przedszkole_tnij_po_roku' );
