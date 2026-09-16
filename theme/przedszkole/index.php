@@ -36,6 +36,7 @@ get_header();
 	   niz ten, ktory wlasnie widac - to mylace. */
 	if ( is_home() || is_category() ) {
 		get_template_part( 'template-parts/filtr-kategorii' );
+		get_template_part( 'template-parts/przelacznik-lat' );
 	}
 	?>
 

@@ -2191,6 +2191,42 @@ main + .fala { background: var(--wp--preset--color--base); }
 .filtr__link--jezyki.is-aktywny:hover    { background: var(--jezyki-tlo);    border-color: var(--jezyki-tekst);    filter: brightness(.95); }
 .filtr__link--kotki.is-aktywny:hover     { background: var(--kotki-tlo);     border-color: var(--kotki-tekst);     filter: brightness(.95); }
 
+/* Przelacznik rocznikow - stoi pod filtrem kategorii, w tej samej belce. */
+.lata {
+	margin: 0 0 2rem;
+}
+
+.lata__form {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.lata__etykieta {
+	font-weight: 700;
+}
+
+.lata__wybor,
+.lata__przycisk {
+	font: inherit;
+	padding: 0.4rem 0.75rem;
+	border: 2px solid currentColor;
+	border-radius: 999px;
+	background: var(--wp--preset--color--base);
+	color: inherit;
+}
+
+.lata__przycisk {
+	cursor: pointer;
+}
+
+.lata__wybor:focus-visible,
+.lata__przycisk:focus-visible {
+	outline: 3px solid var(--wp--preset--color--primary);
+	outline-offset: 2px;
+}
+
 /* ==========================================================================
    25. Karta grupy (strony grup)
 
