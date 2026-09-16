@@ -641,6 +641,44 @@ git commit -m "feat: listy aktualnosci tna sie do biezacego roku szkolnego"
 
 ---
 
+### Poprawki naniesione podczas wdrożenia — 2026-09-16
+
+Kod z Kroku 2 **przepuszcza dwa widoki, których ciąć nie wolno**. Obowiązuje
+wersja z repozytorium.
+
+**1. Kanały RSS** (commit `ba52edc`). `/aktualnosci/feed/` i kanały wszystkich
+kategorii zwracały zero pozycji, bo mają `is_home()` albo `is_category()`
+prawdziwe. Subskrybent dostawał pustkę bez wyjaśnienia — w czytniku nie ma
+przełącznika lat ani komunikatu o pustym roczniku.
+
+**2. Archiwum daty połączone z kategorią** (commit `51b6a89`). `/2024/?cat=7`
+ma jednocześnie `is_date()` i `is_category()`. Cięcie doklejało `date_query`
+do ograniczenia roku kalendarzowego, które rdzeń buduje osobno w `WHERE`
+(`wp/wp-includes/class-wp-query.php`, okolice linii 2109). Przecięcie jest
+zawsze puste: adres zwracający 19 wpisów Misiów z 2024 zaczął pokazywać
+„Brak wpisów". To był żywy regres, nie teoria.
+
+**3. Jeden predykat zamiast dwóch kopii warunku** (commit `51b6a89`).
+`przedszkole_rok_aktywny()` i `przedszkole_tnij_po_roku()` miały w docbloku
+obietnicę, że warunek jest ten sam — i rozjechały się w ciągu jednego commita,
+gdy wyłączenie kanałów trafiło tylko do jednej z nich. Powstał
+`przedszkole_widok_podlega_rocznikowi( WP_Query $zapytanie )`; hak woła go
+z otrzymanym obiektem, `przedszkole_rok_aktywny()` z `$GLOBALS['wp_query']`.
+Docbloki odsyłają do predykatu zamiast powtarzać listę wyjątków — powtórzona
+lista rozjedzie się znowu.
+
+**Uwaga do kroków weryfikacyjnych.** Dopisz do zestawu adresy, które muszą
+pozostać nietknięte, bo bez nich obie usterki przechodzą niezauważone:
+
+```bash
+printf "/2024/?cat=7 -> "; curl -s "http://przedszkole.ddev.site/2024/?cat=7" | grep -c '<article'
+for u in "/feed/" "/aktualnosci/feed/" "/category/misie/feed/"; do
+  printf "%-26s -> " "$u"; curl -s "http://przedszkole.ddev.site$u" | grep -c "<item>"
+done
+```
+
+---
+
 ## Zadanie 4: Przełącznik roczników
 
 **Pliki:**

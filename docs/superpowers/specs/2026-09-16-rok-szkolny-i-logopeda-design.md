@@ -82,7 +82,30 @@ Mechanizm: `date_query` od 1 września roku otwierającego 00:00:00 do 31 sierpn
 roku zamykającego 23:59:59, `inclusive => true`. Bez pól własnych — data
 publikacji jest jedynym źródłem prawdy.
 
-Nietknięte: wyszukiwarka, archiwa dat, pojedyncze wpisy, cały panel.
+Nietknięte: wyszukiwarka, archiwa dat, pojedyncze wpisy, kanały RSS, cały panel.
+
+**Dwa wyjątki dopisane podczas wdrożenia (2026-09-16).** Specyfikacja mówiła
+„listy aktualności i archiwa kategorii" i milcząco zakładała widok HTML.
+Implementacja pokazała, że to za mało:
+
+* **Kanały RSS.** `/aktualnosci/feed/` i kanały wszystkich kategorii mają
+  `is_home()` albo `is_category()` prawdziwe, więc dostawały cięcie i zwracały
+  zero pozycji. Kanał niesie „co nowego", a nie „co w bieżącym roczniku" —
+  i nie ma w nim ani przełącznika lat, ani komunikatu o pustym roku, więc
+  obcięcie zamienia go w niewyjaśnioną pustkę. WordPress ogłasza kanały
+  kategorii w `<head>` archiwów, więc to realny adres, nie martwy zakątek.
+* **Archiwa dat połączone z kategorią.** `/2024/?cat=7` ma jednocześnie
+  `is_date()` i `is_category()` prawdziwe — to nie są flagi wykluczające się.
+  Cięcie doklejało `date_query` bieżącego rocznika do ograniczenia roku
+  kalendarzowego, które WordPress buduje osobno w `WHERE`. Przecięcie „rok 2024"
+  z „rocznik 2026/2027" jest zawsze puste, więc adres, który wcześniej zwracał
+  19 wpisów, zaczął pokazywać „Brak wpisów".
+
+Oba warunki siedzą w jednym predykacie `przedszkole_widok_podlega_rocznikowi(
+WP_Query $zapytanie )`, nad którym stoją zarówno hak, jak i
+`przedszkole_rok_aktywny()` używana przez szablony. Dwie funkcje z powielonym
+warunkiem rozjechały się w ciągu jednego commita — predykat sprawia, że to
+przestaje być możliwe.
 
 ### 3. Przełącznik lat — `template-parts/przelacznik-lat.php`
 
