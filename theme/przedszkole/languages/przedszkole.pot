@@ -2,21 +2,21 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Przedszkole 0.28.0\n"
+"Project-Id-Version: Przedszkole 0.29.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/theme/przedszkole\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-15T13:14:02+02:00\n"
+"POT-Creation-Date: 2026-09-16T14:59:17+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: przedszkole\n"
 
 #. Theme Name of the theme
 #: style.css
-#: functions.php:171
+#: functions.php:173
 msgid "Przedszkole"
 msgstr ""
 
@@ -56,7 +56,7 @@ msgid "Wróć na stronę główną"
 msgstr ""
 
 #: footer.php:34
-#: functions.php:44
+#: functions.php:46
 msgid "Menu w stopce"
 msgstr ""
 
@@ -81,56 +81,56 @@ msgstr ""
 msgid "Zobacz wszystkie"
 msgstr ""
 
-#: functions.php:43
+#: functions.php:45
 #: header.php:113
 msgid "Menu główne"
 msgstr ""
 
-#: functions.php:45
+#: functions.php:47
 msgid "Na skróty (strona główna)"
 msgstr ""
 
-#: functions.php:187
+#: functions.php:189
 msgid "Link do albumu"
 msgstr ""
 
-#: functions.php:195
+#: functions.php:197
 msgid "Wyróżnienie"
 msgstr ""
 
-#: functions.php:203
+#: functions.php:205
 msgid "Kafelek osoby"
 msgstr ""
 
-#: functions.php:211
+#: functions.php:213
 msgid "Spis treści"
 msgstr ""
 
-#: functions.php:219
+#: functions.php:221
 msgid "Numer konta"
 msgstr ""
 
-#: functions.php:248
+#: functions.php:250
 msgid "Stopka — kontakt"
 msgstr ""
 
-#: functions.php:250
+#: functions.php:252
 msgid "Adres, telefon, e-mail."
 msgstr ""
 
-#: functions.php:259
+#: functions.php:261
 msgid "Stopka — godziny"
 msgstr ""
 
-#: functions.php:261
+#: functions.php:263
 msgid "Godziny otwarcia przedszkola."
 msgstr ""
 
-#: functions.php:494
+#: functions.php:496
 msgid "(album w serwisie Google Zdjęcia)"
 msgstr ""
 
-#: functions.php:504
+#: functions.php:506
 msgid "(otwiera się w nowej karcie)"
 msgstr ""
 
@@ -171,6 +171,15 @@ msgstr ""
 msgid "Za dużo nieudanych prób logowania. Spróbuj ponownie za kwadrans."
 msgstr ""
 
+#: inc/intendent.php:94
+msgid "Intendent"
+msgstr ""
+
+#: inc/intendent.php:316
+#: inc/intendent.php:317
+msgid "Jadłospis"
+msgstr ""
+
 #. translators: %1$s: nazwa kategorii, %2$s: nazwa witryny.
 #: inc/seo.php:57
 #, php-format
@@ -181,23 +190,36 @@ msgstr ""
 msgid "Dzieci w kręgu, każde z pluszakiem"
 msgstr ""
 
-#: index.php:65
+#: index.php:66
 msgid "← Poprzednie"
 msgstr ""
 
-#: index.php:66
+#: index.php:67
 msgid "Następne →"
 msgstr ""
 
-#: index.php:67
+#: index.php:68
 msgid "Nawigacja po stronach"
 msgstr ""
 
-#: index.php:75
+#. translators: %s: rok szkolny, na przykład 2026/2027.
+#: index.php:102
+#, php-format
+msgid "W roku szkolnym %s nie ma jeszcze wpisów"
+msgstr ""
+
+#. translators: %s: rok szkolny, na przykład 2025/2026.
+#: index.php:114
+#: template-parts/wpisy-kategorii.php:126
+#, php-format
+msgid "Zobacz wpisy z roku %s"
+msgstr ""
+
+#: index.php:124
 msgid "Brak wpisów"
 msgstr ""
 
-#: index.php:76
+#: index.php:125
 msgid "Nie ma tu jeszcze żadnych treści."
 msgstr ""
 
@@ -329,14 +351,6 @@ msgstr ""
 msgid "Sąsiednie wpisy"
 msgstr ""
 
-#: template-parts/aktualnosci-grupy.php:48
-msgid "Aktualności grupy"
-msgstr ""
-
-#: template-parts/aktualnosci-grupy.php:50
-msgid "Zobacz więcej"
-msgstr ""
-
 #: template-parts/dlaczego-my.php:29
 msgid "Dogodne godziny otwarcia"
 msgstr ""
@@ -389,6 +403,18 @@ msgstr ""
 msgid "W tym dziale"
 msgstr ""
 
+#: template-parts/przelacznik-lat.php:44
+msgid "Wybór roku szkolnego"
+msgstr ""
+
+#: template-parts/przelacznik-lat.php:47
+msgid "Rok szkolny"
+msgstr ""
+
+#: template-parts/przelacznik-lat.php:59
+msgid "Pokaż"
+msgstr ""
+
 #: template-parts/skrzydla.php:42
 msgid "Uśmiechnięte dziecko w stroju ptaka z kartonowymi skrzydłami, na tle ściany z narysowanymi kredą chmurami i słońcem"
 msgstr ""
@@ -399,6 +425,24 @@ msgstr ""
 
 #: template-parts/skrzydla.php:51
 msgid "rozwijać skrzydła"
+msgstr ""
+
+#: template-parts/wpisy-kategorii.php:82
+msgid "Artykuły logopedy"
+msgstr ""
+
+#: template-parts/wpisy-kategorii.php:84
+msgid "Aktualności grupy"
+msgstr ""
+
+#: template-parts/wpisy-kategorii.php:91
+msgid "Zobacz więcej"
+msgstr ""
+
+#. translators: %s: rok szkolny, na przykład 2026/2027.
+#: template-parts/wpisy-kategorii.php:114
+#, php-format
+msgid "Grupa nie dodała jeszcze wpisów w roku szkolnym %s."
 msgstr ""
 
 #: theme.json
