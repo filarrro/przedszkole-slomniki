@@ -30,15 +30,32 @@ const PRZEDSZKOLE_LOGOPEDA = 'logopeda';
  * Granica to 1 września. Wrzesień zaczyna rok `R/R+1`, wszystko przed nim
  * należy jeszcze do `R-1/R`.
  *
- * @param string|null $data Data w formacie zrozumiałym dla `strtotime()`.
- *                          Null oznacza teraz.
+ * Celowo bez `strtotime()`. `post_date` w bazie jest zapisany w czasie
+ * lokalnym serwisu, a `strtotime()` czyta string tak, jakby był w UTC —
+ * w połączeniu z `wp_date()` (który dokłada offset strefy jeszcze raz)
+ * data przesuwa się dwukrotnie i wpis z późnego wieczora 31 sierpnia trafia
+ * do złego rocznika. `mysql2date()` traktuje string jak już-lokalny, bez
+ * dodatkowej konwersji, `current_time()` to lokalny odpowiednik `time()`.
+ *
+ * @param string|null $data Data w formacie zrozumiałym dla `mysql2date()`
+ *                          (np. `post_date`). Null oznacza teraz.
  * @return string Na przykład `2026/2027`.
  */
 function przedszkole_rok_szkolny( $data = null ) {
-	$znacznik = null === $data ? time() : strtotime( $data );
+	if ( null === $data ) {
+		$rok     = (int) current_time( 'Y' );
+		$miesiac = (int) current_time( 'n' );
+	} else {
+		$rok     = (int) mysql2date( 'Y', $data );
+		$miesiac = (int) mysql2date( 'n', $data );
+	}
 
-	$rok     = (int) wp_date( 'Y', $znacznik );
-	$miesiac = (int) wp_date( 'n', $znacznik );
+	// Data, której nie dało się rozpoznać - traktuj jak "teraz", zamiast
+	// zwracać rok `0` i bezsensowne `-1/0`.
+	if ( 0 === $rok ) {
+		$rok     = (int) current_time( 'Y' );
+		$miesiac = (int) current_time( 'n' );
+	}
 
 	if ( $miesiac < 9 ) {
 		--$rok;
@@ -86,6 +103,7 @@ function przedszkole_lata_szkolne() {
 
 	global $wpdb;
 
+	// Bez zmiennych w zapytaniu - prepare() nie miałby tu czego przygotować.
 	$najstarszy = $wpdb->get_var(
 		"SELECT MIN( post_date ) FROM {$wpdb->posts}
 		 WHERE post_type = 'post' AND post_status = 'publish'"
@@ -107,8 +125,24 @@ function przedszkole_lata_szkolne() {
 
 /**
  * Czyści listę roczników po zmianie wpisów.
+ *
+ * `save_post` odpala się też dla rewizji, autozapisów i każdego typu treści
+ * (stron, mediów, pozycji menu), więc bez tych warunków transient padałby
+ * przy każdym autozapisie czegokolwiek, nie tylko wpisu. `deleted_post`
+ * odpala się przed `clean_post_cache()` (rdzeń WP, `wp_delete_post()`),
+ * więc `get_post_type()` tu jeszcze działa i jeden callback obsłuży oba haki.
+ *
+ * @param int $post_id ID wpisu.
  */
-function przedszkole_zapomnij_lata() {
+function przedszkole_zapomnij_lata( $post_id ) {
+	if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+		return;
+	}
+
+	if ( 'post' !== get_post_type( $post_id ) ) {
+		return;
+	}
+
 	delete_transient( 'przedszkole_lata' );
 }
 add_action( 'save_post', 'przedszkole_zapomnij_lata' );
