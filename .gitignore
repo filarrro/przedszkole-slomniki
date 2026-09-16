@@ -37,3 +37,4 @@ podglad.html
 # Wyniki posrednie migracji - odtwarzalne ze zrzutu Joomli
 tools/migracja_tresci.json
 tools/migracja_wpisow.json
+tools/migracja_logopedy.json
