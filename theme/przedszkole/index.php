@@ -72,9 +72,59 @@ get_header();
 
 	<?php else : ?>
 
+		<?php
+		/* Pusto z powodu cięcia po roczniku to inna sytuacja niż pusto
+		   w ogóle. „Brak wpisów” kazałoby rodzicowi myśleć, że grupa nigdy
+		   nic nie napisała, podczas gdy poprzedni rocznik jest o jedno
+		   kliknięcie stąd. */
+		$przedszkole_rok_pusty = '';
+		$przedszkole_starszy   = '';
+
+		if ( przedszkole_rok_aktywny() ) {
+			$przedszkole_rok_pusty = przedszkole_rok_z_zapytania();
+			$przedszkole_lata      = przedszkole_lata_szkolne();
+			$przedszkole_poz       = array_search( $przedszkole_rok_pusty, $przedszkole_lata, true );
+
+			// Lista jest malejąca, więc następny indeks to rocznik starszy.
+			if ( false !== $przedszkole_poz && isset( $przedszkole_lata[ $przedszkole_poz + 1 ] ) ) {
+				$przedszkole_starszy = $przedszkole_lata[ $przedszkole_poz + 1 ];
+			}
+		}
+		?>
+
 		<div class="notice">
-			<h2><?php esc_html_e( 'Brak wpisów', 'przedszkole' ); ?></h2>
-			<p><?php esc_html_e( 'Nie ma tu jeszcze żadnych treści.', 'przedszkole' ); ?></p>
+			<?php if ( $przedszkole_rok_pusty ) : ?>
+
+				<h2>
+					<?php
+					printf(
+						/* translators: %s: rok szkolny, na przykład 2026/2027. */
+						esc_html__( 'W roku szkolnym %s nie ma jeszcze wpisów', 'przedszkole' ),
+						esc_html( przedszkole_rok_z_slug( $przedszkole_rok_pusty ) )
+					);
+					?>
+				</h2>
+
+				<?php if ( $przedszkole_starszy ) : ?>
+					<p>
+						<a href="<?php echo esc_url( add_query_arg( 'rok', $przedszkole_starszy ) ); ?>">
+							<?php
+							printf(
+								/* translators: %s: rok szkolny, na przykład 2025/2026. */
+								esc_html__( 'Zobacz wpisy z roku %s', 'przedszkole' ),
+								esc_html( przedszkole_rok_z_slug( $przedszkole_starszy ) )
+							);
+							?>
+						</a>
+					</p>
+				<?php endif; ?>
+
+			<?php else : ?>
+
+				<h2><?php esc_html_e( 'Brak wpisów', 'przedszkole' ); ?></h2>
+				<p><?php esc_html_e( 'Nie ma tu jeszcze żadnych treści.', 'przedszkole' ); ?></p>
+
+			<?php endif; ?>
 		</div>
 
 	<?php endif; ?>
