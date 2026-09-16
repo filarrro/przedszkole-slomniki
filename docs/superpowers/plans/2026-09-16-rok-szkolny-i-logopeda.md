@@ -39,6 +39,21 @@ dodawaj `--format=csv`, inaczej stderr zaleje się ostrzeżeniami
 **Pułapka pętli** (CLAUDE.md): `ddev exec` zjada stdin. W pętlach `while read`
 i `for` dodawaj `</dev/null`.
 
+**Prefiks archiwum kategorii to `/category/`, nie `/kategoria/`.** Opcja
+`category_base` jest pusta, więc WordPress używa domyślnego angielskiego
+segmentu. Co gorsza, `/kategoria/misie/` nie zwraca 404 tylko przekierowuje
+301 na `/grupy/misie/` — bo strona grupy ma ten sam slug co kategoria,
+a WordPress rozstrzyga kolizję na korzyść strony. Krok weryfikacyjny pod złym
+adresem wygląda więc na działający i pokazuje treść, tylko nie tę, o którą
+pytasz. Adres archiwum sprawdzaj przez `get_category_link()`, nie zgadując.
+
+**Stan danych na 2026-09-16: w roczniku 2026/2027 nie ma ani jednego
+opublikowanego wpisu.** Najnowszy wpis w bazie jest z 15 czerwca 2026.
+Po Zadaniu 3 lista `/aktualnosci/` i wszystkie archiwa kategorii będą więc
+puste aż do pierwszego wpisu nowego roku szkolnego — to zaprojektowane
+zachowanie, nie usterka. Strona główna pozostaje wypełniona, bo zgodnie
+z decyzją nie tnie swojego bloku po roczniku.
+
 ---
 
 ## Struktura plików
@@ -524,7 +539,7 @@ git commit -m "feat: kategoria Kacik logopedy i dopasowanie sluga strony"
 - [ ] **Krok 1: Sprawdź, że listy pokazują wszystkie roczniki**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/" | grep -c 'datetime="202[345]'
+curl -s "http://przedszkole.ddev.site/category/misie/" | grep -c 'datetime="202[345]'
 ```
 
 Oczekiwane: liczba większa od zera — na pierwszej stronie archiwum Misiów
@@ -579,7 +594,7 @@ add_action( 'pre_get_posts', 'przedszkole_tnij_po_roku' );
 - [ ] **Krok 3: Sprawdź, że archiwum grupy pokazuje już tylko bieżący rocznik**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/" | grep -c 'datetime="202[345]'
+curl -s "http://przedszkole.ddev.site/category/misie/" | grep -c 'datetime="202[345]'
 ```
 
 Oczekiwane: `0` — wpisy z roczników 2023/24–2025/26 zniknęły z domyślnego widoku.
@@ -587,7 +602,7 @@ Oczekiwane: `0` — wpisy z roczników 2023/24–2025/26 zniknęły z domyślneg
 - [ ] **Krok 4: Sprawdź, że starszy rocznik wchodzi przez adres**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/?rok=2024-2025" | grep -o 'datetime="20[0-9][0-9]' | sort -u
+curl -s "http://przedszkole.ddev.site/category/misie/?rok=2024-2025" | grep -o 'datetime="20[0-9][0-9]' | sort -u
 ```
 
 Oczekiwane: wyłącznie `datetime="2024` i `datetime="2025` — nic spoza rocznika
@@ -636,7 +651,7 @@ git commit -m "feat: listy aktualnosci tna sie do biezacego roku szkolnego"
 - [ ] **Krok 1: Sprawdź, że przełącznika nie ma**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/" | grep -c 'name="rok"'
+curl -s "http://przedszkole.ddev.site/category/misie/" | grep -c 'name="rok"'
 ```
 
 Oczekiwane: `0`
@@ -771,8 +786,8 @@ i użyj tych, które tam są. Własnych kolorów nie wprowadzamy.
 - [ ] **Krok 5: Sprawdź, że przełącznik się pojawił i ma poprawnie zaznaczony rocznik**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/" | grep -A2 'name="rok"' | head -5
-curl -s "http://przedszkole.ddev.site/kategoria/misie/?rok=2024-2025" | grep -o 'value="2024-2025" *selected'
+curl -s "http://przedszkole.ddev.site/category/misie/" | grep -A2 'name="rok"' | head -5
+curl -s "http://przedszkole.ddev.site/category/misie/?rok=2024-2025" | grep -o 'value="2024-2025" *selected'
 ```
 
 Oczekiwane: pierwszy pokazuje `<select ... name="rok" id="rok">` z opcjami;
@@ -781,8 +796,8 @@ drugi zwraca niepustą linię z `selected`.
 - [ ] **Krok 6: Sprawdź etykietę i przycisk — to są wymogi dostępności**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/" | grep -o '<label[^>]*for="rok"[^>]*>' 
-curl -s "http://przedszkole.ddev.site/kategoria/misie/" | grep -c 'class="lata__przycisk" type="submit"'
+curl -s "http://przedszkole.ddev.site/category/misie/" | grep -o '<label[^>]*for="rok"[^>]*>' 
+curl -s "http://przedszkole.ddev.site/category/misie/" | grep -c 'class="lata__przycisk" type="submit"'
 ```
 
 Oczekiwane: etykieta z `for="rok"` obecna, przycisk policzony jako `1`.
@@ -791,7 +806,7 @@ Brak któregokolwiek to błąd WCAG, nie drobiazg — popraw, zanim pójdziesz d
 - [ ] **Krok 7: Sprawdź, że przełącznika nie ma tam, gdzie nie powinno go być**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/logopeda/" | grep -c 'name="rok"'
+curl -s "http://przedszkole.ddev.site/category/logopeda/" | grep -c 'name="rok"'
 curl -s "http://przedszkole.ddev.site/?s=dzieci" | grep -c 'name="rok"'
 ```
 
@@ -858,7 +873,7 @@ z Zadania 1, więc sprawdza przy okazji, czy zakres dat jest policzony poprawnie
 Weź pierwszą wypisaną parę i podstaw ją niżej zamiast `<kategoria>` i `<rocznik>`:
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/<kategoria>/?rok=<rocznik>" | grep -A3 'class="notice"'
+curl -s "http://przedszkole.ddev.site/category/<kategoria>/?rok=<rocznik>" | grep -A3 'class="notice"'
 ```
 
 Oczekiwane: „Brak wpisów" i „Nie ma tu jeszcze żadnych treści." — komunikat
@@ -951,7 +966,7 @@ Zamień na:
 - [ ] **Krok 3: Sprawdź nowy komunikat na parze znalezionej w kroku 1**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/<kategoria>/?rok=<rocznik>" | grep -A8 'class="notice"'
+curl -s "http://przedszkole.ddev.site/category/<kategoria>/?rok=<rocznik>" | grep -A8 'class="notice"'
 ```
 
 Oczekiwane: nagłówek „W roku szkolnym &lt;rocznik&gt; nie ma jeszcze wpisów"
@@ -969,7 +984,7 @@ w nim pusta (z listy z kroku 1):
 
 ```bash
 ddev exec wp --path=wp eval 'echo end( ( $l = przedszkole_lata_szkolne() ) ), "\n";'
-curl -s "http://przedszkole.ddev.site/kategoria/<kategoria>/?rok=<najstarszy>" | grep -c 'Zobacz wpisy z roku'
+curl -s "http://przedszkole.ddev.site/category/<kategoria>/?rok=<najstarszy>" | grep -c 'Zobacz wpisy z roku'
 ```
 
 Oczekiwane: pierwsze polecenie wypisuje `2023-2024`, drugie zwraca `0`.
@@ -1233,7 +1248,7 @@ git commit -m "feat: blok ostatnich wpisow obsluguje grupy i logopede"
 - [ ] **Krok 1: Sprawdź, że archiwum rocznika jest dziś indeksowalne**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/?rok=2024-2025" | grep -c 'name="robots"'
+curl -s "http://przedszkole.ddev.site/category/misie/?rok=2024-2025" | grep -c 'name="robots"'
 ```
 
 Oczekiwane: `0` — rdzeń nie wystawia `robots` na archiwach.
@@ -1273,7 +1288,7 @@ add_filter( 'wp_robots', 'przedszkole_roboty_rocznik' );
 - [ ] **Krok 3: Sprawdź, że dyrektywa się pojawiła**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/?rok=2024-2025" | grep -o '<meta name="robots"[^>]*>'
+curl -s "http://przedszkole.ddev.site/category/misie/?rok=2024-2025" | grep -o '<meta name="robots"[^>]*>'
 ```
 
 Oczekiwane: `<meta name="robots" content="noindex, follow" />`
@@ -1281,7 +1296,7 @@ Oczekiwane: `<meta name="robots" content="noindex, follow" />`
 - [ ] **Krok 4: Sprawdź, że adres bez parametru pozostał indeksowalny**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/misie/" | grep -c 'noindex'
+curl -s "http://przedszkole.ddev.site/category/misie/" | grep -c 'noindex'
 curl -s "http://przedszkole.ddev.site/" | grep -c 'noindex'
 ```
 
@@ -1549,8 +1564,8 @@ Oczekiwane: cztery razy `logopeda`, ani razu `ogloszenia`.
 - [ ] **Krok 9: Sprawdź, że kategoria nie podlega cięciu i nie ma przełącznika**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/kategoria/logopeda/" | grep -o 'datetime="20[0-9][0-9]' | sort -u
-curl -s "http://przedszkole.ddev.site/kategoria/logopeda/" | grep -c 'name="rok"'
+curl -s "http://przedszkole.ddev.site/category/logopeda/" | grep -o 'datetime="20[0-9][0-9]' | sort -u
+curl -s "http://przedszkole.ddev.site/category/logopeda/" | grep -c 'name="rok"'
 ```
 
 Oczekiwane: daty z wielu lat (nie tylko 2026) oraz `0` dla przełącznika.
@@ -1608,7 +1623,7 @@ Wzorce bloków są cache'owane pod wersją motywu, a my zmieniliśmy CSS i szabl
 ddev exec wp --path=wp eval 'echo PRZEDSZKOLE_VERSION, "\n";'
 curl -s -o /dev/null -w "%{http_code}\n" "http://przedszkole.ddev.site/"
 curl -s -o /dev/null -w "%{http_code}\n" "http://przedszkole.ddev.site/aktualnosci/"
-curl -s -o /dev/null -w "%{http_code}\n" "http://przedszkole.ddev.site/kategoria/logopeda/"
+curl -s -o /dev/null -w "%{http_code}\n" "http://przedszkole.ddev.site/category/logopeda/"
 curl -s "http://przedszkole.ddev.site/aktualnosci/" | grep -ci "fatal error\|warning:"
 ```
 
