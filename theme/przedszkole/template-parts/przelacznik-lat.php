@@ -30,8 +30,15 @@ $przedszkole_wybrany = przedszkole_rok_z_zapytania();
 if ( is_category() ) {
 	$przedszkole_adres = get_category_link( get_queried_object_id() );
 } else {
+	/* `get_permalink()` zwraca `false` dla skasowanej strony, a `esc_url( false )`
+	   daje pusty `action` - formularz trafilby wtedy pod biezacy adres tylko
+	   przez domyslne zachowanie przegladarki. Domykamy to jawnie. */
 	$przedszkole_strona = get_option( 'page_for_posts' );
-	$przedszkole_adres  = $przedszkole_strona ? get_permalink( $przedszkole_strona ) : home_url( '/' );
+	$przedszkole_adres  = $przedszkole_strona ? get_permalink( $przedszkole_strona ) : false;
+
+	if ( ! $przedszkole_adres ) {
+		$przedszkole_adres = home_url( '/' );
+	}
 }
 ?>
 <nav class="lata" aria-label="<?php esc_attr_e( 'Wybór roku szkolnego', 'przedszkole' ); ?>">

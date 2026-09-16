@@ -2118,7 +2118,7 @@ main + .fala { background: var(--wp--preset--color--base); }
 @keyframes przedszkole-cien        { from { opacity: 0; }                    to { opacity: 1; } }
 
 /* ==========================================================================
-   24. Filtr kategorii nad lista aktualnosci
+   24. Filtr kategorii i przelacznik rocznikow nad lista aktualnosci
    ========================================================================== */
 
 .filtr { margin-bottom: clamp(1.25rem, 3vw, 2rem); }
@@ -2192,6 +2192,9 @@ main + .fala { background: var(--wp--preset--color--base); }
 .filtr__link--kotki.is-aktywny:hover     { background: var(--kotki-tlo);     border-color: var(--kotki-tekst);     filter: brightness(.95); }
 
 /* Przelacznik rocznikow - stoi pod filtrem kategorii, w tej samej belce. */
+/* Odstep od filtra nad przelacznikiem wyznacza margines dolny `.filtr` -
+   marginesy sie skleja, bo `.lata` nie ma wlasnego marginesu gornego.
+   To zamierzone, nie przeoczenie. */
 .lata {
 	margin: 0 0 2rem;
 }
@@ -2207,9 +2210,12 @@ main + .fala { background: var(--wp--preset--color--base); }
 	font-weight: 700;
 }
 
+/* Wysokosc 44px - minimalny cel dotykowy, ten sam co w filtrze kategorii
+   i paginacji. Bez tego pole wyboru wychodzi ok. 41px, a przycisk ok. 43px. */
 .lata__wybor,
 .lata__przycisk {
 	font: inherit;
+	min-height: 44px;
 	padding: 0.4rem 0.75rem;
 	border: 2px solid currentColor;
 	border-radius: 999px;
