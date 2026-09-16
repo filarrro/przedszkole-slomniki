@@ -345,3 +345,41 @@ function przedszkole_bez_kanalu_komentarzy() {
 	return false;
 }
 add_filter( 'feed_links_show_comments_feed', 'przedszkole_bez_kanalu_komentarzy' );
+
+/**
+ * Archiwa rocznikowe poza indeksem wyszukiwarek.
+ *
+ * Bez tego siedem kategorii razy cztery roczniki daje 28 list, z których każda
+ * powiela zawartość którejś innej. Rdzeń nie wystawia `rel=canonical`
+ * na archiwach, więc nie ma czym tego rozstrzygnąć — prościej nie wpuszczać
+ * ich do indeksu wcale.
+ *
+ * `follow`, nie `nofollow`: wyszukiwarka ma dalej chodzić po odnośnikach
+ * do wpisów. Same wpisy siedzą w mapie witryny osobno i pozostają indeksowalne.
+ *
+ * Dotyczy też rocznika bieżącego — on również powiela adres bez parametru.
+ * Warunek to sama obecność `rok` w adresie, nie poprawność jego wartości:
+ * nieprawidłowy albo pusty slug i tak cicho spada na rocznik bieżący
+ * (`przedszkole_rok_z_zapytania()`), więc treść nadal się powiela.
+ *
+ * `follow` ustawiamy tylko, gdy nic wcześniej nie wystawiło `nofollow` —
+ * to globalna decyzja (rdzeń robi tak, gdy witryna ma wyłączone `blog_public`,
+ * czyli „odradzaj wyszukiwarkom indeksowanie witryny”) i nie jest naszą sprawą
+ * jej nadpisywać tylko dlatego, że w adresie jest `rok`.
+ *
+ * @param array $roboty Dyrektywy dla robotów.
+ * @return array
+ */
+function przedszkole_roboty_rocznik( $roboty ) {
+	// Odczyt publicznego filtra listy, bez zmiany stanu — nonce nie ma tu sensu.
+	if ( isset( $_GET['rok'] ) ) {
+		$roboty['noindex'] = true;
+
+		if ( ! isset( $roboty['nofollow'] ) ) {
+			$roboty['follow'] = true;
+		}
+	}
+
+	return $roboty;
+}
+add_filter( 'wp_robots', 'przedszkole_roboty_rocznik' );
