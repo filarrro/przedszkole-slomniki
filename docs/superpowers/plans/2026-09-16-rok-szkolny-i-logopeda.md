@@ -343,6 +343,45 @@ git commit -m "feat: model roku szkolnego liczonego z daty publikacji"
 
 ---
 
+### Poprawki naniesione podczas wdrożenia — 2026-09-16
+
+Kod podany wyżej w Kroku 3 **zawiera trzy usterki**, wykryte przez przegląd
+jakości już po pierwszym commicie. Obowiązuje wersja z repozytorium
+(`theme/przedszkole/inc/rok-szkolny.php`), nie ta z planu. Jeśli odtwarzasz
+zadanie od zera, nanieś je od razu:
+
+**1. Podwójna konwersja strefy czasowej** (commit `b368a53`). `strtotime()`
+czyta string jako UTC, bo WordPress ustawia domyślną strefę PHP na UTC,
+a `post_date` jest zapisany w czasie lokalnym serwisu — `wp_date()` dokładał
+offset drugi raz. Wpis z 31 sierpnia 23:30 trafiał do rocznika 2026/2027
+zamiast 2025/2026, czyli błąd siedział dokładnie na granicy, którą ta funkcja
+ma obsługiwać. Zamiast `strtotime()` + `wp_date()` używamy `mysql2date()`
+dla stringa i `current_time()` dla `null`.
+
+**2. Zerowa data MySQL** (commit `d59dc1b`). `mysql2date( 'Y', '0000-00-00
+00:00:00' )` zwraca `-0001`, a nie `false`, więc fallback na `0 === $rok`
+jej nie łapał i funkcja zwracała `-1/0`. Warunek obejmuje teraz `$rok < 1970`.
+Druga warstwa siedzi w `przedszkole_lata_szkolne()`: pętla jest przycinana,
+gdy `$od` wyjdzie większe od `$do` albo rozpiętość przekroczy sto lat —
+inaczej jedna uszkodzona data zapisywała dwa tysiące roczników do transientu
+na dobę. To nie jest hipotetyczne, bo treść tej strony pochodzi z importu.
+
+**3. Nadgorliwe kasowanie transientu** (commit `b368a53`).
+`przedszkole_zapomnij_lata()` reagowała na każdy `save_post`, czyli też
+na rewizje, autozapisy i zapis stron, mediów czy pozycji menu — dobowy cache
+nie miał szans przeżyć edycji czegokolwiek. Callback przyjmuje teraz `$post_id`
+i wychodzi dla rewizji, autozapisów oraz typów innych niż `post`. Ten sam
+callback obsługuje `deleted_post`, bo rdzeń odpala ten hak **przed**
+`clean_post_cache()` — sprawdzone w `wp/wp-includes/post.php`.
+
+**Uwaga do Kroku 7.** Polecenie `ddev exec wp --path=wp eval '...'` nie przejdzie
+z ładunkiem `" OR 1=1`, bo powłoka rozwija zmienne i gubi cytowanie. Zapisz kod
+do pliku i uruchom `ddev exec wp --path=wp eval-file <plik>`, tak jak robi
+to `tools/migracja_wpisow.py`, a plik potem skasuj. Ta sama uwaga dotyczy
+każdego kroku w planie, który woła `wp eval` z apostrofami w środku.
+
+---
+
 ## Zadanie 2: Kategoria logopedy i slug strony
 
 Kategoria musi istnieć, zanim `pre_get_posts` z Zadania 3 zacznie ją wyłączać.
