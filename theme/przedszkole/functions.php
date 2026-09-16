@@ -7,12 +7,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.28.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.29.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
 require_once get_theme_file_path( 'inc/seo.php' );
 require_once get_theme_file_path( 'inc/bezpieczenstwo.php' );
+require_once get_theme_file_path( 'inc/intendent.php' );
 
 /**
  * Deklaracja możliwości motywu.

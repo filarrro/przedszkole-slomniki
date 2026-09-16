@@ -2,8 +2,9 @@
 # Etap 6 - konta i role.
 # Idempotentny: istniejacemu kontu tylko poprawia role, nie dotyka hasla.
 #
-# Nie tworzymy wlasnych rol. Natywne Editor i Author pokrywaja potrzeby
-# przedszkola co do joty - uzasadnienie w PLAN.md, Etap 6.
+# Role natywne pokrywaja dyrekcje (Editor) i nauczycieli (Author) - uzasadnienie
+# w PLAN.md, Etap 6. Jedyna wlasna rola to `intendent`, ktora rejestruje motyw
+# (theme/przedszkole/inc/intendent.php); skrypt jej nie tworzy, tylko przypisuje.
 set -euo pipefail
 
 # Odsiewamy wylacznie szum "Deprecated" z biblioteki wp-cli pod PHP 8.5.
@@ -52,6 +53,9 @@ konto grupa-zajaczki   author "Zajączki"
 konto grupa-zabki      author "Żabki"
 konto grupa-jezyki     author "Jeżyki"
 konto grupa-kotki      author "Kotki"
+
+echo "== Konto kuchni =="
+konto intendent intendent "Intendent"
 
 echo
 echo "== Hasla =="

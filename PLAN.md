@@ -640,13 +640,16 @@ i przyciskiem bez pomocy — sprawdzone praktycznie 2026-09-11.
 | Administrator | wszystko: konfiguracja, motyw, wtyczki, użytkownicy | Administrator |
 | Dyrektor | strony, aktualności, galerie, dokumenty, media | Editor (Redaktor) |
 | Nauczyciel (konto grupowe) | aktualności, zdjęcia, galerie; bez konfiguracji technicznej | Author |
+| Intendent | wyłącznie strona „Jadłospis” i własne pliki | **Intendent** (własna) |
 
-**Konta grupowe (z migracji):** `grupa-kotki`, `grupa-zabki`, `grupa-jezyki`, `grupa-zajaczki`, `grupa-misie`, `grupa-wiewiorki` — rola Author. Plus `przedszkole` (Editor) na treści ogólne.
+**Konta grupowe (z migracji):** `grupa-kotki`, `grupa-zabki`, `grupa-jezyki`, `grupa-zajaczki`, `grupa-misie`, `grupa-wiewiorki` — rola Author. Plus `przedszkole` (Editor) na treści ogólne i `intendent` (rola Intendent) na jadłospis.
 
 - [x] Mapowanie ról na natywne role WP
-- [x] Sprawdzenie, czy natywne role wystarczają — **wystarczają, zero korekt**
+- [x] Sprawdzenie, czy natywne role wystarczają — **dla dyrekcji i nauczycieli tak**
 - [x] Utworzenie kont grupowych — `tools/uzytkownicy.sh`
 - [-] Minimalna korekta uprawnień — niepotrzebna, patrz audyt niżej
+- [x] Rola Intendent — jedyny przypadek, którego natywne role nie pokrywają
+      (2026-09-16), `theme/przedszkole/inc/intendent.php`
 - [x] Ukrycie zbędnych elementów panelu — `theme/przedszkole/inc/panel.php`
 - [x] Zasada: konto administratora **nie** służy do codziennej pracy —
       wypisana na końcu `tools/uzytkownicy.sh`
@@ -677,6 +680,7 @@ surowego HTML-a. Oba braki są tu zaletą.
 | Administrator | Kokpit, Wpisy, Media, Strony, Wygląd, Wtyczki, Użytkownicy, Narzędzia, Ustawienia |
 | Dyrektor (Editor) | Kokpit, Wpisy, Media, Strony, Profil |
 | Nauczyciel (Author) | Kokpit, Wpisy, Media, Profil |
+| Intendent | Kokpit, Media, Strony (sam Jadłospis), Profil |
 
 Co odjęliśmy i dlaczego:
 - **„Wydarzenia i nowości WordPressa”** — odpytuje `api.wordpress.org` przy
@@ -696,11 +700,64 @@ Co odjęliśmy i dlaczego:
 odpowiada 200. Nie jest to luka: strona jest dla tych ról pusta, a to, co
 naprawdę chronione, zwraca 403 (tabela wyżej).
 
+### Rola Intendent — jedno konto, jedna strona
+
+Dodana 2026-09-16. Jedyny wyjątek od zasady „natywne role wystarczają”:
+intendent ma aktualizować wyłącznie „Jadłospis”, a najwęższa natywna rola
+z dostępem do stron — Editor — otwiera wszystkie dwadzieścia.
+
+**Bez wtyczki.** PublishPress Permissions i pokrewne to silnik uprawnień
+z własnymi tabelami i ekranem ustawień pod jedną regułę, na stronie o dwudziestu
+stronach i ośmiu kontach. Reguła w motywie jedzie z repozytorium i widać ją
+w diffie. Gdyby przypadków przybyło, wtyczka zastąpi ten plik bez ruszania
+reszty motywu.
+
+Trzy warstwy w `theme/przedszkole/inc/intendent.php`:
+
+1. **Rola** — `read`, `upload_files`, `edit_pages`, `publish_pages`. Nic ponadto.
+2. **`map_meta_cap`** — bramka na konkretną stronę. To ona odpowiada 403.
+   Strona wyszukiwana po slugu (`jadlospis`), nie po ID z migracji.
+3. **`pre_get_posts`** — listy w panelu pokazują tylko dostępne treści.
+   Kosmetyka, ale bez niej intendent czyta tytuły cudzych stron i nazwy plików.
+
+Zakładanie stron przeniesione z `edit_pages` na własne uprawnienie
+`create_pages` (filtr `register_post_type_args`), przyznane administratorowi
+i redaktorowi. Dzięki temu WordPress sam chowa „Dodaj stronę”, zamiast naszego
+przekierowania.
+
+**Audyt — sprawdzone na żywo, wejściem wprost po adresie:**
+
+| Próba | Intendent |
+|---|---|
+| Edycja „Jadłospisu” (panel i REST) | 200 |
+| Edycja „Opłat”, „Strony głównej” (panel i REST) | **403** |
+| Usunięcie „Jadłospisu” | **403** |
+| Dodanie nowej strony | **403** |
+| Lista stron | 200, jeden wiersz |
+| Wpisy, ustawienia, wygląd, użytkownicy, narzędzia | **403** |
+| Wgranie pliku, opis własnego pliku | 200 |
+| Opis cudzego pliku | **403** |
+| Lista mediów | tylko własne pliki |
+
+Regresja na koncie Editor: lista stron, edycja dowolnej, dodanie nowej — 200.
+
+**Pułapka rdzenia, która kosztowała śledztwo.** Rola z `edit_pages`, ale bez
+`create_pages`, zostawia w podmenu „Strony” jedną pozycję — „Wszystkie strony”,
+o adresie identycznym z menu nadrzędnym. `wp-admin/includes/menu.php` kasuje
+w takim przypadku całe podmenu. Wtedy `get_admin_page_parent()` nie ma czego
+dopasować i zwraca pustego rodzica, a `user_can_access_admin_page()` sprawdza
+samo `edit.php` — które siedzi w `$_wp_menu_nopriv` jako niedostępne menu
+„Wpisy”. Efekt: **lista stron zwraca 403 komuś, kto ma do niej prawo.**
+Naprawa: druga pozycja w podmenu (skrót „Jadłospis” wprost do edytora) zdejmuje
+warunek `count() === 1`. Dotyczy każdej przyszłej roli z dostępem do stron
+bez dostępu do wpisów.
+
 ### Do rozstrzygnięcia przed wdrożeniem
 
 - **Adresy e-mail kont.** Skrypt nadaje `grupa-<nazwa>@przedszkoleslomniki.pl`.
   Na produkcji muszą to być realne skrzynki, inaczej nie zadziała odzyskiwanie
-  hasła. Hosting pokazuje 4 użyte konta pocztowe — brakuje sześciu
+  hasła. Hosting pokazuje 4 użyte konta pocztowe — brakuje siedmiu
+  (sześć grupowych plus `intendent@przedszkoleslomniki.pl`)
 - ~~**Galeria a rola Author.**~~ Rozstrzygnięte 2026-09-14 przez usunięcie
   strony „Galeria”: link do albumu ląduje we wpisie grupy (wzorzec „Link
   do albumu”), a nauczyciel edytuje wpisy, nie strony. Nie ma już strony

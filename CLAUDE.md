@@ -46,6 +46,18 @@ Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
   wzorce z `patterns/` i warianty stylów (`register_block_style`)
 - Edycji plików w `wp/` — to nie nasz kod
 
+## Role i uprawnienia
+
+Natywne role WP: Editor (dyrekcja), Author (konta grupowe nauczycieli).
+Jedna własna rola — `intendent`, dostęp wyłącznie do strony „Jadłospis”
+(`theme/przedszkole/inc/intendent.php`). Nie zastępuj jej wtyczką od uprawnień
+bez powodu: to jedna reguła, a wtyczka to tabele, ekran ustawień i cykl
+aktualizacji. Kolejny taki przypadek — wtedy przelicz na nowo.
+
+**Pułapka rdzenia:** rola z `edit_pages` bez `edit_posts` dostaje 403 na liście
+stron, jeśli w podmenu „Strony” zostanie jedna pozycja. Uzasadnienie i naprawa
+w PLAN.md, Etap 6.
+
 ## Dostępność
 
 Strona placówki publicznej. Ustawa o dostępności cyfrowej wymaga WCAG 2.1 AA.
