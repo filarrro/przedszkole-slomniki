@@ -14,6 +14,7 @@ require_once get_theme_file_path( 'inc/panel.php' );
 require_once get_theme_file_path( 'inc/seo.php' );
 require_once get_theme_file_path( 'inc/bezpieczenstwo.php' );
 require_once get_theme_file_path( 'inc/intendent.php' );
+require_once get_theme_file_path( 'inc/rok-szkolny.php' );
 
 /**
  * Deklaracja możliwości motywu.
