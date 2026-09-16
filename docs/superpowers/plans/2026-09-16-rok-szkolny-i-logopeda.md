@@ -1326,7 +1326,7 @@ add_filter( 'wp_robots', 'przedszkole_roboty_rocznik' );
 - [ ] **Krok 3: Sprawdź, że dyrektywa się pojawiła**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/category/misie/?rok=2024-2025" | grep -o '<meta name="robots"[^>]*>'
+curl -s "http://przedszkole.ddev.site/category/misie/?rok=2024-2025" | grep -o "<meta name='robots'[^>]*>"
 ```
 
 Oczekiwane: `<meta name="robots" content="noindex, follow" />`
@@ -1343,7 +1343,7 @@ Oczekiwane: `0` i `0`.
 - [ ] **Krok 5: Sprawdź, że wyszukiwarka nie straciła swojego `noindex` z rdzenia**
 
 ```bash
-curl -s "http://przedszkole.ddev.site/?s=dzieci" | grep -o '<meta name="robots"[^>]*>'
+curl -s "http://przedszkole.ddev.site/?s=dzieci" | grep -o "<meta name='robots'[^>]*>"
 ```
 
 Oczekiwane: zawiera `noindex` — rdzeń robi to sam i nasz filtr tego nie zepsuł.
@@ -1353,6 +1353,36 @@ Oczekiwane: zawiera `noindex` — rdzeń robi to sam i nasz filtr tego nie zepsu
 ```bash
 git add theme/przedszkole/inc/seo.php
 git commit -m "feat: archiwa rocznikowe poza indeksem wyszukiwarek"
+```
+
+---
+
+### Poprawki naniesione podczas wdrożenia — 2026-09-16
+
+**1. `unset( $roboty['nofollow'] )` z Kroku 2 jest zbyt brutalne** (commit
+`6532790`). Rdzeń ustawia `nofollow` na **każdej** stronie, gdy administrator
+odznaczy „widoczność w wyszukiwarkach" (`blog_public = 0`). Bezwarunkowe
+kasowanie nadpisywałoby tę globalną decyzję akurat na adresach z `?rok=` —
+czyli nasz filtr SEO cichaczem podważałby ustawienie z panelu. Obowiązuje
+wersja warunkowa: `follow` ustawiamy tylko wtedy, gdy nic wcześniej nie
+wystawiło `nofollow`. Na tej instalacji `blog_public = 1`, więc różnicy dziś
+nie widać — ale to zbieg okoliczności, nie gwarancja.
+
+**2. Wzorzec `grep` w krokach 3 i 5 nie pasował.** Rdzeń renderuje znacznik
+z **pojedynczym** cudzysłowem (`<meta name='robots' …>`), więc szukanie
+`name="robots"` zwracało pustkę i test wyglądał na niezaliczony niezależnie
+od tego, czy filtr działa. Wzorce w planie są już poprawione.
+
+**Zweryfikowane wyjście po poprawce:**
+
+```
+/category/misie/?rok=2024-2025  -> max-image-preview:large, noindex, follow
+/category/misie/                -> max-image-preview:large
+/                               -> max-image-preview:large
+/?s=dzieci                      -> noindex, follow, max-image-preview:large
+/category/misie/?rok=           -> max-image-preview:large, noindex, follow
+/category/misie/?rok[]=x        -> max-image-preview:large, noindex, follow
+wp-sitemap.xml                  -> zero adresow z rok=
 ```
 
 ---
