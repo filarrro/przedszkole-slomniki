@@ -1,13 +1,13 @@
 <?php
 /**
- * Wybor rocznika nad lista wpisow.
+ * Wybór rocznika nad listą wpisów.
  *
- * Zwykly formularz GET: bez JavaScriptu, z klawiatury, z czytnikiem ekranu.
- * Przycisk „Pokaz" zamiast zdarzenia `change`, bo lista, ktora przeskakuje
- * przy strzalce w dol, jest dla uzytkownika klawiatury pulapka.
+ * Zwykły formularz GET: bez JavaScriptu, z klawiatury, z czytnikiem ekranu.
+ * Przycisk „Pokaż” zamiast zdarzenia `change`, bo lista, która przeskakuje
+ * przy strzałce w dół, jest dla użytkownika klawiatury pułapką.
  *
- * Paginacji nie obslugujemy sami — `paginate_links()` scala parametry
- * z biezacego adresu do odnosnikow stron.
+ * Paginacji nie obsługujemy sami — `paginate_links()` scala parametry
+ * z bieżącego adresu do odnośników stron.
  *
  * @package Przedszkole
  */
@@ -20,7 +20,7 @@ if ( ! przedszkole_rok_aktywny() ) {
 
 $przedszkole_lata = przedszkole_lata_szkolne();
 
-// Przy jednym roczniku przelacznik nie ma czego przelaczac.
+// Przy jednym roczniku przełącznik nie ma czego przełączać.
 if ( count( $przedszkole_lata ) < 2 ) {
 	return;
 }
