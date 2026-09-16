@@ -20,7 +20,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
 | 6. Użytkownicy | ✅ | role natywne, konta grupowe, panel odchudzony |
-| 7. Frontend | ✅ | widoki gotowe; lista dokumentów bez PDF-ów — przepadły ze starym serwerem |
+| 7. Frontend | ✅ | widoki gotowe; lista dokumentów bez PDF-ów — przepadły ze starym serwerem; listy aktualności i archiwa kategorii tną się do bieżącego roku szkolnego, z wyjątkiem kategorii `logopeda`, kanałów RSS i archiwów dat (2026-09-16) |
 | 8. SEO / wydajność / bezpieczeństwo | 🔄 | motyw gotowy; `.htaccess`, cache i Search Console przy wdrożeniu |
 | 9. Wdrożenie | ⬜ | |
 | 10–12 | ⬜ | |
@@ -527,6 +527,13 @@ Liczby z analizy kategorii Joomli — patrz niżej.
 | Specjaliści / Kadra / Dokumenty / Dla rodziców | 10 |
 
 Stąd taksonomia WordPressa: **6 grup + Ogłoszenia**. Nic więcej nie ma pokrycia w treści.
+
+**Korekta 2026-09-16.** Wiersz „Kącik Logopedy | 4" liczył artykuły widoczne
+w ówczesnym zakresie migracji (lata szkolne 2023/24–2025/26), nie w całej
+kategorii. Kategoria 19 („Logopeda") miała w zrzucie **27 opublikowanych
+artykułów** z lat 2015–2026; pozostałe 23 przejrzał `tools/migracja_logopedy.py`,
+z czego 21 doszło jako nowe wpisy (dwa pominięte świadomie) — szczegóły
+i finalny bilans (25 wpisów w kategorii `logopeda`) w [MIGRACJA.md](MIGRACJA.md).
 
 ### Kategorie wpisów
 
@@ -1941,6 +1948,14 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Git wersjonuje tylko motyw | rdzeń WP i wtyczki to cudzy kod; symlink lokalnie, zwykły katalog na serwerze |
 | 2026-09-15 | Bez 2FA dla administratora | oznacza wtyczkę z ekranem ustawień i cyklem aktualizacji; przy pięciu kontach grupowych i braku danych osobowych na stronie zostają mocne hasła i blokada prób logowania |
 | 2026-09-15 | Zgody rodziców na zdjęcia dzieci zbierane ręcznie, poza stroną | dokumentacja zgód to proces placówki, nie funkcja strony; własny rejestr zgód oznaczałby przechowywanie danych osobowych dzieci w WordPressie |
+| 2026-09-16 | Listy aktualności i archiwa kategorii tną się do bieżącego roku szkolnego | 430 wpisów w jednej paginowanej liście zasłaniało bieżące; rok szkolny to naturalna jednostka dla przedszkola |
+| 2026-09-16 | Rok szkolny nadal liczony z daty publikacji, bez taksonomii | decyzja z 2026-09-11 zostaje w mocy; dokładamy do niej filtrowanie, nie zastępujemy jej terminami. Przeniesienie wpisu = zmiana daty, co WP już umie |
+| 2026-09-16 | Rocznik w adresie jako `?rok=`, bez reguł przepisania | działa od pierwszej minuty, a `paginate_links()` sam scala parametr do odnośników stron |
+| 2026-09-16 | Strona główna nie tnie bloku aktualności, strony grup tną | strona główna nigdy nie ma być pusta; na stronie grupy pusty blok z odnośnikiem wstecz niesie informację |
+| 2026-09-16 | Kategoria `logopeda` wyjęta spod podziału na roczniki | poradniki nie mają daty ważności — „Rozwój mowy dziecka" z 2016 jest tak samo aktualny jak wpis z wczoraj |
+| 2026-09-16 | Archiwa rocznikowe `noindex, follow` | 7 kategorii × 4 roczniki to 28 list duplikatów, a rdzeń nie wystawia `rel=canonical` na archiwach |
+| 2026-09-16 | Artykuł 32 i kategoria 64 Joomli pominięte przy imporcie | art. 32 to godziny pracy z 2015 sprzeczne z treścią strony; kategoria 64 to seria covidowa, którą przedszkole samo wyłączyło |
+| 2026-09-16 | Kanały RSS i archiwa dat wyjęte spod cięcia po roczniku, obok kategorii `logopeda` | specyfikacja mówiła o „listach i archiwach kategorii", milcząco zakładając HTML: kanał kategorii nie ma przełącznika lat ani komunikatu o pustym roku, więc cięcie zamieniłoby go w niewyjaśnioną pustkę; `/2024/?cat=7` ma `is_date()` i `is_category()` prawdziwe naraz, więc bez wyjątku hak przecinałby rok kalendarzowy z rocznikiem bieżącym i pokazywał pustkę tam, gdzie są wpisy. Oba warunki siedzą w jednym predykacie (`przedszkole_widok_podlega_rocznikowi()`), bo rozbicie ich na dwie kopie tego samego warunku raz już się rozjechało w ciągu jednego commita |
 
 ---
 

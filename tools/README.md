@@ -175,3 +175,35 @@ dopisania jej do słownika `WYKSZTALCENIE` albo wstawienia wzorca z edytora.
 Zdjęcia bierze ze słownika `ZDJECIA` (nazwisko → plik w `media/kadra/`). Kto go
 tam nie ma, dostaje inicjały. Plik nieobecny w bibliotece mediów jest importowany
 przy `--zastosuj`; podgląd niczego nie wgrywa.
+
+## `logopeda.sh`
+
+Zakłada kategorię „Kącik logopedy" (slug `logopeda`) i dopasowuje do niej slug
+strony o tej samej nazwie. Motyw wiąże stronę z kategorią po slugu, tak samo
+jak strony grup, więc oba muszą być identyczne.
+
+```bash
+tools/logopeda.sh
+```
+
+Idempotentny: istniejącej kategorii nie zakłada drugi raz.
+
+## `migracja_logopedy.py`
+
+Dobiera ze zrzutu Joomli artykuły z kategorii 19 („Logopeda"), których nie
+objęła migracja z Etapu 2b — obejmowała tylko lata szkolne 2023/24–2025/26,
+a kącik logopedy sięga 2015 roku.
+
+```bash
+python3 tools/migracja_logopedy.py              # plan, nic nie wgrywa
+python3 tools/migracja_logopedy.py --zastosuj   # wgrywa do WordPressa
+```
+
+Wymaga bazy roboczej `joomla`, tej samej, z której korzystają
+`migracja_tresci.py` i `migracja_wpisow.py`. Idempotentny: wpisy rozpoznaje
+po meta `_joomla_id`, więc powtórny przebieg aktualizuje, a nie duplikuje.
+
+Pomija świadomie artykuł 32 (godziny pracy z 2015, sprzeczne z treścią strony)
+i całą kategorię 64 („Archiwum Logopedy" — seria covidowa, na starej stronie
+niepublikowana). Bilans importu (27 artykułów w kategorii, 25 finalnie
+w WordPressie) jest w [MIGRACJA.md](../MIGRACJA.md).

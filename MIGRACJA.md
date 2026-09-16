@@ -568,3 +568,42 @@ dla każdej z sześciu grup.
 Migrowane strony niosą dane z roku szkolnego 2025/2026 — jadłospis na konkretny
 tydzień czerwca 2026 i harmonogramy zajęć logopedycznych z datami dziennymi.
 Przed wdrożeniem trzeba je odświeżyć albo usunąć.
+
+---
+
+## Migracja logopedy (wykonana 2026-09-16)
+
+Uzupełnienie migracji aktualności (wyżej): kategoria 19 Joomli („Logopeda")
+wykracza poza zakres lat szkolnych 2023/24–2025/26 objęty `migracja_wpisow.py`
+— sięga 2015 roku. Narzędzie: `tools/migracja_logopedy.py` (`--zastosuj`
+wgrywa do WordPressa), ta sama baza robocza `joomla`.
+
+**Korekta 2026-09-16.** Kategoria 19 miała w zrzucie **27 opublikowanych
+artykułów**, nie 4, jak sugerowała tabela „Rozkład 440 migrowanych artykułów"
+— patrz PLAN.md, Etap 4. Ten wiersz liczył tylko artykuły z zakresu
+ówczesnej migracji (2023/24–2025/26). Do WordPressa wtedy weszły cztery,
+pozostałe 23 dobrał `migracja_logopedy.py`.
+
+Z tych 23, dwa artykuły pominięte świadomie:
+- **Artykuł 32 „Godziny pracy logopedy"** (2015) — pięć akapitów z godzinami
+  `Poniedziałek 10:40 - 14:40`, sprzecznymi z aktualną treścią strony „Kącik
+  logopedy" (`poniedziałek 12:00 - 16:00`). Import dałby dwie sprzeczne
+  wersje tej samej informacji na stronie.
+- **Artykuł 1224 „Co robimy na zajęciach logopedycznych?"** — treść to
+  wyłącznie `<img src="images/259377452_….jpg">`, plik przepadł ze starym
+  serwerem (patrz „Pliki ze starego serwera: przepadły"). Po wycięciu
+  znacznika zostaje pustka; istniejąca maszyneria konwersji (`zbuduj()`
+  w `migracja_tresci.py`) odrzuca taki wpis sama.
+
+Kategoria 64 („Archiwum Logopedy", 16 odcinków serii #zostańwdomu z okresu
+pandemii) pominięta w całości — na starej stronie była niepublikowana.
+
+**Wynik: 25 wpisów w kategorii `logopeda`** — 21 nowych z importu plus
+4 istniejące, które migracja z Etapu 2b przypisała do „Ogłoszeń" (Joomla ID
+1897, 1899, 1613, 1614; WP 333, 331, 592, 591). Importer rozpoznaje wpis po
+meta `_joomla_id` i przy dopasowaniu **zastępuje** jego kategorie — te cztery
+wpisy przeszły na `logopeda` w tym samym przebiegu co import nowych,
+zamiast osobnego kroku „przepięcia po slugu" pierwotnie przewidzianego
+w specyfikacji. Skutek uboczny: te cztery wpisy dostały też tytuł, slug
+i treść odtworzone ze zrzutu — świadomie zaakceptowane, bo weszły automatem
+i nikt ich ręcznie nie poprawiał.
