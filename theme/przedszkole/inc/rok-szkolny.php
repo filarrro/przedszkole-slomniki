@@ -206,27 +206,69 @@ function przedszkole_zakres_roku( $slug ) {
 }
 
 /**
+ * Czy dany widok podlega podziałowi na roczniki.
+ *
+ * Jeden predykat pod dwie funkcje, które muszą odpowiadać to samo: hak
+ * tnący zapytanie ({@see przedszkole_tnij_po_roku()}) i sprawdzenie dla
+ * przełącznika lat oraz komunikatu o pustym roczniku z Zadań 4 i 5
+ * ({@see przedszkole_rok_aktywny()}). Rozdzielenie ich na dwa osobne
+ * warunki już raz się rozjechało — dodanie wyjątku dla kanałów w haku
+ * nie trafiło do drugiej funkcji, bo obiecywały zgodność tylko w komentarzu.
+ *
+ * Cięciu podlegają wyłącznie lista aktualności i archiwa kategorii
+ * (`is_home()`, `is_category()`) — i nie zawsze nawet one:
+ *
+ * - kanał RSS niesie „co nowego”, nie ma w nim ani przełącznika lat, ani
+ *   komunikatu o pustym roku (oba istnieją tylko w HTML) — cięcie od
+ *   1 września do pierwszego wpisu nowego rocznika zamieniłoby go
+ *   w niewyjaśnioną pustkę, a WordPress ogłasza kanały kategorii w `<head>`
+ *   każdego archiwum, więc to realny adres, nie martwy kąt serwisu;
+ * - archiwum daty (`/2024/`, także połączone z kategorią przez `?cat=`) ma
+ *   już własne ograniczenie w czasie — `is_date()` i `is_category()` nie
+ *   wykluczają się nawzajem, więc bez tego wyjątku hak dokładałby
+ *   `date_query` bieżącego rocznika do zakresu roku kalendarzowego;
+ *   przecięcie dwóch różnych roczników jest zawsze puste i kłamie,
+ *   że archiwum nie ma treści;
+ * - kategoria `logopeda` to poradniki bez daty ważności (patrz stała
+ *   `PRZEDSZKOLE_LOGOPEDA`).
+ *
+ * @param WP_Query $zapytanie Sprawdzane zapytanie.
+ * @return bool
+ */
+function przedszkole_widok_podlega_rocznikowi( $zapytanie ) {
+	if ( $zapytanie->is_feed() || $zapytanie->is_date() ) {
+		return false;
+	}
+
+	if ( ! $zapytanie->is_home() && ! $zapytanie->is_category() ) {
+		return false;
+	}
+
+	return ! $zapytanie->is_category( PRZEDSZKOLE_LOGOPEDA );
+}
+
+/**
  * Czy bieżący widok podlega cięciu po roczniku.
  *
- * Wydzielone, bo odpowiedzi potrzebują też przełącznik lat i komunikat
- * o pustym roczniku — a warunek musi być w trzech miejscach ten sam.
+ * Cienka otoczka nad {@see przedszkole_widok_podlega_rocznikowi()} dla
+ * miejsc bez własnego obiektu zapytania pod ręką — przełącznik lat
+ * i komunikat o pustym roczniku (Zadania 4, 5) pytają o widok, który się
+ * właśnie renderuje, czyli o globalne `$wp_query`.
  *
  * @return bool
  */
 function przedszkole_rok_aktywny() {
-	if ( is_category( PRZEDSZKOLE_LOGOPEDA ) ) {
-		return false;
-	}
-
-	return is_home() || is_category();
+	return przedszkole_widok_podlega_rocznikowi( $GLOBALS['wp_query'] );
 }
 
 /**
  * Ogranicza listy wpisów do jednego rocznika.
  *
- * Wchodzi wyłącznie na listę aktualności i archiwa kategorii. Wyszukiwarka,
- * archiwa dat, pojedyncze wpisy i kanały RSS zostają nietknięte — tam cięcie
- * tylko przeszkadzałoby. Panel również, bo redaktor musi widzieć całość.
+ * `is_admin()` i `! is_main_query()` rozstrzygają, czy w ogóle wolno
+ * modyfikować zapytanie. Które widoki mają być cięte, rozstrzyga wyłącznie
+ * {@see przedszkole_widok_podlega_rocznikowi()} — wyliczenie wyjątków razem
+ * z uzasadnieniem siedzi tam, żeby nie rozjechać się z
+ * {@see przedszkole_rok_aktywny()}.
  *
  * @param WP_Query $zapytanie Modyfikowane zapytanie.
  */
@@ -235,21 +277,7 @@ function przedszkole_tnij_po_roku( $zapytanie ) {
 		return;
 	}
 
-	// Kanał niesie "co nowego", nie "co w bieżącym roczniku" - a nie ma w nim
-	// ani przełącznika lat, ani komunikatu o pustym roku (oba tylko w HTML,
-	// Zadania 4 i 5). Od 1 września do pierwszego wpisu nowego rocznika
-	// cięcie zamieniłoby kanał w pustkę bez wyjaśnienia, a WordPress ogłasza
-	// kanały kategorii w <head> każdego archiwum, więc to realny adres,
-	// z którego ktoś korzysta, nie martwy róg serwisu.
-	if ( $zapytanie->is_feed() ) {
-		return;
-	}
-
-	if ( ! $zapytanie->is_home() && ! $zapytanie->is_category() ) {
-		return;
-	}
-
-	if ( $zapytanie->is_category( PRZEDSZKOLE_LOGOPEDA ) ) {
+	if ( ! przedszkole_widok_podlega_rocznikowi( $zapytanie ) ) {
 		return;
 	}
 
