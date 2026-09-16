@@ -1,0 +1,37 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "przedszkole/osoba",
+	"title": "Osoba",
+	"category": "przedszkole",
+	"icon": "businesswoman",
+	"description": "Kafelek pracownika: okrągłe zdjęcie albo inicjały, imię i nazwisko, tytuł i biogram.",
+	"keywords": [ "kadra", "pracownik", "nauczyciel", "biogram" ],
+	"textdomain": "przedszkole",
+	"attributes": {
+		"imie":       { "type": "string", "default": "" },
+		"tytul":      { "type": "string", "default": "" },
+		"zdjecieId":  { "type": "number", "default": 0 },
+		"zdjecieUrl": { "type": "string", "default": "" },
+		"wyrownanie": { "type": "string", "default": "srodek" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"reusable": false
+	},
+	"example": {
+		"attributes": {
+			"imie": "mgr Anna Kowalska",
+			"tytul": "Pedagogika przedszkolna"
+		},
+		"innerBlocks": [
+			{
+				"name": "core/paragraph",
+				"attributes": { "content": "Nauczycielka grupy Misie. W zawodzie od dziesięciu lat." }
+			}
+		]
+	},
+	"editorScript": "file:./edytor.js",
+	"render": "file:./render.php"
+}

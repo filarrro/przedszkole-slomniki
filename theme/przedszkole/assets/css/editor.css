@@ -26,3 +26,17 @@
 
 /* Blok pliku ma w edytorze dodatkowy pasek narzedzi - nie rozpychamy go. */
 .editor-styles-wrapper .wp-block-file { align-items: center; }
+
+/* Kafelek osoby. Na froncie odstepy nad i pod kafelkiem wisza pod
+   `.entry__content` - w edytorze tego opakowania nie ma. */
+.editor-styles-wrapper .kafelek-osoby { margin-top: 3rem; }
+.editor-styles-wrapper .kafelek-osoby + * { margin-top: 3rem; }
+
+/* Przyciski wyboru zdjecia. Jedyny element bez odpowiednika na froncie:
+   istnieje wylacznie w edytorze, wiec i jego wyglad moze stac tylko tutaj. */
+.kafelek-osoby__sterowanie {
+	display: flex;
+	justify-content: center;
+	gap: .25rem;
+	margin-top: .75rem;
+}

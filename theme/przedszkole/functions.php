@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PRZEDSZKOLE_VERSION', '0.30.0' );
+define( 'PRZEDSZKOLE_VERSION', '0.31.0' );
 
 require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
@@ -15,6 +15,7 @@ require_once get_theme_file_path( 'inc/seo.php' );
 require_once get_theme_file_path( 'inc/bezpieczenstwo.php' );
 require_once get_theme_file_path( 'inc/intendent.php' );
 require_once get_theme_file_path( 'inc/rok-szkolny.php' );
+require_once get_theme_file_path( 'inc/blok-osoba.php' );
 
 /**
  * Deklaracja możliwości motywu.
@@ -195,14 +196,6 @@ function przedszkole_style_blokow() {
 		array(
 			'name'  => 'wyroznienie',
 			'label' => __( 'Wyróżnienie', 'przedszkole' ),
-		)
-	);
-
-	register_block_style(
-		'core/columns',
-		array(
-			'name'  => 'kafelek-osoby',
-			'label' => __( 'Kafelek osoby', 'przedszkole' ),
 		)
 	);
 

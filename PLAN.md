@@ -1891,7 +1891,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Kategorie: 6 grup + Ogłoszenia | tyle ma pokrycie w 440 migrowanych artykułach; podział na Ogłoszenia/Wydarzenia wymagałby ręcznej pracy na 113 wpisach |
 | 2026-09-11 | Galerie jako zwykłe strony z linkami | właściwe albumy są w Google Photos, własny typ treści nic nie wnosi |
 | 2026-09-11 | Polityka prywatności przez natywny mechanizm WP | WP sam dokłada `rel="privacy-policy"` i pilnuje strony w Ustawieniach |
-| 2026-09-11 | Wzorce bloków zamiast własnych bloków Gutenberga | pokrywają potrzeby bez linii JS do utrzymania |
+| 2026-09-11 | Wzorce bloków zamiast własnych bloków Gutenberga | pokrywają potrzeby bez linii JS do utrzymania. **Jeden wyjątek od 2026-09-16:** `przedszkole/osoba` — wpis z tą datą niżej |
 | 2026-09-11 | Warianty stylów bloków zamiast klas wpisywanych ręcznie | pracownik wybiera z listy, nie pisze HTML-a |
 | 2026-09-11 | Wzorce z wordpress.org wyłączone | zero zapytań zewnętrznych + krótka, polska lista w edytorze |
 | 2026-09-11 | Szerokie wyrównania (`alignwide`/`alignfull`) zostają wyłączone | front ich nie obsłuży bez przebudowy szablonów na siatkę |
@@ -1901,7 +1901,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-11 | Mapa treści z tabeli `l6hwz_menu`, nie z tytułów artykułów | menu Joomli jednoznacznie wiąże pozycję z artykułem; dopasowanie po tytule dawałoby trafienia w aktualnościach |
 | 2026-09-11 | Rozkład dnia: trzy warianty na jednej stronie | stare menu miało trzy osobne pozycje pod separatorem — jedna strona z nagłówkami jest prostsza w utrzymaniu |
 | 2026-09-11 | Kadra jako jedna strona składana z 15 artykułów | stara strona rozbijała ją na 15 podstron po jednej osobie — nadmiar nawigacji przy 15 krótkich biogramach |
-| 2026-09-11 | Kafelek osoby jako wariant stylu `core/columns`, nie własny blok | okrągłe zdjęcie + biogram składają się ze zwykłych bloków; personel podmienia treść bez pisania HTML-a |
+| 2026-09-11 | ~~Kafelek osoby jako wariant stylu `core/columns`, nie własny blok~~ | **wycofane 2026-09-16** — układ siedział w treści każdej strony; wpis z tą datą niżej |
 | 2026-09-11 | Trzy gradientowe koła z jednego pliku SVG odbijanego w CSS | trzy układy bez trzech plików; `:nth-child(… of S)` liczy same kafelki, więc nagłówki między nimi nie psują kolejności |
 | 2026-09-11 | Inicjały w kółku, dopóki nie ma zdjęć kadry | 5 fotografii wisi na FTP starej strony; kafelek bez zdjęcia wyglądałby jak dziura, a podmiana na zdjęcie nie zmienia kadru ani stylu |
 | 2026-09-11 | Druga linia kafelka to wykształcenie, nie stopień awansu | przypisania do grup i stopnie pochodzą ze starej strony i zdążyły się zestarzeć; wykształcenie jest w treści u wszystkich 14 osób |
@@ -1955,6 +1955,10 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-16 | Kategoria `logopeda` wyjęta spod podziału na roczniki | poradniki nie mają daty ważności — „Rozwój mowy dziecka" z 2016 jest tak samo aktualny jak wpis z wczoraj |
 | 2026-09-16 | Archiwa rocznikowe `noindex, follow` | 7 kategorii × 4 roczniki to 28 list duplikatów, a rdzeń nie wystawia `rel=canonical` na archiwach |
 | 2026-09-16 | Artykuł 32 i kategoria 64 Joomli pominięte przy imporcie | art. 32 to godziny pracy z 2015 sprzeczne z treścią strony; kategoria 64 to seria covidowa, którą przedszkole samo wyłączyło |
+| 2026-09-16 | Kafelek osoby jako własny blok `przedszkole/osoba`, nie wariant stylu kolumn | wariant stylu trzymał układ w treści: dodanie osoby znaczyło trafić w szerokość kolumny, klasę wariantu i wpisać inicjały dwa razy, a jedno kliknięcie w „Usuń" zostawiało pół kafelka. Poprawka wyglądu szła przez trzynaście kopii tego samego HTML-a. Blok zostawia w treści dane (zdjęcie, imię, tytuł, biogram), a układ rysuje `blocks/osoba/render.php` — jedno miejsce na front i edytor. To pierwszy własny blok w motywie i póki co jedyny uzasadniony: reszta wzorców nie ma tego problemu, bo nie jest powtarzana kilkanaście razy na stronie |
+| 2026-09-16 | Blok bez kroku budowania — zwykły JavaScript, bez JSX i npm | `wp.element.createElement` zamiast znaczników kosztuje trochę czytelności, ale motyw zostaje bez `node_modules`, bez `package.json` i bez zbudowanej paczki w repo. Cena: zależności skryptu trzeba wypisać ręcznie w `blocks/osoba/edytor.asset.php`, bo normalnie generuje go `@wordpress/scripts` |
+| 2026-09-16 | Inicjały liczone z imienia, nie wpisywane | pierwsze litery dwóch pierwszych członów pisanych wielką literą — stopień („mgr", „dr") wypada sam. Reguła stoi dwa razy, w `inc/blok-osoba.php` i `blocks/osoba/edytor.js`, bo bez kroku budowania nie ma jak współdzielić kodu między PHP a przeglądarką; w zamian pracownik nie wpisuje inicjałów ani razu, a wcześniej wpisywał dwa razy |
+| 2026-09-16 | Biogram jako bloki podrzędne, imię i tytuł jako atrybuty | biogramy mają po kilka akapitów z kursywą i cytatem — pole tekstowe w panelu bocznym byłoby krokiem wstecz. Lista dozwolonych bloków (akapit, lista, cytat) trzyma w kafelku sam tekst, więc kolumna czy galeria nie rozwalą układu |
 | 2026-09-16 | Kanały RSS i archiwa dat wyjęte spod cięcia po roczniku, obok kategorii `logopeda` | specyfikacja mówiła o „listach i archiwach kategorii", milcząco zakładając HTML: kanał kategorii nie ma przełącznika lat ani komunikatu o pustym roku, więc cięcie zamieniłoby go w niewyjaśnioną pustkę; `/2024/?cat=7` ma `is_date()` i `is_category()` prawdziwe naraz, więc bez wyjątku hak przecinałby rok kalendarzowy z rocznikiem bieżącym i pokazywał pustkę tam, gdzie są wpisy. Oba warunki siedzą w jednym predykacie (`przedszkole_widok_podlega_rocznikowi()`), bo rozbicie ich na dwie kopie tego samego warunku raz już się rozjechało w ciągu jednego commita |
 
 ---

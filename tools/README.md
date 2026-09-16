@@ -65,29 +65,25 @@ wdrożeniem muszą to być realne skrzynki — patrz PLAN.md, Etap 6.
 Własnych ról nie tworzymy. Natywne Editor i Author pokrywają potrzeby przedszkola,
 uzasadnienie i audyt uprawnień są w PLAN.md.
 
-## `kadra_zdjecie.py`
+## `kadra_na_blok.py`
 
-Wstawia zdjęcia osób w kafelki na stronie „Kadra" — podmienia zawartość lewej
-kolumny kafelka (inicjały albo poprzednie zdjęcie) na wskazany plik.
+Przepisał kafelki na stronie „Kadra" ze zwykłych `core/columns` na blok
+`przedszkole/osoba`. **Jednorazowy** — uruchomiony 2026-09-16, w repo zostaje
+jako zapis tego, co poszło do bazy.
 
 ```bash
-python3 tools/kadra_zdjecie.py              # podgląd, nic nie zapisuje
-python3 tools/kadra_zdjecie.py --zastosuj   # wgrywa do WordPressa
+python3 tools/kadra_na_blok.py              # podgląd, nic nie zapisuje
+python3 tools/kadra_na_blok.py --zastosuj   # wgrywa do WordPressa
 ```
 
-Nowa osoba ze zdjęciem: dopisz linię do słownika `ZDJECIA` (nazwisko dokładnie
-jak w nagłówku `h3`, bez „mgr") i uruchom. Plik nieobecny w bibliotece mediów
-jest importowany przy `--zastosuj`.
+Idempotentny przez brak roboty: szuka starych kolumn, a po migracji żadnych
+już nie ma, więc drugie uruchomienie kończy się „Nic do zrobienia".
 
-Zdjęcie do usunięcia: skasuj linię i uruchom — kafelek wróci do inicjałów.
-Skrypt przechodzi po **wszystkich** kafelkach, nie po samym słowniku, więc brak
-wpisu znaczy „inicjały", a nie „nie ruszaj". Sam załącznik zostaje w bibliotece
-mediów — usuwa się go osobno przez `wp post delete <ID> --force`.
-
-Idempotentny — powtórne uruchomienie z tym samym słownikiem nic nie zmienia.
-
-To następca `kadra_kafelki.py` w zakresie zdjęć: tamten skrypt jest jednorazowy
-i na przepisanej stronie już nie zadziała, a zdjęcia przychodzą pojedynczo.
+**Nowych osób nie dodaje się skryptem.** W edytorze: „Osoba" z kategorii
+„Przedszkole", zdjęcie przyciskiem pod kółkiem, reszta wprost w kafelku.
+Bez zdjęcia kafelek pokazuje inicjały wyliczone z imienia — nie trzeba ich
+nigdzie wpisywać. Zdjęcia w `media/kadra/` wgrywa się przez bibliotekę mediów
+albo `wp media import`.
 
 **Zdjęcia muszą być kwadratowe** — kafelek kadruje je do koła. Przygotowanie:
 
@@ -99,8 +95,9 @@ sips -z 800 800 media/kadra/awatar-6.jpg
 Dwa przebiegi, nie jeden: `sips` łączy `-c` z `-Z` w nieprzewidywalnej kolejności
 i wychodzi obrazek mniejszy, niż się prosiło.
 
-Wyrównanie kolumn (`top`/`center`) zależy od długości biogramu, nie od zdjęcia —
-skrypt go nie rusza.
+Poprzednicy: `kadra_kafelki.py` (proza → kafelki) i `kadra_zdjecie.py`
+(wstawianie zdjęć w lewą kolumnę) — oba usunięte razem z migracją, bo parsują
+układ, którego na stronie już nie ma.
 
 ## `migracja_tresci.py`
 
@@ -152,29 +149,6 @@ kilka albumów, etykieta z poprzedzającego akapitu („Grupa Żabki") wchodzi d
 tekstu przycisku — inaczej strona miałaby sześć identycznych odnośników.
 
 Bez obrazków wyróżniających — dlaczego, patrz [MIGRACJA.md](../MIGRACJA.md).
-
-## `kadra_kafelki.py`
-
-Przepisuje stronę „Kadra" z prozy na kafelki osób — jeden `is-style-kafelek-osoby`
-na dyrektora, nauczycielkę i specjalistkę. Biogramy bierze z obecnej treści strony,
-nie z pamięci; dokłada inicjały i linię wykształcenia, poprawia literówki po Joomli.
-
-```bash
-python3 tools/kadra_kafelki.py              # podgląd na stdout, nic nie zapisuje
-python3 tools/kadra_kafelki.py --zastosuj   # wgrywa do WordPressa
-```
-
-Sekcja „Pracownicy administracji i obsługi" zostaje listą akapitów — 11 osób
-opisanych jedną linijką nie ma czym wypełnić kafelka.
-
-**Jednorazowy.** Na już przepisanej stronie odmawia działania: parser oczekuje
-układu `h3` + akapity, a w kafelkach nagłówki siedzą w kolumnach.
-Linia wykształcenia jest w skrypcie wpisana z ręki — nowa osoba w kadrze wymaga
-dopisania jej do słownika `WYKSZTALCENIE` albo wstawienia wzorca z edytora.
-
-Zdjęcia bierze ze słownika `ZDJECIA` (nazwisko → plik w `media/kadra/`). Kto go
-tam nie ma, dostaje inicjały. Plik nieobecny w bibliotece mediów jest importowany
-przy `--zastosuj`; podgląd niczego nie wgrywa.
 
 ## `logopeda.sh`
 

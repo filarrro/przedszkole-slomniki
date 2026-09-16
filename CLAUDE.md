@@ -40,10 +40,19 @@ Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
 
 - Zewnętrznych zapytań (CDN, Google Fonts, biblioteki) — wszystko lokalnie
 - jQuery i frameworków JS
+- Kroku budowania (npm, webpack, JSX) — kod bloków to zwykły JavaScript
+  z `wp.element.createElement`. Cena: plik `*.asset.php` z zależnościami
+  skryptu piszemy ręcznie, bo nie generuje go `@wordpress/scripts`
 - Page builderów
 - Własnego systemu logowania
-- Własnych bloków Gutenberga bez wyraźnej potrzeby — na razie wystarczają
-  wzorce z `patterns/` i warianty stylów (`register_block_style`)
+- Własnych bloków Gutenberga bez wyraźnej potrzeby — zwykle wystarczają
+  wzorce z `patterns/` i warianty stylów (`register_block_style`).
+  Jeden wyjątek: `przedszkole/osoba` (`blocks/osoba/`) — kafelek kadry
+  powtarzany kilkanaście razy na jednej stronie. Wzorzec trzymał układ
+  w treści, więc każda poprawka wyglądu szła przez wszystkie kopie,
+  a jedno nieostrożne kliknięcie zostawiało pół kafelka. Próg dla drugiego
+  bloku jest ten sam: układ powtarzany wielokrotnie i psujący się w rękach
+  pracownika, nie „byłoby wygodniej".
 - Edycji plików w `wp/` — to nie nasz kod
 
 ## Role i uprawnienia

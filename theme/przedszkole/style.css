@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 0.30.0
+Version: 0.31.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -1502,30 +1502,41 @@ main + .fala { background: var(--wp--preset--color--base); }
 
 /* ==========================================================================
    19. Kafelek osoby (strona Kadra)
-   Wariant zwyklych kolumn, nie wlasny blok: okragle zdjecie po lewej,
-   biogram po prawej. Trzy gradientowe kola pod zdjeciem to jeden plik SVG
-   odbijany w CSS - trzy uklady bez trzech plikow.
+   Wlasny blok `przedszkole/osoba`: okragle zdjecie po lewej, biogram po
+   prawej. Uklad rysuje `blocks/osoba/render.php`, a edytor powtarza te same
+   klasy - jeden komplet regul obsluguje front i podglad.
+   Trzy gradientowe kola pod zdjeciem to jeden plik SVG odbijany w CSS -
+   trzy uklady bez trzech plikow.
    Zamiast zdjecia moga stac inicjaly; oba warianty maja ten sam kadr,
    pierscien i cien, wiec podmiana zdjecia nic nie psuje.
    ========================================================================== */
 
-.wp-block-columns.is-style-kafelek-osoby { gap: 2.5rem; }
+.kafelek-osoby {
+	display: flex;
+	align-items: center;
+	gap: 2.5rem;
+}
+/* Przy dlugim biogramie kolo wyglada lepiej przy pierwszym akapicie
+   niz po srodku kilkunastu linijek - stad drugi wariant. */
+.kafelek-osoby--gora { align-items: flex-start; }
+
 /* Kola wystaja poza kafelek, wiec sasiedzi potrzebuja wiecej powietrza
    niz zwykly blok - inaczej dekoracje dwoch kafelkow sie zderzaja. */
-.entry__content > .wp-block-columns.is-style-kafelek-osoby { margin-top: 3rem; }
-.entry__content > .wp-block-columns.is-style-kafelek-osoby + * { margin-top: 3rem; }
+.entry__content > .kafelek-osoby { margin-top: 3rem; }
+.entry__content > .kafelek-osoby + * { margin-top: 3rem; }
 
-/* Lewa kolumna - pole na zdjecie albo inicjaly.
-   `container-type` pozwala skalowac inicjaly wzgledem szerokosci kolumny
-   (jednostka cqw), a nie okna: kafelek wyglada tak samo przy kazdym uklad
-   kolumn i w edytorze. */
-.is-style-kafelek-osoby > .wp-block-column:first-child {
+/* Pole na zdjecie albo inicjaly.
+   `container-type` pozwala skalowac inicjaly wzgledem szerokosci pola
+   (jednostka cqw), a nie okna: kafelek wyglada tak samo przy kazdej
+   szerokosci tresci i w edytorze. */
+.kafelek-osoby__portret {
 	position: relative;
+	flex: 0 0 38%;
 	container-type: inline-size;
 }
 
 /* Kola. Ujemny `inset`, zeby wystawaly poza zdjecie. */
-.is-style-kafelek-osoby > .wp-block-column:first-child::before {
+.kafelek-osoby__portret::before {
 	content: "";
 	position: absolute;
 	inset: -11%;
@@ -1537,25 +1548,21 @@ main + .fala { background: var(--wp--preset--color--base); }
    `of S` liczy same kafelki, wiec naglowki miedzy nimi nie psuja kolejnosci.
    Przegladarka bez obslugi `of S` pokaze wszedzie uklad pierwszy -
    strata wylacznie kosmetyczna. */
-:nth-child(3n + 2 of .is-style-kafelek-osoby) > .wp-block-column:first-child::before {
+:nth-child(3n + 2 of .kafelek-osoby) .kafelek-osoby__portret::before {
 	transform: scaleX(-1);
 }
-:nth-child(3n + 3 of .is-style-kafelek-osoby) > .wp-block-column:first-child::before {
+:nth-child(3n + 3 of .kafelek-osoby) .kafelek-osoby__portret::before {
 	transform: scale(-1);
 }
 
 /* Zdjecie i inicjaly - wspolny kadr. `position` stawia je nad kolami. */
-.is-style-kafelek-osoby .wp-block-image {
-	position: relative;
-	width: 100%;
-	margin: 0;
-}
-.is-style-kafelek-osoby .wp-block-image img,
-.is-style-kafelek-osoby .kafelek-osoby__inicjaly {
+.kafelek-osoby__zdjecie,
+.kafelek-osoby__inicjaly {
 	position: relative;
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
+	height: auto;
 	margin: 0;
 	aspect-ratio: 1;
 	border: 10px solid var(--wp--preset--color--surface);
@@ -1567,8 +1574,7 @@ main + .fala { background: var(--wp--preset--color--base); }
 /* Inicjaly zamiast zdjecia - dopoki nie ma fotografii. Tlo w kolorze strony,
    wiec kolo definiuje bialy pierscien i cien, a nie wypelnienie.
    Kolor tekstu na tle strony: kontrast 14,0 (WCAG AA i AAA). */
-.is-style-kafelek-osoby .kafelek-osoby__inicjaly {
-	position: relative;
+.kafelek-osoby__inicjaly {
 	display: grid;
 	place-items: center;
 	overflow: hidden;          /* obcina znak wodny do kola */
@@ -1591,24 +1597,32 @@ main + .fala { background: var(--wp--preset--color--base); }
 	opacity: .15;
 }
 
-/* Opis. Naglowek bez gornego odstepu - rownowaza go kolumny. */
-.is-style-kafelek-osoby h3.wp-block-heading { margin-top: 0; }
-.is-style-kafelek-osoby > .wp-block-column + .wp-block-column > * + * { margin-top: .85rem; }
-.is-style-kafelek-osoby .kafelek-osoby__tytul {
+/* Opis. `min-width: 0` pozwala dlugiemu slowu zlamac sie zamiast rozpychac
+   kafelek. Naglowek bez gornego odstepu - rownowaza go kolumny. */
+.kafelek-osoby__opis { min-width: 0; }
+.kafelek-osoby__imie { margin-top: 0; }
+.kafelek-osoby__opis > * + *,
+.kafelek-osoby__biogram > * + * { margin-top: .85rem; }
+.kafelek-osoby__tytul {
 	margin-top: .25rem;
 	color: var(--wp--preset--color--ink);
 	font-size: var(--wp--preset--font-size--small);
 	font-weight: 600;
 }
 /* Biogram - kontrast 6,5 na tle strony. */
-.is-style-kafelek-osoby > .wp-block-column + .wp-block-column p:not(.kafelek-osoby__tytul) {
-	color: var(--wp--preset--color--ink-soft);
-}
+.kafelek-osoby__biogram { color: var(--wp--preset--color--ink-soft); }
 
-/* Po zlozeniu kolumn (WordPress robi to sam ponizej 782 px) zdjecie
-   zajelo by cala szerokosc - stad gorny limit. */
+/* Waski ekran: kolumny jedna pod druga, a zdjecie przestaje zajmowac
+   cala szerokosc. Prog ten sam co dla kolumn rdzenia, zeby kafelek skladal
+   sie razem z reszta strony. */
 @media (max-width: 781px) {
-	.is-style-kafelek-osoby > .wp-block-column:first-child {
+	.kafelek-osoby {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.kafelek-osoby__portret {
+		flex-basis: auto;
+		width: 100%;
 		max-width: 240px;
 	}
 }
