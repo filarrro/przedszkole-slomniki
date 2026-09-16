@@ -50,9 +50,12 @@ function przedszkole_rok_szkolny( $data = null ) {
 		$miesiac = (int) mysql2date( 'n', $data );
 	}
 
-	// Data, której nie dało się rozpoznać - traktuj jak "teraz", zamiast
-	// zwracać rok `0` i bezsensowne `-1/0`.
-	if ( 0 === $rok ) {
+	// Data, której nie dało się rozpoznać ($rok === 0), oraz zerowa data
+	// MySQL ('0000-00-00 00:00:00', którą mysql2date() parsuje na formalnie
+	// poprawny rok -1) - traktuj obie jak "teraz". Import z Joomli i inne
+	// uszkodzone dane potrafią taką wartość podrzucić, a rok publikacji
+	// sprzed powstania WordPressa (1970) to i tak sygnał błędnych danych.
+	if ( $rok < 1970 ) {
 		$rok     = (int) current_time( 'Y' );
 		$miesiac = (int) current_time( 'n' );
 	}
@@ -111,6 +114,13 @@ function przedszkole_lata_szkolne() {
 
 	$do = (int) substr( przedszkole_rok_szkolny(), 0, 4 );
 	$od = $najstarszy ? (int) substr( przedszkole_rok_szkolny( $najstarszy ), 0, 4 ) : $do;
+
+	// Zabezpieczenie pętli, nie tylko samej daty: gdyby `$od` mimo wszystko
+	// wyszło większe od `$do` albo odległe o więcej niż stulecie, przytnij
+	// do bieżącego rocznika zamiast generować tysiące pozycji w transiencie.
+	if ( $od > $do || ( $do - $od ) > 100 ) {
+		$od = $do;
+	}
 
 	$lata = array();
 
