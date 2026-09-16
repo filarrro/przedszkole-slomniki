@@ -403,7 +403,7 @@ Oczekiwane: wśród kategorii **nie ma** `logopeda`; strona o slugu
 
 ```bash
 #!/usr/bin/env bash
-# Kategoria „Kącik logopedy" i dopasowanie sluga strony.
+# Kategoria „Kącik logopedy” i dopasowanie sluga strony.
 #
 # Motyw wiąże stronę z kategorią po slugu — tak samo jak strony grup
 # (`page.php` woła template part z `post_name`). Dlatego strona i kategoria
@@ -425,28 +425,60 @@ SLUG=logopeda
 NAZWA="Kącik logopedy"
 OPIS="Artykuły i porady logopedy przedszkolnego."
 
-if wp term list category --slug="$SLUG" --field=term_id --format=csv | grep -q '[0-9]'; then
-	echo "Kategoria „$NAZWA" już jest — pomijam."
+# Zwraca ID jedynej strony o danym slugu (puste, jeśli żadnej). Przerywa
+# skrypt, jeśli slug pasuje do więcej niż jednej strony — zmiana sluga jest
+# nieodwracalna, więc zgadywanie „która to ta właściwa” byłoby gorsze niż
+# jawny błąd. `wc -l`, nie `grep -c`: ten drugi zwraca kod 1 przy zerze
+# dopasowań, co pod `set -e` wywaliłoby skrypt bez czytelnego komunikatu.
+id_strony() {
+	local slug="$1" wyniki liczba
+	wyniki=$(wp post list --post_type=page --name="$slug" --field=ID --format=csv)
+	if [ -z "$wyniki" ]; then
+		return 0
+	fi
+	liczba=$(printf '%s\n' "$wyniki" | wc -l | tr -d ' ')
+	if [ "$liczba" -gt 1 ]; then
+		echo "BŁĄD: $liczba stron ma slug „$slug” — powinna być jedna. Sprawdź ręcznie." >&2
+		exit 1
+	fi
+	printf '%s' "$wyniki"
+}
+
+if [ -n "$(wp term list category --slug="$SLUG" --field=term_id --format=csv)" ]; then
+	echo "Kategoria „$NAZWA” już jest — pomijam."
 else
-	wp term create category "$NAZWA" --slug="$SLUG" --description="$OPIS"
-	echo "Utworzona kategoria „$NAZWA" ($SLUG)."
+	wp term create category "$NAZWA" --slug="$SLUG" --description="$OPIS" >/dev/null
+	echo "Utworzona kategoria „$NAZWA” ($SLUG)."
 fi
 
-ID=$(wp post list --post_type=page --name=kacik-logopedy --field=ID --format=csv | head -1)
+ID=$(id_strony kacik-logopedy)
 
 if [ -n "$ID" ]; then
-	wp post update "$ID" --post_name="$SLUG"
+	wp post update "$ID" --post_name="$SLUG" >/dev/null
+	NOWY_SLUG=$(wp post get "$ID" --field=post_name)
+	if [ "$NOWY_SLUG" != "$SLUG" ]; then
+		echo "BŁĄD: strona $ID dostała slug „$NOWY_SLUG”, nie „$SLUG” (WordPress dokleił sufiks?). Sprawdź ręcznie." >&2
+		exit 1
+	fi
 	echo "Strona $ID: slug zmieniony na $SLUG."
 else
-	ID=$(wp post list --post_type=page --name="$SLUG" --field=ID --format=csv | head -1)
+	ID=$(id_strony "$SLUG")
 	if [ -n "$ID" ]; then
 		echo "Strona $ID ma już slug $SLUG — pomijam."
 	else
-		echo "UWAGA: nie znalazłem strony „Kącik logopedy". Sprawdź ręcznie." >&2
+		echo "UWAGA: nie znalazłem strony „Kącik logopedy”. Sprawdź ręcznie." >&2
 		exit 1
 	fi
 fi
 ```
+
+Ten listing jest kopią `tools/logopeda.sh` z repozytorium, wziętą po przeglądzie
+jakości. Pierwotna wersja w planie **nie parsowała się w bashu** — trzy wywołania
+`echo` otwierały cudzysłów typograficzny „ a zamykały prostym ASCII `"`, co
+przedwcześnie kończyło string. Dołożono też obsługę więcej niż jednego
+dopasowania sluga, sprawdzenie faktycznego wyniku `wp post update` (WordPress
+sam dokleja sufiks, gdy slug jest zajęty) oraz wyciszenie `stdout` wywołań
+wp-cli, żeby zgadzała się obiecana niżej liczba linii potwierdzenia.
 
 - [ ] **Krok 3: Nadaj prawa wykonywania i uruchom**
 
