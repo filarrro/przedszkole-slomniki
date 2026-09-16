@@ -225,13 +225,23 @@ function przedszkole_rok_aktywny() {
  * Ogranicza listy wpisów do jednego rocznika.
  *
  * Wchodzi wyłącznie na listę aktualności i archiwa kategorii. Wyszukiwarka,
- * archiwa dat i pojedyncze wpisy zostają nietknięte — tam cięcie tylko
- * przeszkadzałoby. Panel również, bo redaktor musi widzieć całość.
+ * archiwa dat, pojedyncze wpisy i kanały RSS zostają nietknięte — tam cięcie
+ * tylko przeszkadzałoby. Panel również, bo redaktor musi widzieć całość.
  *
  * @param WP_Query $zapytanie Modyfikowane zapytanie.
  */
 function przedszkole_tnij_po_roku( $zapytanie ) {
 	if ( is_admin() || ! $zapytanie->is_main_query() ) {
+		return;
+	}
+
+	// Kanał niesie "co nowego", nie "co w bieżącym roczniku" - a nie ma w nim
+	// ani przełącznika lat, ani komunikatu o pustym roku (oba tylko w HTML,
+	// Zadania 4 i 5). Od 1 września do pierwszego wpisu nowego rocznika
+	// cięcie zamieniłoby kanał w pustkę bez wyjaśnienia, a WordPress ogłasza
+	// kanały kategorii w <head> każdego archiwum, więc to realny adres,
+	// z którego ktoś korzysta, nie martwy róg serwisu.
+	if ( $zapytanie->is_feed() ) {
 		return;
 	}
 
