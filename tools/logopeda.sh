@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Kategoria „Kącik logopedy" i dopasowanie sluga strony.
+# Kategoria „Kącik logopedy” i dopasowanie sluga strony.
 #
 # Motyw wiąże stronę z kategorią po slugu — tak samo jak strony grup
 # (`page.php` woła template part z `post_name`). Dlatego strona i kategoria
