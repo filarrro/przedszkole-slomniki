@@ -281,6 +281,17 @@ function przedszkole_tnij_po_roku( $zapytanie ) {
 		return;
 	}
 
+	/*
+	 * Przypięte wpisy ustępują rocznikowi. WordPress dokleja je do listy
+	 * aktualności osobnym zapytaniem, bez `date_query` — przypięty wpis
+	 * z 2023 roku wróciłby więc na szczyt listy rocznika 2026/2027, czyli
+	 * dokładnie to, czemu ten hak ma zapobiegać. Gorzej: na widoku
+	 * `?rok=2023-2024` wyskoczyłby wpis spoza tego rocznika, a na archiwach
+	 * kategorii nie wyskoczyłby wcale, bo tam rdzeń przypiętych nie dokleja.
+	 * Jedno zachowanie na wszystkich listach jest mniej mylące niż wyjątek,
+	 * którego nikt nie przewidzi.
+	 */
+	$zapytanie->set( 'ignore_sticky_posts', true );
 	$zapytanie->set( 'date_query', przedszkole_zakres_roku( przedszkole_rok_z_zapytania() ) );
 }
 add_action( 'pre_get_posts', 'przedszkole_tnij_po_roku' );

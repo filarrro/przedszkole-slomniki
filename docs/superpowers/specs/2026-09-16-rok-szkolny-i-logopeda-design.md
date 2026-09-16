@@ -166,7 +166,7 @@ Bilans w zrzucie (kategoria 19 „Logopeda", kategoria 64 „Archiwum Logopedy")
 | Zbiór | Sztuk | Zakres | Los |
 |---|---|---|---|
 | kat. 19, opublikowane, już w WP jako `ogloszenia` | 4 | 2024–2026 | przepiąć |
-| kat. 19, opublikowane, nieobecne w WP | 23 | 2015–2023 | zaimportować |
+| kat. 19, opublikowane, nieobecne w WP | 23 | 2015–2023 | zaimportować — **faktycznie 21**, patrz niżej |
 | kat. 19, w koszu (`state = -2`) | 4 | 2020-03 | pominąć |
 | kat. 64, kategoria niepublikowana | 16 | 2020–2021 | pominąć |
 
@@ -182,6 +182,19 @@ Kroki:
 4. Dwa artykuły zawierają `<img>`; pliki przepadły ze starym serwerem, więc
    znaczniki wycinamy — zgodnie z decyzją „Obrazki wycięte z migrowanej treści".
    Żaden artykuł nie odwołuje się do PDF-a.
+
+**Korekta po wdrożeniu (2026-09-16).** Zaimportowano **21**, nie 23, a w kategorii
+stoi **25** wpisów, nie 27. Dwa artykuły odpadły świadomie: **32** („Godziny pracy
+logopedy", 2015) podaje godziny sprzeczne z treścią strony „Kącik logopedy",
+a **1224** to sam znacznik `<img>` do pliku, który przepadł ze starym serwerem —
+po jego wycięciu nie zostaje nic. Pełny bilans w MIGRACJA.md.
+
+**Przypięte wpisy ustępują rocznikowi.** WordPress dokleja je do listy aktualności
+osobnym zapytaniem, bez `date_query`, więc przypięty wpis z dawnego rocznika
+przebijał cięcie — zweryfikowane na żywo. Hak ustawia teraz `ignore_sticky_posts`.
+Gdyby tego nie zrobić, widok `?rok=2023-2024` pokazywałby na górze wpis spoza
+tego rocznika, a archiwa kategorii zachowywałyby się inaczej niż lista
+aktualności, bo tam rdzeń przypiętych nie dokleja.
 
 Kryteria odbioru:
 
