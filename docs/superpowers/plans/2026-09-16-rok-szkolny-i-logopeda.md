@@ -1591,7 +1591,11 @@ python3 tools/migracja_logopedy.py
 
 Oczekiwane:
 - `Wpisów do importu: 25`
-- `Wyciętych znaczników <img>: 2`
+- `Wyciętych znaczników <img>: 1`
+
+  Nie dwa, choć dwa artykuły w kategorii 19 zawierają `<img>`. Artykuł 1224 jest
+  odrzucany na sprawdzeniu pustej treści **zanim** licznik zdąży go policzyć,
+  więc wśród 25 importowanych obrazek ma tylko artykuł 1364.
 - wśród pominiętych **32** („pominiety swiadomie") i **1224**
   („pusto po wycieciu obrazkow")
 - sekcja „Zgłoszone przez skaner" pusta albo wyłącznie ze stanem
