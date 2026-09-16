@@ -2216,15 +2216,42 @@ main + .fala { background: var(--wp--preset--color--base); }
 .lata__przycisk {
 	font: inherit;
 	min-height: 44px;
-	padding: 0.4rem 0.75rem;
-	border: 2px solid currentColor;
 	border-radius: 999px;
-	background: var(--wp--preset--color--base);
-	color: inherit;
 }
 
+/* Pole wyboru: biale tlo odcina je od kremowego tla strony, granatowa
+   obramowka wiaze wizualnie z przyciskiem obok. Zostawiamy natywna strzalke
+   przegladarki - wlasna wymagalaby `appearance: none`, a wtedy trzeba by
+   odtworzyc caly wyglad pola razem ze stanami, ktore system rysuje sam. */
+.lata__wybor {
+	padding: 0.4rem 0.75rem;
+	border: 2px solid var(--wp--preset--color--primary);
+	background: var(--wp--preset--color--surface);
+	color: var(--wp--preset--color--ink);
+}
+
+/* Przycisk powtarza wyglad przyciskow blokowych z `theme.json` (kolor, promien,
+   grubosc, odstepy poziome, cien z sekcji hero) - ma byc rozpoznawalny jako ten
+   sam element interfejsu co „Poznaj przedszkole". Rozni sie tylko wysokoscia:
+   pionowe odstepy zostaja przy 0.4rem, zeby przycisk nie gorowal nad polem
+   wyboru w jednym rzedzie.
+
+   Kolor napisu bierzemy ze zmiennej, nie z literalnej bieli jak `theme.json`.
+   W trybie wysokiego kontrastu `primary` robi sie zolte i biel dalaby kontrast
+   1,07 - napis by zniknal. `--tekst-na-ciemnym` przechodzi tam na czern. */
 .lata__przycisk {
+	padding: 0.4rem 1.75rem;
+	border: 2px solid transparent;
+	background: var(--wp--preset--color--primary);
+	color: var(--tekst-na-ciemnym);
+	font-weight: 700;
+	box-shadow: var(--shadow);
 	cursor: pointer;
+}
+
+.lata__przycisk:is( :hover, :focus ) {
+	background: var(--primary-hover);
+	color: var(--tekst-na-ciemnym);
 }
 
 .lata__wybor:focus-visible,
