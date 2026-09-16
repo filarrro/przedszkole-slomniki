@@ -21,20 +21,44 @@ SLUG=logopeda
 NAZWA="Kącik logopedy"
 OPIS="Artykuły i porady logopedy przedszkolnego."
 
-if wp term list category --slug="$SLUG" --field=term_id --format=csv | grep -q '[0-9]'; then
+# Zwraca ID jedynej strony o danym slugu (puste, jeśli żadnej). Przerywa
+# skrypt, jeśli slug pasuje do więcej niż jednej strony — zmiana sluga jest
+# nieodwracalna, więc zgadywanie „która to ta właściwa” byłoby gorsze niż
+# jawny błąd. `wc -l`, nie `grep -c`: ten drugi zwraca kod 1 przy zerze
+# dopasowań, co pod `set -e` wywaliłoby skrypt bez czytelnego komunikatu.
+id_strony() {
+	local slug="$1" wyniki liczba
+	wyniki=$(wp post list --post_type=page --name="$slug" --field=ID --format=csv)
+	if [ -z "$wyniki" ]; then
+		return 0
+	fi
+	liczba=$(printf '%s\n' "$wyniki" | wc -l | tr -d ' ')
+	if [ "$liczba" -gt 1 ]; then
+		echo "BŁĄD: $liczba stron ma slug „$slug” — powinna być jedna. Sprawdź ręcznie." >&2
+		exit 1
+	fi
+	printf '%s' "$wyniki"
+}
+
+if [ -n "$(wp term list category --slug="$SLUG" --field=term_id --format=csv)" ]; then
 	echo "Kategoria „$NAZWA” już jest — pomijam."
 else
-	wp term create category "$NAZWA" --slug="$SLUG" --description="$OPIS"
+	wp term create category "$NAZWA" --slug="$SLUG" --description="$OPIS" >/dev/null
 	echo "Utworzona kategoria „$NAZWA” ($SLUG)."
 fi
 
-ID=$(wp post list --post_type=page --name=kacik-logopedy --field=ID --format=csv | head -1)
+ID=$(id_strony kacik-logopedy)
 
 if [ -n "$ID" ]; then
-	wp post update "$ID" --post_name="$SLUG"
+	wp post update "$ID" --post_name="$SLUG" >/dev/null
+	NOWY_SLUG=$(wp post get "$ID" --field=post_name)
+	if [ "$NOWY_SLUG" != "$SLUG" ]; then
+		echo "BŁĄD: strona $ID dostała slug „$NOWY_SLUG”, nie „$SLUG” (WordPress dokleił sufiks?). Sprawdź ręcznie." >&2
+		exit 1
+	fi
 	echo "Strona $ID: slug zmieniony na $SLUG."
 else
-	ID=$(wp post list --post_type=page --name="$SLUG" --field=ID --format=csv | head -1)
+	ID=$(id_strony "$SLUG")
 	if [ -n "$ID" ]; then
 		echo "Strona $ID ma już slug $SLUG — pomijam."
 	else
