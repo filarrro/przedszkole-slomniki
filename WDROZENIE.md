@@ -62,9 +62,11 @@ Nic jeszcze nie kasujemy.
 - [ ] `max_execution_time` — sprawdzić, minimum 60 s
 - [ ] SSL Let's Encrypt → włączony, **wymuszony HTTPS**
 - [ ] Nowa baza MySQL + użytkownik tylko do niej (zapisać dane — wchodzą do `wp-config.php`)
-- [ ] Sprawdzić wersję MySQL/MariaDB — poniżej 10.4 import z MariaDB 11.8 potrafi
-      się wyłożyć na kolacji `utf8mb4_uca1400_*`; wtedy przy eksporcie
-      (krok 4) dodać `--default-character-set=utf8mb4` i podmienić kolację w zrzucie
+- [x] ~~Sprawdzić wersję MySQL/MariaDB pod kątem kolacji `utf8mb4_uca1400_*`~~ —
+      **pułapka nie dotyczy tego zrzutu (sprawdzone 2026-09-21).** Wszystkie
+      12 tabel jedzie na `utf8mb4_unicode_520_ci`, ani jednego `uca1400`.
+      Tę kolację rozumie MySQL od 5.6 i MariaDB od 10.0, więc import przejdzie
+      na każdej wersji, jaką daje hosting
 - [ ] Sprawdzić, czy pakiet daje **SSH** — bez niego kroki z `wp-cli` i `find`
       odpadają, zostaje FTP + phpMyAdmin (ścieżki awaryjne opisane przy każdym kroku)
 - [ ] Sprawdzić **cron** w panelu (krok 10)
@@ -173,6 +175,33 @@ Kontrola — w zrzucie nie może zostać ani jedno `ddev.site`:
 grep -c 'ddev.site' produkcja.sql    # oczekiwane: 0
 gzip produkcja.sql
 ```
+
+**Zrzut wykonany 2026-09-21.** 1040 podmian adresu, `produkcja.sql.gz` waży
+401 KB (1,9 MB przed kompresją). Sprawdzony przez próbny import do osobnej bazy
+w kontenerze — nie na ślepo po `grep`-ie, bo zrzut, który się nie wczytuje,
+wygląda tak samo jak dobry:
+
+| | |
+|---|---|
+| Wpisy opublikowane | 449 |
+| Strony | 20 opublikowanych + 1 szkic („Kącik pedagoga") |
+| Wpisy — szkic | 1 („Adaptacja w przedszkolu…") |
+| Pozycje menu | 23 |
+| Załączniki | 9 |
+| Konta | 10 |
+| `siteurl` / `home` | `https://przedszkoleslomniki.pl` |
+| `ddev.site` w treści | 0 |
+
+Do powtórzenia, jeśli treść zmieni się przed wdrożeniem — zrzut jest fotografią
+bazy, nie dokumentem.
+
+**W zrzucie siedzą dane osobowe** (adresy e-mail, hashe haseł) i konto `dev`.
+`*.sql.gz` jest w `.gitignore`, ale plik nie ma prawa pojechać nigdzie poza
+serwer docelowy. Konto `dev` znika dopiero na produkcji, w kroku 9.
+
+Dwie pozycje do ewentualnego sprzątnięcia przed eksportem, obie nieszkodliwe:
+521 rewizji wpisów (historia edycji, rośnie sama) i 3 puste `auto-draft`
+zostawione przez edytor. Nie wyświetlają się nigdzie.
 
 **Prefiks tabel zostaje `wp_`.** PLAN.md dopuszczał zmianę, ale zmiana prefiksu
 po eksporcie to nie tylko nazwy tabel: trzeba podmienić klucz opcji
@@ -309,8 +338,8 @@ serwer odda go jako tekst zamiast uruchomić:
 
 ## 8. Import bazy
 
-phpMyAdmin → wybrana baza → Import → `produkcja.sql.gz`. Przy limicie rozmiaru
-w panelu wgrać rozpakowany plik (7,5 MB mieści się w typowym limicie 50 MB).
+phpMyAdmin → wybrana baza → Import → `produkcja.sql.gz` (401 KB). Przy limicie
+rozmiaru w panelu wgrać rozpakowany plik — 1,9 MB mieści się wszędzie.
 
 Ze SSH:
 
