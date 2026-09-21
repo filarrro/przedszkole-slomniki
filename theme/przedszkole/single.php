@@ -82,8 +82,21 @@ $przedszkole_strona_wpisow = get_option( 'page_for_posts' );
 
 		<?php
 		/*
-		 * Sąsiednie wpisy chronologicznie, bez ograniczania do kategorii —
-		 * rodzic czytający wpis Misiów równie chętnie zajrzy do Żabek.
+		 * Sąsiednie wpisy w obrębie kategorii: wpis Misiów prowadzi do Misiów,
+		 * ogłoszenie do ogłoszenia, poradnik do poradnika.
+		 *
+		 * Wcześniej nawigacja szła po całym serwisie chronologicznie, z myślą
+		 * o rodzicu, który przy okazji zajrzy do innej grupy. W praktyce dawało
+		 * to sąsiedztwa bez sensu — najwyraźniej przy kącikach specjalistów,
+		 * bo daty poradników są rozsypane po całej historii serwisu
+		 * i „Seplenienie międzyzębowe" wypadało obok „Wioski Indiańskiej
+		 * Kotków". Kto czyta wpis swojej grupy, chce następny wpis tej grupy;
+		 * do pozostałych prowadzi filtr nad listą aktualności.
+		 *
+		 * Wystarczy `in_same_term` — każdy wpis w serwisie ma dokładnie jedną
+		 * kategorię (sprawdzone 2026-09-16, 452 na 452), więc nie ma tu
+		 * niejednoznaczności. Gdyby ktoś nadał wpisowi dwie, rdzeń policzy
+		 * sąsiadów z obu i nawigacja przeskoczy między kategoriami.
 		 */
 		the_post_navigation(
 			array(
@@ -92,7 +105,8 @@ $przedszkole_strona_wpisow = get_option( 'page_for_posts' );
 				'next_text'           => '<span class="pagination__kierunek">' . esc_html__( 'Następny wpis', 'przedszkole' ) . '</span><span class="pagination__tytul">%title</span>',
 				'screen_reader_text'  => __( 'Sąsiednie wpisy', 'przedszkole' ),
 				'aria_label'          => __( 'Sąsiednie wpisy', 'przedszkole' ),
-				'in_same_term'        => false,
+				'in_same_term'        => true,
+				'taxonomy'            => 'category',
 			)
 		);
 		?>
