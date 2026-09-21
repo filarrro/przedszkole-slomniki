@@ -548,9 +548,16 @@ body:not(.home) main + .fala { background: transparent; }
 
 .card__title { margin: 0; font-size: 1.125rem; line-height: 1.35; }
 .card__title a { text-decoration: none; }
-/* Powiekszenie obszaru klikalnego na cala karte. */
+/* Powiekszenie obszaru klikalnego na caly panel z trescia. Blokiem
+   zawierajacym jest `.card__body`, bo to on ma `position: relative` (pasek
+   koloru grupy) - nakladka nie siega wiec zdjecia. Zdjecie jest osobnym
+   odnosnikiem w `card.php`, patrz komentarz w szablonie. */
 .card__title a::after { content: ""; position: absolute; inset: 0; }
 .card { position: relative; }
+
+/* Etykieta kategorii lezy pod nakladka tytulu, wiec bez tego jest martwa:
+   pozycjonowana nakladka rysuje sie nad zwyklym tekstem w linii. */
+.card__meta .pill { position: relative; z-index: 2; }
 
 .card__excerpt { margin: 0; font-size: .9375rem; color: var(--wp--preset--color--ink-soft); }
 

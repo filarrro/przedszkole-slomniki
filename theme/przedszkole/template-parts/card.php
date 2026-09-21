@@ -23,17 +23,30 @@ $poziom = min( 6, max( 2, $poziom ) );
 ?>
 <article <?php post_class( $klasy ); ?>>
 
-	<?php if ( has_post_thumbnail() ) : ?>
-		<span class="card__media">
+	<?php
+	/*
+	 * Zdjecie jest osobnym odnosnikiem, a nie tylko ozdoba. Nakladka
+	 * rozciagajaca odnosnik tytulu (`.card__title a::after`) siega wylacznie
+	 * `.card__body` - to `.card__body` jest jej blokiem zawierajacym, bo ma
+	 * `position: relative` pod pasek koloru grupy. Efekt `:hover` siedzi
+	 * natomiast na calej karcie, wiec zdjecie podnosilo kafelek, a klikniecie
+	 * w nie nic nie robilo.
+	 *
+	 * `aria-hidden` i `tabindex="-1"`, bo to ten sam cel co odnosnik tytulu:
+	 * czytnik ekranu i klawiatura maja dostac jedno przejscie do wpisu, nie
+	 * dwa. Widzacy uzytkownik myszy zyskuje caly kafelek jako obszar klikalny.
+	 */
+	?>
+	<a class="card__media<?php echo has_post_thumbnail() ? '' : ' card__media--brak'; ?>"
+		href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
+		<?php if ( has_post_thumbnail() ) : ?>
 			<?php the_post_thumbnail( 'przedszkole-karta', array( 'loading' => 'lazy' ) ); ?>
-		</span>
-	<?php else : ?>
-		<?php /* Zastepnik trzyma te sama proporcje co zdjecie, wiec kafelki bez zdjecia nie rozjezdzaja sie w rzedzie. */ ?>
-		<span class="card__media card__media--brak" aria-hidden="true">
+		<?php else : ?>
+			<?php /* Zastepnik trzyma te sama proporcje co zdjecie, wiec kafelki bez zdjecia nie rozjezdzaja sie w rzedzie. */ ?>
 			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/brak-zdjecia.webp' ) ); ?>"
 				alt="" width="1200" height="805" loading="lazy" decoding="async">
-		</span>
-	<?php endif; ?>
+		<?php endif; ?>
+	</a>
 
 	<div class="card__body">
 		<div class="card__meta">
