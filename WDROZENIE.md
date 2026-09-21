@@ -19,9 +19,9 @@ na które już wpadliśmy lokalnie.
 | Baza lokalnie | MariaDB 11.8, ~7,5 MB |
 | Prefiks tabel | `wp_` |
 | Wtyczki | **zero** (`wp-content/plugins` pusty poza `index.php`) |
-| Motyw | `przedszkole` 0.32.0, symlink → `theme/przedszkole` |
+| Motyw | `przedszkole` 1.0.0, symlink → `theme/przedszkole` |
 | Motyw zapasowy | `twentytwentyfive` (zostaje — awaryjny powrót przy błędzie w motywie) |
-| Uploady | 44 pliki, 3,8 MB — 8 załączników w bibliotece, wszystkie przenosimy |
+| Uploady | 4,3 MB — 9 załączników w bibliotece, wszystkie przenosimy |
 | Konta | 10 (`dev`, `przedszkole`, 6× grupa, `intendent`, `pedagog`) |
 | Serwer lokalnie | **nginx**, na produkcji **Apache** — `.htaccess` z kroku 7 nie był testowany lokalnie |
 
@@ -97,16 +97,20 @@ ddev exec wp --path=wp post delete <ID> --force   # pojedynczo, nieodwracalnie
 
 `wp site empty` **nie** — ta komenda czyści całą treść, nie kosz.
 
-**Szkice.** `Kącik pedagoga` (1322) i wpis `Adaptacja w przedszkolu…` (1325)
-czekają na akceptację przedszkola. Treść jest **wygenerowana, nie migrowana** —
-godziny pracy pedagoga są zmyślone. Do decyzji przed wdrożeniem:
+**Szkice — rozstrzygnięte 2026-09-21: jadą na produkcję jako szkice.**
+`Kącik pedagoga` (1322) i wpis `Adaptacja w przedszkolu…` (1325) zostają
+w bazie ze statusem `draft`. Treść jest **wygenerowana, nie migrowana**,
+a godziny pracy pedagoga zmyślone — publikacja czeka, aż przedszkole je
+potwierdzi, już po starcie.
 
-- akceptacja → opublikować oba i dodać pozycję menu pod „Dla rodziców",
-  za „Kącikiem logopedy",
-- brak akceptacji → usunąć.
+Nic z tym nie robimy przy eksporcie: szkic jedzie w zrzucie bazy, jest
+niewidoczny dla odwiedzającego, a strona stoi poza menu. Konto `pedagog`
+widzi ją i redaguje od pierwszego dnia — bramka ról liczy szkice na równi
+z opublikowanymi (`inc/role.php`).
 
-Zostawienie ich jako szkiców też jest poprawne: szkic jest niewidoczny,
-a strona stoi poza menu.
+Do zrobienia dopiero po akceptacji treści: zmiana statusu na `publish`
+i pozycja menu pod „Dla rodziców", za „Kącikiem logopedy". Pozycja menu
+**przed** publikacją dałaby odwiedzającemu 404.
 
 **Reszta długu (nie blokuje startu, do ustalenia z przedszkolem):**
 - 7 wpisów, które na starej stronie były zajawką dla PDF-a, i 11 bez dokumentu
@@ -117,8 +121,8 @@ a strona stoi poza menu.
   wpisać jako nazwaną niezgodność w deklaracji dostępności (PLAN.md, Etap 8.4)
 - zdjęcia kadry — 14 kafelków ma inicjały; to poprawny stan końcowy do czasu,
   aż będą zdjęcia **wraz ze zgodami**
-- potwierdzić dane w stopce: adres, telefon `510 217 005`,
-  `sekretariat@przedszkoleslomniki.pl`, godziny 6:30–17:00
+- ~~potwierdzić dane w stopce~~ — **potwierdzone 2026-09-21**: adres, telefon
+  `510 217 005`, `sekretariat@przedszkoleslomniki.pl`, godziny 6:30–17:00
 
 **Skrzynki e-mail.** Przed krokiem 9 muszą istnieć realne konta pocztowe dla
 kont grupowych, `intendent@` i `pedagog@` — bez nich nie działa odzyskiwanie
@@ -136,7 +140,10 @@ hasła. Hosting pokazuje 4 użyte konta, brakuje ośmiu.
       do starej strony
 - [ ] Przegląd zawartości pod kątem materiałów do odzyskania: logo i grafiki,
       zdjęcia z galerii, PDF-y, teksty
-- [ ] **Pisemne potwierdzenie klienta**, że stara strona nie jest już potrzebna
+- [x] ~~**Pisemne potwierdzenie klienta**, że stara strona nie jest już potrzebna~~
+      — 2026-09-21 klient potwierdził ustnie, że strona nie jest potrzebna, i odstąpił
+      od formy pisemnej. Backup z punktów wyżej zostaje obowiązkowy: to on, a nie
+      papier, pozwala cokolwiek odzyskać po skasowaniu
 - [ ] Sprawdzone, że backup hostingu obejmuje ten katalog i wiadomo, jak go odtworzyć
 - [ ] Backup lokalny przetestowany — rozpakowany, otwarty, nie jest pustym archiwum
 

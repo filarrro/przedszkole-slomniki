@@ -46,8 +46,9 @@ w [MIGRACJA.md](MIGRACJA.md).
 ### Decyzje czekające na klienta
 
 - ~~Dane do stopki: adres, telefon, godziny otwarcia~~ — **odzyskane ze zrzutu**
-  (Etap 2b): ul. św. Jadwigi Królowej 4, 32-090 Słomniki, tel. 510 217 005,
-  sekretariat@przedszkoleslomniki.pl. Do potwierdzenia, czy nadal aktualne
+  (Etap 2b) i **potwierdzone przez klienta 2026-09-21**: ul. św. Jadwigi
+  Królowej 4, 32-090 Słomniki, tel. 510 217 005,
+  sekretariat@przedszkoleslomniki.pl
 - ~~Jakie sekcje na stronie głównej poza aktualnościami~~ — **zamknięte**
   2026-09-15: treść strony głównej potwierdzona jako docelowa
 - Czy stara strona jest zaindeksowana w Google (przekierowania 301)
@@ -62,8 +63,8 @@ w [MIGRACJA.md](MIGRACJA.md).
   Nadal potrzebne prawdziwe zdjęcia pracownic wraz z ich zgodą na publikację —
   bez nich inicjały zostają, i jest to poprawny stan końcowy, nie brak
 - ~~Godziny otwarcia — w sekcji „Dlaczego my" stoi tymczasowe 6:30–17:00~~ —
-  **potwierdzone** ramowym rozkładem dnia ze starej strony: schodzenie się dzieci
-  od 6:30, zajęcia do 17:00. Do potwierdzenia, czy nadal aktualne
+  **zamknięte 2026-09-21**: ramowy rozkład dnia ze starej strony (schodzenie
+  się dzieci od 6:30, zajęcia do 17:00) potwierdzony przez klienta
 
 ---
 
@@ -205,7 +206,8 @@ Wykonywane dopiero przy wdrożeniu (Etap 9). **Nic nie kasujemy przed odhaczenie
   - [ ] zdjęcia (galerie ze starej strony)
   - [ ] PDF-y i dokumenty
   - [ ] teksty do przeniesienia (O przedszkolu, oferta, kontakt)
-- [ ] Potwierdzenie od klienta, że stara strona nie jest już potrzebna
+- [x] ~~Potwierdzenie od klienta, że stara strona nie jest już potrzebna~~ — **2026-09-21**,
+      ustnie; klient odstąpił od formy pisemnej. Backup z punktów wyżej zostaje obowiązkowy
 - [ ] Weryfikacja, że backup cyber_Folks obejmuje ten katalog i wiadomo, jak go odtworzyć
 - [ ] Dopiero teraz: usunięcie plików
 - [ ] Usunięcie nieużywanej bazy danych starej strony (po potwierdzeniu, która to)
@@ -1851,15 +1853,15 @@ Nie może trafić na produkcję.
       po wdrożeniu. Nie blokuje startu
 - [x] ~~Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")~~ —
       potwierdzona 2026-09-15 jako docelowa
-- [ ] **„Kącik pedagoga" (strona 1322) i wpis „Adaptacja w przedszkolu — jak
-      pomóc dziecku i sobie" (1325) czekają jako szkice.** Treść jest
-      wygenerowana 2026-09-16, nie migrowana — stara witryna nie miała
-      odpowiednika, godziny pracy pedagoga są zmyślone. Szkic nie jest
-      widoczny dla odwiedzających i strona jest poza menu, więc nie blokuje
-      wdrożenia. Po potwierdzeniu treści przez przedszkole: opublikować oba
-      i dodać pozycję menu pod „Dla rodziców", za „Kącikiem logopedy".
-      Gdyby treść nie zyskała akceptacji — usunąć. Wpis nie ma `_joomla_id`,
-      więc nie ukryje się wśród migrowanych
+- [x] ~~„Kącik pedagoga" (1322) i wpis „Adaptacja w przedszkolu — jak pomóc
+      dziecku i sobie" (1325)~~ — **rozstrzygnięte 2026-09-21: jadą na
+      produkcję jako szkice.** Treść jest wygenerowana 2026-09-16, nie
+      migrowana, a godziny pracy pedagoga zmyślone, więc publikacja czeka na
+      potwierdzenie przez przedszkole — już po starcie. Szkic jest niewidoczny
+      dla odwiedzającego, strona stoi poza menu, a konto `pedagog` redaguje ją
+      od pierwszego dnia (bramka ról liczy szkice na równi z opublikowanymi).
+      Pozycja menu dochodzi dopiero razem z publikacją — wpięta wcześniej dałaby
+      404. Wpis nie ma `_joomla_id`, więc nie ukryje się wśród migrowanych
 - [x] ~~Kosz i media testowe~~ — 2026-09-17 opróżniony kosz (4 wpisy: „Test",
       „ddfdfs", pusty wpis, automatyczny szkic strony) i usunięte załączniki
       `rene-porter-…` oraz `sample.pdf`. W bibliotece zostało 8 pozycji,
@@ -2063,7 +2065,9 @@ bez treści testowej i bez konta `dev`.
 - [ ] Kto pisze nową deklarację dostępności? (Etap 8.4 — obowiązek ustawowy)
 - [ ] **Godziny pracy pedagoga i treść „Kącika pedagoga" do potwierdzenia
       przez przedszkole** — strona powstała 2026-09-16 z treści wygenerowanej,
-      bo stara witryna nie miała odpowiednika. Godziny są zmyślone
+      bo stara witryna nie miała odpowiednika. Godziny są zmyślone.
+      2026-09-21: strona jedzie na produkcję jako szkic, pytanie zostaje
+      otwarte po starcie
 
 ---
 
