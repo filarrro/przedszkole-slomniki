@@ -882,14 +882,18 @@ inną drogą: migracji ze starej strony i `wp media regenerate`.
 - [x] Strona z listą dokumentów PDF (linki do Media Library) — wzorzec „Lista dokumentów"
 - [x] Nazwa dokumentu + grupowanie (nagłówki sekcji w Gutenbergu)
 - [x] Otwieranie PDF w nowej karcie
-- [x] Realne dokumenty — **cztery PDF-y wprost od przedszkola**, nie z FTP:
-      statut i standardy ochrony małoletnich w sekcji „Status przedszkola",
-      warunki ubezpieczenia i klauzula informacyjna w „Ubezpieczenie dla dzieci"
-      (2026-09-17, standardy dołożone 2026-09-21)
-- [ ] Nagłówek dla standardów ochrony małoletnich — leżą pod „Status
-      przedszkola" razem ze statutem, a to nie jest status placówki.
-      Do rozstrzygnięcia z przedszkolem: własna sekcja czy szersza nazwa
-      istniejącej
+- [x] Realne dokumenty — **cztery PDF-y wprost od przedszkola**, nie z FTP
+      (2026-09-17, standardy ochrony małoletnich dołożone 2026-09-21).
+      Trzy sekcje: „Statut przedszkola", „Ochrona małoletnich",
+      „Ubezpieczenie dla dzieci" (warunki + klauzula informacyjna)
+- [x] Standardy ochrony małoletnich we własnej sekcji — 2026-09-21. Wcześniej
+      leżały pod „Status przedszkola" razem ze statutem, a to nie jest status
+      placówki: rodzic szukający standardów nie zajrzałby pod ten nagłówek
+- [ ] Poziom nagłówków sekcji — trzy `h3` pod `h1` tytułu, bez `h2` po drodze.
+      Reszta stron trzyma się `h2` na sekcję („Opłaty" ma cztery, „Deklaracja
+      dostępności" osiem plus `h3` na podsekcje). Przeskok poziomu nie jest
+      błędem AA sam w sobie, ale czytnik ekranu nawiguje po nagłówkach
+      i dziura w numeracji myli. Do poprawienia przy najbliższej edycji strony
 
 **Standardy ochrony małoletnich to obowiązek ustawowy, nie dobra wola.**
 Ustawa z 13 maja 2016 r. o przeciwdziałaniu zagrożeniom przestępczością na tle
