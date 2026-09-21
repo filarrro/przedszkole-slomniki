@@ -74,13 +74,13 @@ Nic jeszcze nie kasujemy.
 
 Baza lokalna jest źródłem. Co zostanie w niej teraz, pojedzie na produkcję.
 
-**Biblioteka mediów — zamknięta 2026-09-17.** Zostało 8 załączników i wszystkie
-jadą na produkcję: logo (258, 1240), ikona strony (1215), trzy dokumenty
-(statut, ubezpieczenie, klauzula informacyjna) oraz dwa zdjęcia wyróżniające
-wpisów 267 i 268. Testowe `rene-porter-…` i `sample.pdf` usunięte razem
-z plikami.
+**Biblioteka mediów — zamknięta 2026-09-17, uzupełniona 2026-09-21.** Zostało
+9 załączników i wszystkie jadą na produkcję: logo (258, 1240), ikona strony
+(1215), cztery dokumenty (statut 1335, ubezpieczenie 1336, klauzula informacyjna
+1337, standardy ochrony małoletnich 1341) oraz dwa zdjęcia wyróżniające wpisów
+267 i 268. Testowe `rene-porter-…` i `sample.pdf` usunięte razem z plikami.
 
-Kontrola przed eksportem — lista ma mieć 8 pozycji i żadnej nieznajomej:
+Kontrola przed eksportem — lista ma mieć 9 pozycji i żadnej nieznajomej:
 
 ```bash
 ddev exec wp --path=wp post list --post_type=attachment --fields=ID,post_title,post_parent --format=csv
@@ -111,6 +111,10 @@ a strona stoi poza menu.
 **Reszta długu (nie blokuje startu, do ustalenia z przedszkolem):**
 - 7 wpisów, które na starej stronie były zajawką dla PDF-a, i 11 bez dokumentu
   — listy w [MIGRACJA.md](MIGRACJA.md)
+- statut (1335) i standardy ochrony małoletnich (1341) są nieotagowane: tekst
+  mają, struktury nagłówków nie. Oba powstały u przedszkola, więc poprawka to
+  ponowny eksport z zaznaczonym „PDF/UA" i wgranie na nowo. Jeśli nie zdążą —
+  wpisać jako nazwaną niezgodność w deklaracji dostępności (PLAN.md, Etap 8.4)
 - zdjęcia kadry — 14 kafelków ma inicjały; to poprawny stan końcowy do czasu,
   aż będą zdjęcia **wraz ze zgodami**
 - potwierdzić dane w stopce: adres, telefon `510 217 005`,

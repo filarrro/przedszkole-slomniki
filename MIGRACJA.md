@@ -560,7 +560,7 @@ dla każdej z sześciu grup.
 | **Dla rodziców** (strona nadrzędna) | brak | kategoria bez opisu; pod spodem 19 artykułów poradnikowych |
 | **Galeria** | brak → **strona usunięta 2026-09-14** | art. 191 „Galeria prac plastycznych" jest niepublikowany i zawiera pusty shortcode Joomli |
 | **Polityka prywatności** | niepełna | jest wyłącznie kontakt do Inspektora Ochrony Danych. Właściwej polityki i klauzuli RODO trzeba napisać |
-| **Statut, Koncepcja pracy** | tylko nazwy plików | 6 PDF-ów podpiętych do art. 21 leży na FTP starej strony |
+| **Statut, Koncepcja pracy** | tylko nazwy plików → **statut odzyskany poza migracją** | 6 PDF-ów podpiętych do art. 21 leżało na FTP starej strony i przepadło. Przedszkole dostarczyło pliki wprost: statut, ubezpieczenie i klauzulę informacyjną (2026-09-17) oraz standardy ochrony małoletnich (2026-09-21). Koncepcji pracy nadal nie ma |
 | **Zdjęcia w treści** | wycięte | 5 plików: 1 w Kontakcie, 4 logotypy dofinansowania. Też na FTP |
 
 ### Uwaga o aktualności danych

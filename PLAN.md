@@ -20,7 +20,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
 | 6. Użytkownicy | ✅ | role natywne, konta grupowe, panel odchudzony |
-| 7. Frontend | ✅ | widoki gotowe; lista dokumentów bez PDF-ów — przepadły ze starym serwerem; listy aktualności i archiwa kategorii tną się do bieżącego roku szkolnego, z wyjątkiem kategorii kącików (`logopeda`, `pedagog`), kanałów RSS i archiwów dat (2026-09-16) |
+| 7. Frontend | ✅ | widoki gotowe, lista dokumentów z czterema realnymi PDF-ami dostarczonymi przez przedszkole (2026-09-17 i 2026-09-21), bo ze starego serwera nic nie wróciło; listy aktualności i archiwa kategorii tną się do bieżącego roku szkolnego, z wyjątkiem kategorii kącików (`logopeda`, `pedagog`), kanałów RSS i archiwów dat (2026-09-16) |
 | 8. SEO / wydajność / bezpieczeństwo | 🔄 | motyw gotowy; `.htaccess`, cache i Search Console przy wdrożeniu |
 | 9. Wdrożenie | ⬜ | |
 | 10–12 | ⬜ | |
@@ -497,7 +497,7 @@ Grupy
   ├── Misie · Wiewiórki · Zajączki
   └── Żabki · Jeżyki · Kotki
 Dla rodziców
-  ├── Dokumenty
+  ├── Dokumenty              ⚖️ standardy ochrony małoletnich wymagane prawem
   ├── Jadłospis
   ├── Ramowy rozkład dnia
   ├── Opłaty
@@ -882,7 +882,21 @@ inną drogą: migracji ze starej strony i `wp media regenerate`.
 - [x] Strona z listą dokumentów PDF (linki do Media Library) — wzorzec „Lista dokumentów"
 - [x] Nazwa dokumentu + grupowanie (nagłówki sekcji w Gutenbergu)
 - [x] Otwieranie PDF w nowej karcie
-- [ ] Realne dokumenty — **czeka na pliki z FTP**
+- [x] Realne dokumenty — **cztery PDF-y wprost od przedszkola**, nie z FTP:
+      statut i standardy ochrony małoletnich w sekcji „Status przedszkola",
+      warunki ubezpieczenia i klauzula informacyjna w „Ubezpieczenie dla dzieci"
+      (2026-09-17, standardy dołożone 2026-09-21)
+- [ ] Nagłówek dla standardów ochrony małoletnich — leżą pod „Status
+      przedszkola" razem ze statutem, a to nie jest status placówki.
+      Do rozstrzygnięcia z przedszkolem: własna sekcja czy szersza nazwa
+      istniejącej
+
+**Standardy ochrony małoletnich to obowiązek ustawowy, nie dobra wola.**
+Ustawa z 13 maja 2016 r. o przeciwdziałaniu zagrożeniom przestępczością na tle
+seksualnym i ochronie małoletnich (art. 22c) każe placówce przyjąć standardy
+i **udostępnić je na stronie internetowej**. Strona „Dokumenty" niesie więc
+ten sam ciężar co „Dofinansowanie" i „Deklaracja dostępności": nie wolno jej
+usunąć ani schować z menu.
 
 Nowa karta wbrew decyzji o albumach, które otwierają się w tej samej: plik PDF
 nie jest stroną, do której da się wrócić przyciskiem „wstecz" — przeglądarka
@@ -1338,11 +1352,24 @@ się jak portret tej osoby. Opis alternatywny tego nie naprawiał — każdy by�
 albo nieprawdą, albo pytaniem, po co to zdjęcie stoi przy tym nazwisku.
 Kafelki wróciły do inicjałów (AD, MG), pliki skasowane z dysku i z bazy.
 
-**Do sprawdzenia przy okazji:** w bibliotece mediów jest PDF „Jadłospis
-wrzesień 2026". Dostępność dokumentów PDF to osobny obowiązek — plik powinien
-mieć warstwę tekstową i strukturę, a nie być skanem. Deklaracja obejmuje ten
-przypadek zapisem warunkowym o załącznikach, ale zapis nie zwalnia z poprawiania
-konkretnych plików. Do zweryfikowania przed wdrożeniem.
+**Dokumenty PDF — sprawdzone 2026-09-21.** Dostępność załączników to osobny
+obowiązek i zapis warunkowy w deklaracji z niego nie zwalnia. Cztery pliki na
+stronie „Dokumenty" mają warstwę tekstową, żaden nie jest skanem (47 tys. znaków
+w statucie, 45 tys. w standardach). Dwa są jednak **nieotagowane**, czyli bez
+struktury nagłówków, którą czyta czytnik ekranu:
+
+| Plik | Stron | Tagi | Skąd |
+|---|---|---|---|
+| Statut przedszkola | 29 | ❌ nie | OpenOffice 4.1.6 |
+| Standardy ochrony małoletnich | 30 | ❌ nie | LibreOffice 7.4 |
+| Ubezpieczenie dzieci (Inter Broker) | 15 | ✅ tak | Word 2021 |
+| Klauzula informacyjna (Inter Broker) | 2 | ✅ tak | Word 2016 |
+
+Dwa pierwsze powstały u przedszkola, więc poprawka jest wykonalna: eksport
+z LibreOffice z zaznaczonym „PDF/UA" (Plik → Eksportuj jako PDF → Ogólne)
+i wgranie na nowo. Dwa pliki brokera przyszły z zewnątrz i tagi już mają.
+Do zrobienia przed wdrożeniem albo — jeśli przedszkole nie zdąży — do wpisania
+w deklarację jako nazwana niezgodność, nie ogólnik o załącznikach.
 
 **Temat na szkolenie personelu (Etap 12):** trzy warunkowe niezgodności opisują
 dokładnie te trzy rzeczy, które redaktor może zepsuć jednym kliknięciem — brak
@@ -1461,8 +1488,10 @@ napisaniem deklaracji (Etap 11):
   Do odhaczenia na prawdziwej przeglądarce
 - Treść redakcyjna: teksty alternatywne zdjęć, opisowe nazwy odnośników,
   poprawna hierarchia nagłówków we wpisach. To pisze personel, nie motyw
-- Dokumenty PDF — 118 załączników przepadło ze starym serwerem; te, które
-  powstaną w przyszłości, muszą być dostępne same z siebie
+- Dokumenty PDF — 118 załączników przepadło ze starym serwerem; cztery, które
+  przedszkole dostarczyło wprost (2026-09-17 i 2026-09-21), mają tekst, ale dwa
+  są nieotagowane — patrz tabela wyżej. Każdy kolejny plik musi być dostępny
+  sam z siebie
 
 ### 8.5 Rozmiar tekstu i wysoki kontrast
 
@@ -1831,7 +1860,9 @@ Nie może trafić na produkcję.
       „ddfdfs", pusty wpis, automatyczny szkic strony) i usunięte załączniki
       `rene-porter-…` oraz `sample.pdf`. W bibliotece zostało 8 pozycji,
       wszystkie docelowe: logo, ikona strony, trzy dokumenty i dwa zdjęcia
-      wyróżniające wpisów
+      wyróżniające wpisów. **2026-09-21 doszedł czwarty dokument** —
+      „Standardy ochrony małoletnich" (1341), więc kontrolna lista przed
+      eksportem ma teraz 9 pozycji
 - [ ] Konto `dev` — **usunąć**, nie przenosić na produkcję
 - [ ] Baza robocza `joomla` — nie migruje na serwer, zostaje lokalnie
 

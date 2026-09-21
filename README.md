@@ -76,6 +76,9 @@ wyróżniających ani 118 załączników (PDF-y, wnioski, zarządzenia).
 
 Treść przeniesiona w całości: **16 stron** i **428 wpisów**, bez utraty tekstu.
 Zdjęcia z wydarzeń nie zginęły — siedzą w Google Photos i wpisy linkują do 395 albumów.
+Cztery dokumenty przedszkole dostarczyło wprost, z pominięciem starego serwera:
+statut, standardy ochrony małoletnich, warunki ubezpieczenia i klauzulę
+informacyjną. Stoją na stronie „Dokumenty".
 
 Do dokończenia ręcznie:
 - 7 wpisów, które na starej stronie były samą zajawką dla pliku PDF
