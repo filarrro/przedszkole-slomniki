@@ -3,8 +3,8 @@
 # Idempotentny: istniejacemu kontu tylko poprawia role, nie dotyka hasla.
 #
 # Role natywne pokrywaja dyrekcje (Editor) i nauczycieli (Author) - uzasadnienie
-# w PLAN.md, Etap 6. Jedyna wlasna rola to `intendent`, ktora rejestruje motyw
-# (theme/przedszkole/inc/intendent.php); skrypt jej nie tworzy, tylko przypisuje.
+# w PLAN.md, Etap 6. Wlasne role to `intendent` i `pedagog`; rejestruje je motyw
+# (theme/przedszkole/inc/role.php), skrypt ich nie tworzy, tylko przypisuje.
 set -euo pipefail
 
 # Odsiewamy wylacznie szum "Deprecated" z biblioteki wp-cli pod PHP 8.5.
@@ -56,6 +56,11 @@ konto grupa-kotki      author "Kotki"
 
 echo "== Konto kuchni =="
 konto intendent intendent "Intendent"
+
+# Pedagog prowadzi strone „Kacik pedagoga" i pisze poradniki. Kategoria `pedagog`
+# doklada sie do wpisu sama - patrz theme/przedszkole/inc/role.php.
+echo "== Konto pedagoga =="
+konto pedagog pedagog "Pedagog"
 
 echo
 echo "== Hasla =="

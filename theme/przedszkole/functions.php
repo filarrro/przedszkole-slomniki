@@ -13,7 +13,7 @@ require_once get_theme_file_path( 'inc/helpers.php' );
 require_once get_theme_file_path( 'inc/panel.php' );
 require_once get_theme_file_path( 'inc/seo.php' );
 require_once get_theme_file_path( 'inc/bezpieczenstwo.php' );
-require_once get_theme_file_path( 'inc/intendent.php' );
+require_once get_theme_file_path( 'inc/role.php' );
 require_once get_theme_file_path( 'inc/rok-szkolny.php' );
 require_once get_theme_file_path( 'inc/blok-osoba.php' );
 
