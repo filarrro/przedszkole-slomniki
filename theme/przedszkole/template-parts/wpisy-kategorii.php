@@ -4,7 +4,8 @@
  *
  * Wiążemy stronę z kategorią przez slug: strona „Misie" i kategoria „Misie"
  * mają ten sam slug, więc nie trzeba niczego łączyć ręcznie w panelu. Tak samo
- * strona „Kącik logopedy" i kategoria o slugu `logopeda`.
+ * strona „Kącik logopedy" i kategoria o slugu `logopeda`, „Kącik pedagoga"
+ * i `pedagog` — lista kącików siedzi w {@see przedszkole_kaciki()}.
  *
  * Dwa zachowania, bo dwa rodzaje treści:
  *
@@ -12,8 +13,9 @@
  *   Gdy grupa nic jeszcze nie dodała, zamiast znikać zostawia zdanie
  *   i przejście do poprzedniego rocznika. Pusty blok niesie tu informację:
  *   „jeszcze nic, stare jest tutaj".
- * * **Logopeda** — poradniki bez daty ważności. Bez cięcia po roczniku,
- *   a gdy pusto, sekcja po prostu się nie pokazuje.
+ * * **Kącik specjalisty** — poradniki bez daty ważności. Bez cięcia po
+ *   roczniku, a gdy pusto, sekcja po prostu się nie pokazuje. Świeżo
+ *   założony kącik nie straszy więc pustą ramką.
  *
  * @package Przedszkole
  * @param string $args['slug'] Slug strony, ten sam co slug kategorii.
@@ -23,10 +25,11 @@ defined( 'ABSPATH' ) || exit;
 
 $przedszkole_slug = isset( $args['slug'] ) ? (string) $args['slug'] : '';
 
-$przedszkole_jest_grupa    = in_array( $przedszkole_slug, przedszkole_grupy(), true );
-$przedszkole_jest_logopeda = PRZEDSZKOLE_LOGOPEDA === $przedszkole_slug;
+$przedszkole_kaciki     = przedszkole_kaciki();
+$przedszkole_jest_grupa = in_array( $przedszkole_slug, przedszkole_grupy(), true );
+$przedszkole_jest_kacik = isset( $przedszkole_kaciki[ $przedszkole_slug ] );
 
-if ( ! $przedszkole_jest_grupa && ! $przedszkole_jest_logopeda ) {
+if ( ! $przedszkole_jest_grupa && ! $przedszkole_jest_kacik ) {
 	return;
 }
 
@@ -64,8 +67,8 @@ if ( $przedszkole_jest_grupa ) {
 
 $przedszkole_wpisy = new WP_Query( $przedszkole_parametry );
 
-// Kącik logopedy bez artykułów: sekcja się nie pokazuje.
-if ( ! $przedszkole_wpisy->have_posts() && $przedszkole_jest_logopeda ) {
+// Kącik bez artykułów: sekcja się nie pokazuje.
+if ( ! $przedszkole_wpisy->have_posts() && $przedszkole_jest_kacik ) {
 	wp_reset_postdata();
 	return;
 }
@@ -78,8 +81,8 @@ $przedszkole_adres_kategorii = get_category_link( $przedszkole_kategoria );
 	<div class="section__head">
 		<h2>
 			<?php
-			if ( $przedszkole_jest_logopeda ) {
-				esc_html_e( 'Artykuły logopedy', 'przedszkole' );
+			if ( $przedszkole_jest_kacik ) {
+				echo esc_html( $przedszkole_kaciki[ $przedszkole_slug ] );
 			} else {
 				esc_html_e( 'Aktualności grupy', 'przedszkole' );
 			}

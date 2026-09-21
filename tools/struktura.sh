@@ -11,11 +11,19 @@ wp() {
 }
 
 # Zwraca ID strony o danym slugu; tworzy ja, jesli nie istnieje.
+#
+# Piaty argument to status przy tworzeniu (domyslnie `publish`). Przy
+# aktualizacji statusu nie ruszamy - strona raz opublikowana z panelu ma
+# zostac opublikowana, nawet jesli skrypt przewiduje dla niej szkic.
+#
+# Statusy wyliczone jawnie, nie `any`: `--name=` razem z `--post_status=any`
+# nie widzi szkicow (sprawdzone 2026-09-16, WP 7.1), wiec szkic „Kacika
+# pedagoga" powstawalby przy kazdym uruchomieniu od nowa.
 strona() {
-	local slug="$1" tytul="$2" rodzic="${3:-0}" kolejnosc="${4:-0}" id
-	id=$(wp post list --post_type=page --name="$slug" --field=ID --posts_per_page=1)
+	local slug="$1" tytul="$2" rodzic="${3:-0}" kolejnosc="${4:-0}" status="${5:-publish}" id
+	id=$(wp post list --post_type=page --name="$slug" --field=ID --posts_per_page=1 --post_status=publish,draft,pending,private)
 	if [ -z "$id" ]; then
-		id=$(wp post create --post_type=page --post_status=publish \
+		id=$(wp post create --post_type=page --post_status="$status" \
 			--post_title="$tytul" --post_name="$slug" \
 			--post_parent="$rodzic" --menu_order="$kolejnosc" --porcelain)
 	else
@@ -48,7 +56,16 @@ strona dokumenty            "Dokumenty"             "$RODZICE" 1 >/dev/null
 strona jadlospis            "Jadłospis"             "$RODZICE" 2 >/dev/null
 strona ramowy-rozklad-dnia  "Ramowy rozkład dnia"   "$RODZICE" 3 >/dev/null
 strona oplaty               "Opłaty"                "$RODZICE" 4 >/dev/null
-strona kacik-logopedy       "Kącik logopedy"        "$RODZICE" 5 >/dev/null
+# Kaciki specjalistow: slug bez przedrostka „kacik-", bo motyw wiaze strone
+# z kategoria po slugu, a stary adres Joomli to `dla-rodzicow/logopeda`
+# (patrz tools/kaciki.sh, ktory zaklada odpowiadajace im kategorie).
+#
+# „Kacik pedagoga" powstaje jako szkic i nie wchodzi do menu. Jego tresc jest
+# wygenerowana, nie migrowana - przedszkole musi ja potwierdzic (PLAN.md,
+# Etap 9.4). Pozycja menu prowadzaca do szkicu daje odwiedzajacemu 404:
+# rdzen nie ukrywa takiej pozycji, sprawdzone 2026-09-16.
+strona logopeda             "Kącik logopedy"        "$RODZICE" 5 >/dev/null
+strona pedagog              "Kącik pedagoga"        "$RODZICE" 6 draft >/dev/null
 
 KADRA=$(strona kadra        "Kadra"                 0 4)
 DOFINANSOWANIE=$(strona dofinansowanie "Dofinansowanie" 0 5)
@@ -92,7 +109,8 @@ for s in misie wiewiorki zajaczki zabki jezyki kotki; do
 done
 
 M_R=$(poz "$RODZICE")
-for s in dokumenty jadlospis ramowy-rozklad-dnia oplaty kacik-logopedy; do
+# Bez `pedagog` - to szkic, patrz komentarz przy stronach.
+for s in dokumenty jadlospis ramowy-rozklad-dnia oplaty logopeda; do
 	pozp "$(wp post list --post_type=page --name=$s --field=ID)" "$M_R" >/dev/null
 done
 

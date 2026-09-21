@@ -21,6 +21,33 @@ function przedszkole_grupy() {
 }
 
 /**
+ * Kąciki specjalistów: slug strony i kategorii → nagłówek sekcji z wpisami.
+ *
+ * Strona „Kącik logopedy” ma slug `logopeda`, „Kącik pedagoga” — `pedagog`,
+ * i każda dzieli slug z kategorią o tej samej nazwie. Wiązanie po slugu jest
+ * to samo co przy grupach, więc nie trzeba niczego łączyć ręcznie w panelu.
+ *
+ * Slugi bez przedrostka `kacik-`, bo stary adres Joomli to
+ * `dla-rodzicow/logopeda` — przekierowania 301 z Etapu 9 robią się trywialne.
+ * `pedagog` idzie tym samym wzorem, choć starego odpowiednika nie ma.
+ *
+ * Te kategorie są wyjęte spod podziału na roczniki: poradnik nie ma daty
+ * ważności — „Rozwój mowy dziecka” z 2016 jest tak samo aktualny jak wpis
+ * z wczoraj. Cięcie po roczniku schowałoby go bez powodu.
+ *
+ * Kolejny specjalista = jedna linia tutaj plus strona i kategoria o tym
+ * slugu ({@see tools/kaciki.sh}). Motyw nie wymaga niczego więcej.
+ *
+ * @return array<string, string> Slug → nagłówek sekcji z wpisami.
+ */
+function przedszkole_kaciki() {
+	return array(
+		'logopeda' => __( 'Artykuły logopedy', 'przedszkole' ),
+		'pedagog'  => __( 'Artykuły pedagoga', 'przedszkole' ),
+	);
+}
+
+/**
  * Zwraca pierwszą kategorię wpisu, która jest grupą przedszkolną.
  *
  * @param int|null $post_id ID wpisu.

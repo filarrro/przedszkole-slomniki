@@ -16,15 +16,6 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Kategoria wyjęta spod podziału na lata.
- *
- * Artykuły logopedki to poradniki — „Rozwój mowy dziecka" z 2016 roku jest
- * tak samo aktualny jak wpis z wczoraj. Cięcie po roczniku schowałoby je
- * bez powodu.
- */
-const PRZEDSZKOLE_LOGOPEDA = 'logopeda';
-
-/**
  * Rok szkolny dla podanej daty.
  *
  * Granica to 1 września. Wrzesień zaczyna rok `R/R+1`, wszystko przed nim
@@ -229,8 +220,8 @@ function przedszkole_zakres_roku( $slug ) {
  *   `date_query` bieżącego rocznika do zakresu roku kalendarzowego;
  *   przecięcie dwóch różnych roczników jest zawsze puste i kłamie,
  *   że archiwum nie ma treści;
- * - kategoria `logopeda` to poradniki bez daty ważności (patrz stała
- *   `PRZEDSZKOLE_LOGOPEDA`).
+ * - kategorie kącików specjalistów (`logopeda`, `pedagog`) to poradniki bez
+ *   daty ważności (patrz {@see przedszkole_kaciki()}).
  *
  * @param WP_Query $zapytanie Sprawdzane zapytanie.
  * @return bool
@@ -244,7 +235,7 @@ function przedszkole_widok_podlega_rocznikowi( $zapytanie ) {
 		return false;
 	}
 
-	return ! $zapytanie->is_category( PRZEDSZKOLE_LOGOPEDA );
+	return ! $zapytanie->is_category( array_keys( przedszkole_kaciki() ) );
 }
 
 /**
