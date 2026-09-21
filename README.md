@@ -5,6 +5,7 @@ Lekki motyw WordPress dla konkretnego przedszkola. Nie SaaS, nie uniwersalny CMS
 **Dokumenty projektu:**
 - [PLAN.md](PLAN.md) — plan w 12 etapach, stan prac, rejestr decyzji, pytania otwarte
 - [MIGRACJA.md](MIGRACJA.md) — migracja treści ze starej strony (Joomla 3.10.5)
+- [WDROZENIE.md](WDROZENIE.md) — instrukcja wdrożenia na cyber_Folks, krok po kroku
 - [CLAUDE.md](CLAUDE.md) — konwencje dla agentów AI i developerów
 - [tools/README.md](tools/README.md) — narzędzia pomocnicze
 

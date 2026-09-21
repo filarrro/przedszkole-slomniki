@@ -20,7 +20,7 @@ Status: `[ ]` do zrobienia · `[~]` w trakcie · `[x]` zrobione · `[-]` pomini�
 | 4. Struktura treści | ✅ | strony, menu główne + stopka, kategorie |
 | 5. Gutenberg | ✅ | wzorce, warianty stylów, style bloków i edytora |
 | 6. Użytkownicy | ✅ | role natywne, konta grupowe, panel odchudzony |
-| 7. Frontend | ✅ | widoki gotowe; lista dokumentów bez PDF-ów — przepadły ze starym serwerem; listy aktualności i archiwa kategorii tną się do bieżącego roku szkolnego, z wyjątkiem kategorii `logopeda`, kanałów RSS i archiwów dat (2026-09-16) |
+| 7. Frontend | ✅ | widoki gotowe; lista dokumentów bez PDF-ów — przepadły ze starym serwerem; listy aktualności i archiwa kategorii tną się do bieżącego roku szkolnego, z wyjątkiem kategorii kącików (`logopeda`, `pedagog`), kanałów RSS i archiwów dat (2026-09-16) |
 | 8. SEO / wydajność / bezpieczeństwo | 🔄 | motyw gotowy; `.htaccess`, cache i Search Console przy wdrożeniu |
 | 9. Wdrożenie | ⬜ | |
 | 10–12 | ⬜ | |
@@ -487,7 +487,8 @@ Kadra przeszła na górny poziom menu, adres z `/o-przedszkolu/kadra/` na `/kadr
 
 **Kolejność menu** od najczęściej odwiedzanego: Aktualności · Grupy ·
 Dla rodziców · Kadra · Dofinansowanie · Kontakt. Sześć pozycji najwyższego
-poziomu, 17 łącznie.
+poziomu, 17 łącznie — „Kącik pedagoga" wejdzie osiemnastą, gdy przedszkole
+potwierdzi treść i strona wyjdzie ze szkicu.
 
 ```
 Strona główna              (statyczna, poza menu)
@@ -501,6 +502,7 @@ Dla rodziców
   ├── Ramowy rozkład dnia
   ├── Opłaty
   └── Kącik logopedy
+      (Kącik pedagoga — szkic, poza menu do czasu potwierdzenia treści)
 Kadra
 Dofinansowanie             ⚖️ wymagania zewnętrzne — musi być widoczne
 Kontakt
@@ -539,9 +541,13 @@ i finalny bilans (25 wpisów w kategorii `logopeda`) w [MIGRACJA.md](MIGRACJA.md
 
 `misie` · `wiewiorki` · `zajaczki` · `zabki` · `jezyki` · `kotki` — kolory i etykiety w motywie (Etap 3).
 `ogloszenia` — aktualności ogólne, ustawiona jako kategoria domyślna.
+`logopeda` · `pedagog` — kąciki specjalistów: poradniki wiązane ze stroną o tym
+samym slugu, wyjęte spod podziału na roczniki (`przedszkole_kaciki()`).
 „Bez kategorii" usunięta.
 
-- [x] Utworzenie stron wg struktury — 20 stron (było 23; „O przedszkolu”, „Oferta” i „Galeria” usunięte)
+- [x] Utworzenie stron wg struktury — 20 opublikowanych + 1 szkic (było 23;
+      „O przedszkolu”, „Oferta” i „Galeria” usunięte, „Kącik pedagoga” doszedł
+      2026-09-16 jako szkic poza menu)
 - [x] Ustawienie strony głównej jako statycznej + strony wpisów („Aktualności")
 - [x] Menu główne + kolejność + podstrony jako pozycje zagnieżdżone
 - [x] Menu w stopce (lokalizacja `footer` była zarejestrowana, ale pusta)
@@ -648,15 +654,17 @@ i przyciskiem bez pomocy — sprawdzone praktycznie 2026-09-11.
 | Dyrektor | strony, aktualności, galerie, dokumenty, media | Editor (Redaktor) |
 | Nauczyciel (konto grupowe) | aktualności, zdjęcia, galerie; bez konfiguracji technicznej | Author |
 | Intendent | wyłącznie strona „Jadłospis” i własne pliki | **Intendent** (własna) |
+| Pedagog | strona „Kącik pedagoga”, własne wpisy w kategorii `pedagog`, własne pliki | **Pedagog** (własna) |
 
-**Konta grupowe (z migracji):** `grupa-kotki`, `grupa-zabki`, `grupa-jezyki`, `grupa-zajaczki`, `grupa-misie`, `grupa-wiewiorki` — rola Author. Plus `przedszkole` (Editor) na treści ogólne i `intendent` (rola Intendent) na jadłospis.
+**Konta grupowe (z migracji):** `grupa-kotki`, `grupa-zabki`, `grupa-jezyki`, `grupa-zajaczki`, `grupa-misie`, `grupa-wiewiorki` — rola Author. Plus `przedszkole` (Editor) na treści ogólne, `intendent` (rola Intendent) na jadłospis i `pedagog` (rola Pedagog) na kącik pedagoga.
 
 - [x] Mapowanie ról na natywne role WP
 - [x] Sprawdzenie, czy natywne role wystarczają — **dla dyrekcji i nauczycieli tak**
 - [x] Utworzenie kont grupowych — `tools/uzytkownicy.sh`
 - [-] Minimalna korekta uprawnień — niepotrzebna, patrz audyt niżej
-- [x] Rola Intendent — jedyny przypadek, którego natywne role nie pokrywają
-      (2026-09-16), `theme/przedszkole/inc/intendent.php`
+- [x] Role własne — Intendent i Pedagog, oba przypadki tego samego kształtu
+      („konto specjalisty = jedna strona”), jedna maszyneria
+      w `theme/przedszkole/inc/role.php` (2026-09-16)
 - [x] Ukrycie zbędnych elementów panelu — `theme/przedszkole/inc/panel.php`
 - [x] Zasada: konto administratora **nie** służy do codziennej pracy —
       wypisana na końcu `tools/uzytkownicy.sh`
@@ -714,18 +722,31 @@ intendent ma aktualizować wyłącznie „Jadłospis”, a najwęższa natywna r
 z dostępem do stron — Editor — otwiera wszystkie dwadzieścia.
 
 **Bez wtyczki.** PublishPress Permissions i pokrewne to silnik uprawnień
-z własnymi tabelami i ekranem ustawień pod jedną regułę, na stronie o dwudziestu
-stronach i ośmiu kontach. Reguła w motywie jedzie z repozytorium i widać ją
-w diffie. Gdyby przypadków przybyło, wtyczka zastąpi ten plik bez ruszania
-reszty motywu.
+z własnymi tabelami i ekranem ustawień pod dwie reguły, na stronie o dwudziestu
+stronach i dziewięciu kontach. Reguły w motywie jadą z repozytorium i widać je
+w diffie; konfiguracja wtyczki siedziałaby w bazie i przy wdrożeniu trzeba by
+ją odtwarzać z pamięci. Gdyby przypadków przybyło, wtyczka zastąpi ten plik
+bez ruszania reszty motywu.
 
-Trzy warstwy w `theme/przedszkole/inc/intendent.php`:
+Trzy warstwy w `theme/przedszkole/inc/role.php`, wspólne dla obu ról:
 
-1. **Rola** — `read`, `upload_files`, `edit_pages`, `publish_pages`. Nic ponadto.
+1. **Rola** — `read`, `upload_files`, `edit_pages`, `publish_pages`. Pedagog
+   dodatkowo zwykły zestaw autora na wpisy, bez żadnego `*_others_*`.
 2. **`map_meta_cap`** — bramka na konkretną stronę. To ona odpowiada 403.
-   Strona wyszukiwana po slugu (`jadlospis`), nie po ID z migracji.
+   Strona wyszukiwana po slugu (`jadlospis`, `pedagog`), nie po ID z migracji;
+   szkice liczą się na równi z opublikowanymi, bo kącik pedagoga czeka jako
+   szkic. Wpisy bramka przepuszcza bez zmian — tam po autorze rozstrzyga rdzeń.
 3. **`pre_get_posts`** — listy w panelu pokazują tylko dostępne treści.
-   Kosmetyka, ale bez niej intendent czyta tytuły cudzych stron i nazwy plików.
+   Kosmetyka, ale bez niej specjalista czyta tytuły cudzych stron i nazwy plików.
+
+**Kategoria wpisów wymuszana, nie pilnowana.** Uprawnienie `assign_terms`
+obowiązuje dla całej taksonomii, nie dla pojedynczego terminu — rdzeń nie ma
+pojęcia „autor tylko w swojej kategorii”. Zamiast sprawdzać wybór, nadpisujemy
+go przy zapisie (`rest_after_insert_post` dla edytora blokowego,
+`save_post_post` dla klasycznego i wp-cli), a panel wyboru kategorii chowamy —
+selektor, który po zapisie cofa decyzję, jest gorszy niż jego brak. Decyduje
+rola osoby zapisującej, nie autora wpisu, więc dyrekcja nadal może przenieść
+cudzy tekst gdzie indziej.
 
 Zakładanie stron przeniesione z `edit_pages` na własne uprawnienie
 `create_pages` (filtr `register_post_type_args`), przyznane administratorowi
@@ -1797,6 +1818,20 @@ Nie może trafić na produkcję.
       po wdrożeniu. Nie blokuje startu
 - [x] ~~Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")~~ —
       potwierdzona 2026-09-15 jako docelowa
+- [ ] **„Kącik pedagoga" (strona 1322) i wpis „Adaptacja w przedszkolu — jak
+      pomóc dziecku i sobie" (1325) czekają jako szkice.** Treść jest
+      wygenerowana 2026-09-16, nie migrowana — stara witryna nie miała
+      odpowiednika, godziny pracy pedagoga są zmyślone. Szkic nie jest
+      widoczny dla odwiedzających i strona jest poza menu, więc nie blokuje
+      wdrożenia. Po potwierdzeniu treści przez przedszkole: opublikować oba
+      i dodać pozycję menu pod „Dla rodziców", za „Kącikiem logopedy".
+      Gdyby treść nie zyskała akceptacji — usunąć. Wpis nie ma `_joomla_id`,
+      więc nie ukryje się wśród migrowanych
+- [x] ~~Kosz i media testowe~~ — 2026-09-17 opróżniony kosz (4 wpisy: „Test",
+      „ddfdfs", pusty wpis, automatyczny szkic strony) i usunięte załączniki
+      `rene-porter-…` oraz `sample.pdf`. W bibliotece zostało 8 pozycji,
+      wszystkie docelowe: logo, ikona strony, trzy dokumenty i dwa zdjęcia
+      wyróżniające wpisów
 - [ ] Konto `dev` — **usunąć**, nie przenosić na produkcję
 - [ ] Baza robocza `joomla` — nie migruje na serwer, zostaje lokalnie
 
@@ -1810,7 +1845,7 @@ ddev exec wp --path=wp post list --post_type=post --fields=ID,post_title
 - [ ] Usunięcie lokalnego konta roboczego
 - [ ] Przejście po wszystkich podstronach — czy działają
 - [ ] Sprawdzenie, czy zdjęcia się ładują (ścieżki!)
-- [ ] Test formularza kontaktowego na produkcji
+- [-] ~~Test formularza kontaktowego na produkcji~~ — bez formularza (Etap 7.6)
 - [ ] `robots.txt` + indeksowanie włączone (WP potrafi blokować — sprawdzić Ustawienia → Czytanie)
 - [ ] Google Search Console: potwierdzenie własności + zgłoszenie `wp-sitemap.xml`
 - [ ] Deklaracja dostępności napisana od nowa (Etap 8.4 — lista zmian)
@@ -1842,7 +1877,9 @@ bez treści testowej i bez konta `dev`.
 
 - [ ] Desktop / tablet / telefon
 - [ ] Chrome, Safari, Firefox, Edge
-- [ ] Formularz kontaktowy — mail dochodzi
+- [-] ~~Formularz kontaktowy — mail dochodzi~~ — bezprzedmiotowe, formularz
+      odrzucony (Etap 7.6). Sprawdzamy tylko, czy adres i telefon w stopce
+      i na stronie „Kontakt" są poprawne
 - [ ] Upload zdjęcia przez użytkownika nietechnicznego
 - [ ] Wstawienie linku do albumu we wpisie przez nauczycielkę (wzorzec „Link do albumu”)
 - [ ] Dodanie aktualności przez nauczyciela
@@ -1953,6 +1990,12 @@ bez treści testowej i bez konta `dev`.
 | 2026-09-16 | Rocznik w adresie jako `?rok=`, bez reguł przepisania | działa od pierwszej minuty, a `paginate_links()` sam scala parametr do odnośników stron |
 | 2026-09-16 | Strona główna nie tnie bloku aktualności, strony grup tną | strona główna nigdy nie ma być pusta; na stronie grupy pusty blok z odnośnikiem wstecz niesie informację |
 | 2026-09-16 | Kategoria `logopeda` wyjęta spod podziału na roczniki | poradniki nie mają daty ważności — „Rozwój mowy dziecka" z 2016 jest tak samo aktualny jak wpis z wczoraj |
+| 2026-09-16 | Rola `pedagog` własnym kodem, na tej samej maszynerii co `intendent` | drugi przypadek tego samego kształtu („konto specjalisty = jedna strona"), więc `intendent.php` uogólniony w `role.php` z tablicą ról zamiast drugiej kopii bramki. Wtyczka od uprawnień to nadal tabele, ekran ustawień i konfiguracja poza repo — pod dwie reguły za dużo. Trzeci przypadek: przeliczyć na nowo |
+| 2026-09-16 | Kategoria wpisów pedagoga wymuszana przy zapisie, a nie sprawdzana | `assign_terms` obowiązuje dla całej taksonomii, nie dla jednego terminu — rdzeń nie umie „autor tylko w swojej kategorii". Nadpisanie przy zapisie działa na obu drogach (REST i klasycznej), a panel wyboru chowamy, bo selektor cofający decyzję po zapisie myli bardziej niż jego brak |
+| 2026-09-16 | „Kącik pedagoga" jako szkic poza menu do czasu potwierdzenia treści | treść jest wygenerowana, a godziny pracy zmyślone — publiczna strona placówki nie może podawać zmyślonych godzin przyjęć. Pozycja menu prowadząca do szkicu dałaby odwiedzającemu 404, bo rdzeń jej nie ukrywa |
+| 2026-09-16 | Zdjęcie na kafelku jako osobny odnośnik, ukryty przed czytnikiem ekranu | nakładka rozciągająca odnośnik tytułu sięga tylko `.card__body` (to on jest blokiem zawierającym, bo trzyma pasek koloru grupy), a `:hover` siedzi na całej karcie — zdjęcie podnosiło kafelek, ale kliknięcie w nie nic nie robiło. `aria-hidden` + `tabindex="-1"`, żeby klawiatura i czytnik dostały jedno przejście do wpisu, nie dwa. Przy okazji `.card__meta .pill` dostał `z-index` — etykieta kategorii leżała pod nakładką i była martwa |
+| 2026-09-16 | Nawigacja „poprzedni / następny wpis" w obrębie kategorii (`in_same_term`) | wcześniej szła chronologicznie po całym serwisie, żeby rodzic zajrzał przy okazji do innej grupy — w praktyce dawała sąsiedztwa bez związku, najostrzej przy kącikach (daty poradników sięgają 2015, więc „Seplenienie międzyzębowe" wypadało obok „Wioski Indiańskiej Kotków"). Kto czyta wpis swojej grupy, chce następny wpis tej grupy; do pozostałych prowadzi filtr nad listą aktualności. Bez `excluded_terms` — każdy z 452 wpisów ma dokładnie jedną kategorię |
+| 2026-09-16 | „Kącik pedagoga" na tym samym mechanizmie co logopeda, bez własnego kodu | strona i kategoria o wspólnym slugu to wiązanie, które motyw już miał dla grup; doszła jedna linia w `przedszkole_kaciki()` zamiast drugiego zestawu warunków. Stała `PRZEDSZKOLE_LOGOPEDA` ustąpiła miejsca tej mapie — trzeci specjalista nie wymaga już zmian w szablonach |
 | 2026-09-16 | Archiwa rocznikowe `noindex, follow` | 7 kategorii × 4 roczniki to 28 list duplikatów, a rdzeń nie wystawia `rel=canonical` na archiwach |
 | 2026-09-16 | Artykuł 32 i kategoria 64 Joomli pominięte przy imporcie | art. 32 to godziny pracy z 2015 sprzeczne z treścią strony; kategoria 64 to seria covidowa, którą przedszkole samo wyłączyło |
 | 2026-09-16 | Kafelek osoby jako własny blok `przedszkole/osoba`, nie wariant stylu kolumn | wariant stylu trzymał układ w treści: dodanie osoby znaczyło trafić w szerokość kolumny, klasę wariantu i wpisać inicjały dwa razy, a jedno kliknięcie w „Usuń" zostawiało pół kafelka. Poprawka wyglądu szła przez trzynaście kopii tego samego HTML-a. Blok zostawia w treści dane (zdjęcie, imię, tytuł, biogram), a układ rysuje `blocks/osoba/render.php` — jedno miejsce na front i edytor. To pierwszy własny blok w motywie i póki co jedyny uzasadniony: reszta wzorców nie ma tego problemu, bo nie jest powtarzana kilkanaście razy na stronie |
@@ -1983,6 +2026,9 @@ bez treści testowej i bez konta `dev`.
 - [ ] Kto po wdrożeniu odpowiada za aktualizacje?
 - [x] Czy włączamy 2FA dla konta administratora? → **nie** (Etap 8.3)
 - [ ] Kto pisze nową deklarację dostępności? (Etap 8.4 — obowiązek ustawowy)
+- [ ] **Godziny pracy pedagoga i treść „Kącika pedagoga" do potwierdzenia
+      przez przedszkole** — strona powstała 2026-09-16 z treści wygenerowanej,
+      bo stara witryna nie miała odpowiednika. Godziny są zmyślone
 
 ---
 

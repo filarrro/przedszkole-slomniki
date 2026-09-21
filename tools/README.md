@@ -29,6 +29,11 @@ więc ręczne zmiany w menu przepadną.
 
 Skrypt tworzy wyłącznie puste strony. Treść wchodzi w Etapie 7 i przy migracji.
 
+„Kącik pedagoga" powstaje jako **szkic** i nie wchodzi do menu — jego treść jest
+wygenerowana, nie migrowana. Publikacja i pozycja w menu dopiero po akceptacji
+przedszkola. Status istniejącej strony skrypt zostawia w spokoju, więc raz
+opublikowanej nie cofnie do szkicu.
+
 ## `skroty.sh`
 
 Tworzy menu „Na skróty" — kafelki na stronie głównej (Etap 7). Trzy pozycje:
@@ -48,8 +53,9 @@ Bez tego menu sekcja „Na skróty" nie pojawia się na stronie głównej.
 
 ## `uzytkownicy.sh`
 
-Zakłada konta z Etapu 6: zbiorcze `przedszkole` (rola Editor — dyrekcja) i sześć
-kont grupowych `grupa-misie` … `grupa-kotki` (rola Author — nauczycielki).
+Zakłada konta z Etapu 6: zbiorcze `przedszkole` (rola Editor — dyrekcja), sześć
+kont grupowych `grupa-misie` … `grupa-kotki` (rola Author — nauczycielki) oraz
+dwa konta specjalistów — `intendent` i `pedagog`.
 
 ```bash
 tools/uzytkownicy.sh
@@ -62,8 +68,16 @@ Zgub je, a zostaje odzyskiwanie hasła z panelu, które wymaga działającej skr
 Adresy są zmyślone z nazwy konta (`grupa-misie@przedszkoleslomniki.pl`); przed
 wdrożeniem muszą to być realne skrzynki — patrz PLAN.md, Etap 6.
 
-Własnych ról nie tworzymy. Natywne Editor i Author pokrywają potrzeby przedszkola,
-uzasadnienie i audyt uprawnień są w PLAN.md.
+Obieg treści pokrywają role natywne: Editor (dyrekcja) i Author (nauczycielki).
+Poza nie wychodzimy bez powodu — audyt uprawnień jest w PLAN.md, Etap 6.
+
+Własne role są dwie, obie w kształcie „konto specjalisty = jedna strona":
+`intendent` (wyłącznie „Jadłospis") i `pedagog` („Kącik pedagoga" plus wpisy
+wymuszane do kategorii `pedagog`). Ten skrypt ich **nie tworzy** — definicje
+siedzą w motywie (`theme/przedszkole/inc/role.php`) i rejestrują się na `init`,
+skrypt tylko przypisuje je kontom. Nowa rola tego samego kształtu to pozycja
+w `przedszkole_role_wlasne()` i podbicie `PRZEDSZKOLE_WERSJA_ROL` — bez tego
+drugiego `add_role()` na istniejącej definicji nic nie zrobi.
 
 ## `kadra_na_blok.py`
 
@@ -150,17 +164,28 @@ tekstu przycisku — inaczej strona miałaby sześć identycznych odnośników.
 
 Bez obrazków wyróżniających — dlaczego, patrz [MIGRACJA.md](../MIGRACJA.md).
 
-## `logopeda.sh`
+## `kaciki.sh`
 
-Zakłada kategorię „Kącik logopedy" (slug `logopeda`) i dopasowuje do niej slug
-strony o tej samej nazwie. Motyw wiąże stronę z kategorią po slugu, tak samo
-jak strony grup, więc oba muszą być identyczne.
+Zakłada kategorie kącików specjalistów — „Kącik logopedy" (slug `logopeda`)
+i „Kącik pedagoga" (slug `pedagog`) — i sprawdza, że strony o tych slugach
+istnieją. Motyw wiąże stronę z kategorią po slugu, tak samo jak strony grup,
+więc oba muszą być identyczne.
 
 ```bash
-tools/logopeda.sh
+tools/kaciki.sh
 ```
 
+Strony tworzy `struktura.sh`; ten skrypt uruchamiaj po nim. Instalacjom sprzed
+2026-09-16 przenosi przy okazji slug strony z `kacik-logopedy` na `logopeda`.
+Szkice liczą się tak samo jak strony opublikowane — „Kącik pedagoga" czeka jako
+szkic na potwierdzenie treści przez przedszkole (PLAN.md, Etap 9.4).
+
 Idempotentny: istniejącej kategorii nie zakłada drugi raz.
+
+Kolejny specjalista to trzy linie: pozycja w tablicy `KACIKI` tutaj, wywołanie
+`strona` i wpis w pętli menu w `struktura.sh`, oraz linia w
+`przedszkole_kaciki()` (`theme/przedszkole/inc/helpers.php`), z której motyw
+bierze nagłówek sekcji z wpisami i wyjęcie kategorii spod podziału na roczniki.
 
 ## `migracja_logopedy.py`
 

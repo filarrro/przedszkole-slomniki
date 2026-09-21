@@ -58,10 +58,20 @@ Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
 ## Role i uprawnienia
 
 Natywne role WP: Editor (dyrekcja), Author (konta grupowe nauczycieli).
-Jedna własna rola — `intendent`, dostęp wyłącznie do strony „Jadłospis”
-(`theme/przedszkole/inc/intendent.php`). Nie zastępuj jej wtyczką od uprawnień
-bez powodu: to jedna reguła, a wtyczka to tabele, ekran ustawień i cykl
-aktualizacji. Kolejny taki przypadek — wtedy przelicz na nowo.
+Dwie własne role w `theme/przedszkole/inc/role.php`, obie w jednym kształcie
+„konto specjalisty = jedna strona”:
+
+- `intendent` — wyłącznie strona „Jadłospis”,
+- `pedagog` — strona „Kącik pedagoga” plus wpisy wymuszane do kategorii
+  `pedagog` (rdzeń nie umie ograniczyć autora do jednej kategorii, więc
+  przypisanie nadpisujemy przy zapisie).
+
+Nie zastępuj ich wtyczką od uprawnień bez powodu: to dwie reguły na jednej
+tablicy, a wtyczka to tabele, ekran ustawień i konfiguracja poza repozytorium,
+którą przy wdrożeniu trzeba odtworzyć z pamięci. **Trzeci taki przypadek —
+wtedy przelicz na nowo.** Nowa rola tego samego kształtu to pozycja w
+`przedszkole_role_wlasne()` i podbicie `PRZEDSZKOLE_WERSJA_ROL` (definicje ról
+siedzą w bazie, `add_role()` na istniejącej roli nic nie robi).
 
 **Pułapka rdzenia:** rola z `edit_pages` bez `edit_posts` dostaje 403 na liście
 stron, jeśli w podmenu „Strony” zostanie jedna pozycja. Uzasadnienie i naprawa
@@ -117,6 +127,20 @@ ddev exec wp --path=wp <komenda>
 7. `wp/wp-config.php` nie ma znacznika `#ddev-generated` — zdjęliśmy go, żeby
    ddev nie kasował `WP_DEBUG` przy każdym starcie. Nie przywracaj. Dane dostępowe
    do bazy nadal przychodzą z `wp-config-ddev.php`, którym ddev zarządza.
+
+8. `wp post list --name=<slug> --post_status=any` **nie widzi szkiców.**
+   Ten sam slug z `--post_status=draft` znajduje wpis bez problemu. Skrypt
+   szukający strony po slugu wyliczy więc statusy jawnie:
+   ```bash
+   ddev exec wp --path=wp post list --post_type=page --name=pedagog \
+     --post_status=publish,draft,pending,private --field=ID --format=csv
+   ```
+   Bez tego skrypt idempotentny przestaje być idempotentny — nie znajduje
+   szkicu i zakłada go drugi raz.
+
+9. **Pozycja menu prowadząca do szkicu nie znika z frontu.** Rdzeń ukrywa
+   pozycje wskazujące na kosz, ale szkic zostaje i daje odwiedzającemu 404.
+   Stronę odkładaną „na potem" trzymaj poza menu, nie licz na WordPressa.
 
 ## Podgląd wizualny
 
