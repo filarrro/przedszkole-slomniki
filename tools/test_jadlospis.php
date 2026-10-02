@@ -125,6 +125,12 @@ $sprawdz( 'bez daty: bez plakietek', false === strpos( $bez_daty, 'jadlospis__dz
 
 // --- Skrypty --- (Zadania 5 i 6 dopisują tu swoje sprawdzenia)
 
+$widok = generate_block_asset_handle( 'przedszkole/jadlospis', 'viewScript' );
+$sprawdz( 'skrypt widoku zarejestrowany', wp_script_is( $widok, 'registered' ) );
+$sprawdz( 'skrypt widoku odroczony', 'defer' === wp_scripts()->get_data( $widok, 'strategy' ) );
+$sprawdz( 'skrypt widoku bez zależności', wp_script_is( $widok, 'registered' ) && array() === wp_scripts()->registered[ $widok ]->deps );
+$sprawdz( 'skrypt widoku w wersji motywu', wp_script_is( $widok, 'registered' ) && PRZEDSZKOLE_VERSION === wp_scripts()->registered[ $widok ]->ver );
+
 if ( $bledy ) {
 	WP_CLI::error( $bledy . ' sprawdzeń nie przeszło.' );
 }

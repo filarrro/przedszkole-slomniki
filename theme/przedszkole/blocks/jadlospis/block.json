@@ -39,5 +39,6 @@
 			]
 		}
 	},
+	"viewScript": "file:./widok.js",
 	"render": "file:./render.php"
 }
