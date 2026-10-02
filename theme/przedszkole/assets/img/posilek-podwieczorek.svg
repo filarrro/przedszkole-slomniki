@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+	<!-- Ikona podwieczorku: babeczka z wisienka. Maska w style.css -
+	     liczy sie tylko ksztalt, kolor nadaje CSS. Krem to trzy kola
+	     i prostokat, ktore w masce zlewaja sie w jeden ksztalt. -->
+	<circle cx="12" cy="3.25" r="1.75"/>
+	<circle cx="7" cy="10" r="3"/>
+	<circle cx="12" cy="8.5" r="4"/>
+	<circle cx="17" cy="10" r="3"/>
+	<rect x="4" y="10" width="16" height="3" rx="1"/>
+	<path d="M5 14.5h14l-2 7H7z"/>
+</svg>

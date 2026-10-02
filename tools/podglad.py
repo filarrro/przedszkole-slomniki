@@ -1,5 +1,7 @@
-import re,sys,urllib.request,pathlib
-base='http://przedszkole.ddev.site'
+import re,sys,urllib.request,pathlib,os
+# Adres lokalnego WordPressa. Gdy porty 80/443 zajmuje inny proces, ddev
+# przenosi router na inne porty - wtedy podaj adres w PODGLAD_BAZA.
+base=os.environ.get('PODGLAD_BAZA','http://przedszkole.ddev.site')
 path=sys.argv[1] if len(sys.argv)>1 else '/'
 out=sys.argv[2] if len(sys.argv)>2 else 'podglad.html'
 html=urllib.request.urlopen(base+path).read().decode('utf-8')

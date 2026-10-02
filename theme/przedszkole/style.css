@@ -2742,3 +2742,225 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 	background-color: var(--primary-hover);
 	color: var(--tekst-na-ciemnym);
 }
+
+/* ==========================================================================
+   29. Jadlospis
+   Wlasny blok `przedszkole/jadlospis`: tydzien jako piec kart, po jednej
+   na dzien. Uklad rysuje `blocks/jadlospis/render.php`, edytor powtarza
+   te same klasy - jeden komplet regul obsluguje front i podglad.
+
+   Kolory wylacznie ze zmiennych: tryb wysokiego kontrastu (sekcja 28)
+   przestawia je sam, bez osobnych regul.
+
+   Siatka liczy sie od szerokosci bloku (`@container`), nie okna. W edytorze
+   blok stoi w plotnie o innej szerokosci niz okno, a przy powiekszonym
+   tekscie (sekcja 27) progi w `rem` rosna razem z litera - przy A++
+   na laptopie zostaja dwie szersze kolumny zamiast pieciu waskich.
+
+   Selektory z prefiksem `.jadlospis`: reguly `.entry__content ol`,
+   `li + li` i `h2` (sekcje 10 i 18) waza wiecej niz pojedyncza klasa.
+   ========================================================================== */
+
+.jadlospis {
+	container: jadlospis / inline-size;
+}
+
+/* Na froncie blok wychodzi poza kolumne tresci (760px) i poza `.wrap`
+   (1140px) - przy pieciu kolumnach 1140px daje karte ~210px na ~250 znakow
+   posilku. Srodek liczony od rodzica, ktory sam stoi na srodku okna.
+   `100vw` wlicza pasek przewijania, ale odstep 2 x 1.25rem jest od niego
+   szerszy, wiec przewijania w poziomie nie ma. W edytorze te sama role
+   pelni klasa `alignfull` - patrz `assets/css/editor.css`. */
+.entry__content > .jadlospis {
+	--jadlospis-szerokosc: min(1400px, 100vw - 2.5rem);
+	width: var(--jadlospis-szerokosc);
+	margin-inline: calc(50% - var(--jadlospis-szerokosc) / 2);
+}
+
+.jadlospis .jadlospis__zakres {
+	margin: 0 0 1.25rem;
+	font-size: var(--wp--preset--font-size--large);
+}
+
+.jadlospis .jadlospis__dni {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.25rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* 41.25rem = 660px przy domyslnych 16px - tyle ma blok w oknie 700px.
+   Dwie karty w rzedzie na siatce czterokolumnowej: samotny piatek
+   w ostatnim rzedzie staje wtedy na srodku, a nie przy lewej krawedzi. */
+@container jadlospis (min-width: 41.25rem) {
+	.jadlospis .jadlospis__dni { grid-template-columns: repeat(4, 1fr); }
+	.jadlospis .jadlospis__dzien { grid-column: span 2; }
+	.jadlospis .jadlospis__dzien:last-child:nth-child(odd) { grid-column: 2 / span 2; }
+}
+
+/* 72.5rem = 1160px - blok w oknie 1200px. Caly tydzien w jednym rzedzie. */
+@container jadlospis (min-width: 72.5rem) {
+	.jadlospis .jadlospis__dni {
+		grid-template-columns: repeat(5, 1fr);
+		gap: 1rem;
+	}
+	.jadlospis .jadlospis__dzien,
+	.jadlospis .jadlospis__dzien:last-child:nth-child(odd) { grid-column: auto; }
+}
+
+/* Kolor dnia z pary tlo/tekst grupy - kontrast policzony w sekcji 1,
+   od 4.78 (Wiewiorki) do 5.83 (Zajaczki). */
+.jadlospis__dzien--zabki     { --dzien-tlo: var(--zabki-tlo);     --dzien-tekst: var(--zabki-tekst); }
+.jadlospis__dzien--zajaczki  { --dzien-tlo: var(--zajaczki-tlo);  --dzien-tekst: var(--zajaczki-tekst); }
+.jadlospis__dzien--kotki     { --dzien-tlo: var(--kotki-tlo);     --dzien-tekst: var(--kotki-tekst); }
+.jadlospis__dzien--misie     { --dzien-tlo: var(--misie-tlo);     --dzien-tekst: var(--misie-tekst); }
+.jadlospis__dzien--wiewiorki { --dzien-tlo: var(--wiewiorki-tlo); --dzien-tekst: var(--wiewiorki-tekst); }
+
+.jadlospis .jadlospis__dzien {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--border);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow);
+	overflow: hidden;
+}
+
+/* Dzisiejszy dzien - klase i `aria-current` dopisuje `widok.js`.
+   Obrys zamiast ramki: nie przesuwa tresci i nie obcina go `overflow`. */
+.jadlospis .jadlospis__dzien--dzis {
+	outline: 3px solid var(--wp--preset--color--primary);
+	outline-offset: 2px;
+}
+
+.jadlospis .jadlospis__naglowek {
+	padding: 1rem 1.25rem .9rem;
+	background: var(--dzien-tlo);
+	color: var(--dzien-tekst);
+	border-bottom: 1px solid var(--wp--preset--color--border);
+}
+.jadlospis .jadlospis__nazwa {
+	margin: 0;
+	font-size: var(--wp--preset--font-size--large);
+	font-weight: 800;
+	line-height: 1.2;
+	color: inherit;
+}
+.jadlospis .jadlospis__data {
+	margin: .15rem 0 0;
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 600;
+}
+
+/* Plakietka "Dzis". W znacznikach stoi z atrybutem `hidden` - odslania
+   ja `widok.js`. Jawna regula `[hidden]`, bo `display` ponizej nadpisalby
+   domyslne ukrycie przegladarki i plakietka wisialaby na kazdej karcie.
+   Biel na granacie: 9.24. */
+.jadlospis .jadlospis__dzis {
+	display: inline-block;
+	margin: .5rem 0 0;
+	padding: .1rem .65rem;
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 700;
+	line-height: 1.5;
+	color: var(--tekst-na-ciemnym);
+	background: var(--wp--preset--color--primary);
+	border-radius: 999px;
+}
+.jadlospis .jadlospis__dzis[hidden] { display: none; }
+
+/* Kolumna flex - "Dzien wolny" staje na srodku wolnego miejsca karty,
+   a karty w rzedzie i tak maja rowna wysokosc z siatki. */
+.jadlospis .jadlospis__tresc {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	padding: 0 1.25rem 1rem;
+}
+
+.jadlospis .jadlospis__posilek { padding-block: 1rem; }
+.jadlospis .jadlospis__posilek + .jadlospis__posilek {
+	border-top: 1px solid var(--wp--preset--color--border);
+}
+.jadlospis .jadlospis__posilek p {
+	margin: 0;
+	font-size: var(--wp--preset--font-size--small);
+	line-height: 1.55;
+}
+
+/* Etykieta posilku: wielkie litery wylacznie z CSS - w zrodle stoi
+   "Sniadanie", zeby czytnik ekranu nie literowal wyrazu.
+   Tekst na bieli: zielony 6.47, pomaranczowy 5.88, niebieski 7.04. */
+.jadlospis .jadlospis__etykieta {
+	display: flex;
+	align-items: center;
+	gap: .45rem;
+	margin: 0 0 .35rem;
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 600;
+	line-height: 1.3;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--posilek-tekst);
+}
+
+/* Ikona przez maske: plik SVG daje ksztalt, kolor nadaje `background-color`.
+   Jeden plik na front i edytor, bez kopii SVG w PHP i JS. Ikona jest
+   ozdobna - znaczenie niesie napis obok. Adres pliku przy klasie posilku,
+   nie w zmiennej: `url()` w zmiennej przegladarki rozwiazuja roznie. */
+.jadlospis .jadlospis__etykieta::before {
+	content: "";
+	flex: none;
+	width: 1.4em;
+	height: 1.4em;
+	background-color: var(--posilek-ikona);
+	-webkit-mask-position: center;
+	mask-position: center;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+}
+
+.jadlospis__posilek--sniadanie {
+	--posilek-tekst: var(--zabki-tekst);
+	--posilek-ikona: var(--wp--preset--color--zabki);
+}
+.jadlospis__posilek--obiad {
+	--posilek-tekst: var(--wiewiorki-tekst);
+	--posilek-ikona: var(--wp--preset--color--accent);
+}
+.jadlospis__posilek--podwieczorek {
+	--posilek-tekst: var(--zajaczki-tekst);
+	--posilek-ikona: var(--wp--preset--color--zajaczki);
+}
+.jadlospis__posilek--sniadanie .jadlospis__etykieta::before {
+	-webkit-mask-image: url("assets/img/posilek-sniadanie.svg");
+	mask-image: url("assets/img/posilek-sniadanie.svg");
+}
+.jadlospis__posilek--obiad .jadlospis__etykieta::before {
+	-webkit-mask-image: url("assets/img/posilek-obiad.svg");
+	mask-image: url("assets/img/posilek-obiad.svg");
+}
+.jadlospis__posilek--podwieczorek .jadlospis__etykieta::before {
+	-webkit-mask-image: url("assets/img/posilek-podwieczorek.svg");
+	mask-image: url("assets/img/posilek-podwieczorek.svg");
+}
+
+/* Dzien wolny i dzien bez wpisanych posilkow: napis na srodku wolnego
+   miejsca karty. `--ink-soft` na bieli: 6.80. Pod "Dzien wolny" wejdzie
+   pozniej obrazek z podpisem. */
+.jadlospis .jadlospis__wolne,
+.jadlospis .jadlospis__pusty {
+	margin: auto 0;
+	padding-block: 2rem;
+	text-align: center;
+	color: var(--wp--preset--color--ink-soft);
+}
+.jadlospis .jadlospis__wolne {
+	font-size: var(--wp--preset--font-size--large);
+	font-weight: 700;
+}
