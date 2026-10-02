@@ -173,7 +173,7 @@ Panel boczny pusty.
 - Nagłówek karty: tło `--X-tlo`, nazwa dnia pogrubiona i data w `--X-tekst`.
 - Etykiety: `text-transform: uppercase`, `font-weight: 600`, ikona w `::before`
   przez `mask-image: url(assets/img/posilek-*.svg)` i `background-color`
-  w jasnym kolorze grupy (`zabki`, `accent`, `zajaczki`). Ikona ozdobna —
+  w jasnym kolorze grupy (`zabki`, `wiewiorki`, `zajaczki`). Ikona ozdobna —
   znaczenie niesie tekst. Jedno źródło ikon dla frontu i edytora.
 - Siatka:
   - < 700px — 1 kolumna,

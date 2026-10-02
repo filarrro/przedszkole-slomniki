@@ -1102,7 +1102,7 @@ Oczekiwane: `poprawne`.
 }
 .jadlospis__posilek--obiad {
 	--posilek-tekst: var(--wiewiorki-tekst);
-	--posilek-ikona: var(--wp--preset--color--accent);
+	--posilek-ikona: var(--wp--preset--color--wiewiorki);
 }
 .jadlospis__posilek--podwieczorek {
 	--posilek-tekst: var(--zajaczki-tekst);
