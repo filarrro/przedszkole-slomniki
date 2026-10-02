@@ -125,7 +125,7 @@ ddev exec wp --path=wp <komenda>
    Nie tłum tego przez `2>/dev/null` w skryptach z `set -e` — razem z szumem
    znikają prawdziwe błędy i skrypt pada bez śladu. `wp eval-file` nie ma
    `--format`, więc jego wynik dostaje ten sam szum `Deprecated` — filtruj go
-   przez `| grep -v '^Deprecated:'`, nigdy przez `2>/dev/null`.
+   przez `2>&1 | grep -v '^Deprecated:'` (szum idzie na stderr), nigdy przez `2>/dev/null`.
 
 5. Slug menu wylicza WP z nazwy, a nie ty. „Menu w stopce" → `menu-w-stopce`.
    Sprawdź `wp menu list`, zanim odwołasz się do sluga w skrypcie.
