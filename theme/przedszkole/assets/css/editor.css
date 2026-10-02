@@ -43,23 +43,32 @@
 
 /* Jadlospis. Na froncie blok wychodzi poza kolumne tresci regula pod
    `.entry__content` - w edytorze robi to klasa `alignfull`, ktora uklad
-   rdzenia rozciaga na cale plotno, az do krawedzi. Tu odsuniecie kart od
-   tych krawedzi, a na szerokim plotnie rosnace, zeby karty nie byly szersze
-   niz na froncie (front: min(1400px, 100vw - 2.5rem)). 100% to szerokosc
-   kontenera glownego; blok jest o 2.5rem szerszy przez ujemne marginesy
-   `alignfull`, stad 100% + 2.5rem. */
-.editor-styles-wrapper .jadlospis { padding-inline: max(1.25rem, calc((100% + 2.5rem - 1400px) / 2)); }
+   rdzenia rozciaga na cale plotno, az do krawedzi. Tu tylko odsuniecie
+   kart od tych krawedzi; szerokosc kart (300-370px) trzyma siatka. */
+.editor-styles-wrapper .jadlospis { padding-inline: 1.25rem; }
 
-/* Pasek nad kartami: przycisk kalendarza i zakres tygodnia w jednym rzedzie.
-   Istnieje wylacznie w edytorze - na froncie stoi sam naglowek. */
+/* Pasek nad kartami: przycisk kalendarza i zakres tygodnia w jednym rzedzie,
+   w linii z kolumna tresci - jak sam naglowek na froncie. Istnieje
+   wylacznie w edytorze. */
 .jadlospis__tydzien {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: .75rem 1.25rem;
-	margin-bottom: 1.25rem;
+	max-width: 760px;
+	margin: 0 auto 1.25rem;
 }
 .editor-styles-wrapper .jadlospis__tydzien .jadlospis__zakres { margin: 0; }
 
 /* Przelacznik dnia wolnego nad polami posilkow. */
 .jadlospis__przelacznik { margin-block: 1rem .25rem; }
+
+/* Na froncie tresc karty dzieli wiersze z sasiadami (`subgrid`, po jednym
+   na posilek). W edytorze stoi w niej jeszcze przelacznik - czwarty element
+   na trzy wiersze - wiec tresc wraca do kolumny flex. Posilki w rzedzie nie
+   wyrownuja sie tu wysokoscia, za to zaden nie wpada w cudzy wiersz. */
+.editor-styles-wrapper .jadlospis .jadlospis__tresc {
+	display: flex;
+	flex-direction: column;
+}
+.editor-styles-wrapper .jadlospis .jadlospis__wolne { margin: auto 0; }

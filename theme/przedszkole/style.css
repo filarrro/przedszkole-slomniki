@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 1.1.0
+Version: 1.1.1
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -1058,7 +1058,8 @@ a.pill:hover { filter: brightness(.93); }
    (#5F5869) na tym tle: 6.1 - powyzej wymaganych 4.5. */
 .card { --karta-panel: #F6F2EC; }
 
-.card {
+.card,
+.jadlospis__dzien {
 	--karta-fala: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><g fill="black"><path d="M0 0v99.7C62 69 122.4 48.7 205 66c83.8 17.6 160.5 20.4 240-12 54-22 110-26 173-10a392.2 392.2 0 0 0 222-5c55-17 110.3-36.9 160-27.2V0H0Z" opacity=".5"></path><path d="M0 0v74.7C62 44 122.4 28.7 205 46c83.8 17.6 160.5 25.4 240-7 54-22 110-21 173-5 76.5 19.4 146.5 23.3 222 0 55-17 110.3-31.9 160-22.2V0H0Z"></path></g></svg>');
 }
 
@@ -2695,6 +2696,7 @@ html[data-kontrast="wysoki"] .hero::before,
 html[data-kontrast="wysoki"] .hero::after,
 html[data-kontrast="wysoki"] .hero__art::before,
 html[data-kontrast="wysoki"] .card::after,
+html[data-kontrast="wysoki"] .jadlospis__dzien::after,
 html[data-kontrast="wysoki"] .card__body::before,
 html[data-kontrast="wysoki"] .skroty::before,
 html[data-kontrast="wysoki"] .skrzydla__kadr::before,
@@ -2757,6 +2759,11 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
    tekscie (sekcja 27) progi w `rem` rosna razem z litera - przy A++
    na laptopie zostaja dwie szersze kolumny zamiast pieciu waskich.
 
+   Karta ma od 300 do 370px: 1 w rzedzie, od 660px okna 2, od 1000px 3,
+   od 1550px wszystkie 5 (wtedy ~287px - wyjatek od minimum, swiadomy).
+   Wiersze kart dziela siatke (`subgrid`): naglowek, sniadanie, obiad,
+   podwieczorek i fala maja w calym rzedzie wysokosc najwyzszego sasiada.
+
    Selektory z prefiksem `.jadlospis`: reguly `.entry__content ol`,
    `li + li` i `h2` (sekcje 10 i 18) waza wiecej niz pojedyncza klasa.
    ========================================================================== */
@@ -2766,62 +2773,82 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 }
 
 /* Na froncie blok wychodzi poza kolumne tresci (760px) i poza `.wrap`
-   (1140px) - przy pieciu kolumnach 1140px daje karte ~210px na ~250 znakow
-   posilku. Srodek liczony od rodzica, ktory sam stoi na srodku okna.
-   `100vw` wlicza pasek przewijania, ale odstep 2 x 1.25rem jest od niego
-   szerszy, wiec przewijania w poziomie nie ma. W edytorze te sama role
-   pelni klasa `alignfull` - patrz `assets/css/editor.css`. */
+   (1140px) na cala szerokosc okna minus margines - piec kart po ~287px
+   potrzebuje 1510px. Szerokosc kart ogranicza siatka, nie blok. Srodek
+   liczony od rodzica, ktory sam stoi na srodku okna. `100vw` wlicza pasek
+   przewijania, ale odstep 2 x 1.25rem jest od niego szerszy, wiec
+   przewijania w poziomie nie ma. W edytorze te sama role pelni klasa
+   `alignfull` - patrz `assets/css/editor.css`. */
 .entry__content > .jadlospis {
-	--jadlospis-szerokosc: min(1400px, 100vw - 2.5rem);
-	width: var(--jadlospis-szerokosc);
-	margin-inline: calc(50% - var(--jadlospis-szerokosc) / 2);
+	width: calc(100vw - 2.5rem);
+	margin-inline: calc(50% - 50vw + 1.25rem);
 }
 
+/* Zakres tygodnia w linii z kolumna tresci (tytul strony nad nim). */
 .jadlospis .jadlospis__zakres {
-	margin: 0 0 1.25rem;
+	max-width: 760px;
+	margin: 0 auto 1.25rem;
 	font-size: var(--wp--preset--font-size--large);
 }
 
+/* Sciezki maja gorny limit, wiec siatka nie rozciaga kart ponad 370px,
+   tylko staje na srodku bloku. Polowkowe sciezki (`--pol-karty`, karta
+   zajmuje dwie i odstep miedzy nimi) pozwalaja postawic niepelny ostatni
+   rzad na srodku. Odstep miedzy rzedami kart to dolny margines karty, nie
+   `row-gap`: `row-gap` wszedlby tez miedzy wiersze wewnatrz kart (subgrid). */
 .jadlospis .jadlospis__dni {
+	--karta-max: 370px;
+	--odstep: 1.25rem;
+	--pol-karty: minmax(0, calc((var(--karta-max) - var(--odstep)) / 2));
 	display: grid;
-	grid-template-columns: 1fr;
-	gap: 1.25rem;
-	margin: 0;
+	grid-template-columns: minmax(0, var(--karta-max));
+	justify-content: center;
+	column-gap: var(--odstep);
+	row-gap: 0;
+	margin: 0 0 calc(-1 * var(--odstep));
 	padding: 0;
 	list-style: none;
 }
 
-/* 41.25rem = 660px przy domyslnych 16px - tyle ma blok w oknie 700px.
-   Dwie karty w rzedzie na siatce czterokolumnowej: samotny piatek
-   w ostatnim rzedzie staje wtedy na srodku, a nie przy lewej krawedzi. */
-@container jadlospis (min-width: 41.25rem) {
-	.jadlospis .jadlospis__dni { grid-template-columns: repeat(4, 1fr); }
+/* 38.75rem = 620px przy domyslnych 16px - blok w oknie 660px, dwie karty
+   po 300px. Piatek sam w ostatnim rzedzie, na srodku. */
+@container jadlospis (min-width: 38.75rem) {
+	.jadlospis .jadlospis__dni { grid-template-columns: repeat(4, var(--pol-karty)); }
 	.jadlospis .jadlospis__dzien { grid-column: span 2; }
-	.jadlospis .jadlospis__dzien:last-child:nth-child(odd) { grid-column: 2 / span 2; }
+	.jadlospis .jadlospis__dzien:nth-child(5) { grid-column: 2 / span 2; }
 }
 
-/* 72.5rem = 1160px - blok w oknie 1200px. Caly tydzien w jednym rzedzie. */
-@container jadlospis (min-width: 72.5rem) {
-	.jadlospis .jadlospis__dni {
-		grid-template-columns: repeat(5, 1fr);
-		gap: 1rem;
-	}
+/* 60rem = 960px - blok w oknie 1000px, trzy karty po ~307px. Czwartek
+   i piatek w drugim rzedzie, razem na srodku. */
+@container jadlospis (min-width: 60rem) {
+	.jadlospis .jadlospis__dni { grid-template-columns: repeat(6, var(--pol-karty)); }
+	.jadlospis .jadlospis__dzien:nth-child(4) { grid-column: 2 / span 2; }
+	.jadlospis .jadlospis__dzien:nth-child(5) { grid-column: 4 / span 2; }
+}
+
+/* 94.375rem = 1510px - blok w oknie 1550px. Caly tydzien w jednym rzedzie. */
+@container jadlospis (min-width: 94.375rem) {
+	.jadlospis .jadlospis__dni { grid-template-columns: repeat(5, minmax(0, var(--karta-max))); }
 	.jadlospis .jadlospis__dzien,
-	.jadlospis .jadlospis__dzien:last-child:nth-child(odd) { grid-column: auto; }
+	.jadlospis .jadlospis__dzien:nth-child(n) { grid-column: auto; }
 }
 
 /* Kolor dnia z pary tlo/tekst grupy - kontrast policzony w sekcji 1,
    od 4.78 (Wiewiorki) do 5.83 (Zajaczki). */
-.jadlospis__dzien--zabki     { --dzien-tlo: var(--zabki-tlo);     --dzien-tekst: var(--zabki-tekst); }
-.jadlospis__dzien--zajaczki  { --dzien-tlo: var(--zajaczki-tlo);  --dzien-tekst: var(--zajaczki-tekst); }
-.jadlospis__dzien--kotki     { --dzien-tlo: var(--kotki-tlo);     --dzien-tekst: var(--kotki-tekst); }
-.jadlospis__dzien--misie     { --dzien-tlo: var(--misie-tlo);     --dzien-tekst: var(--misie-tekst); }
-.jadlospis__dzien--wiewiorki { --dzien-tlo: var(--wiewiorki-tlo); --dzien-tekst: var(--wiewiorki-tekst); }
+.jadlospis__dzien--zabki     { --dzien-tlo: var(--zabki-tlo);     --dzien-tekst: var(--zabki-tekst);     --dzien-kolor: var(--wp--preset--color--zabki); }
+.jadlospis__dzien--zajaczki  { --dzien-tlo: var(--zajaczki-tlo);  --dzien-tekst: var(--zajaczki-tekst);  --dzien-kolor: var(--wp--preset--color--zajaczki); }
+.jadlospis__dzien--kotki     { --dzien-tlo: var(--kotki-tlo);     --dzien-tekst: var(--kotki-tekst);     --dzien-kolor: var(--wp--preset--color--kotki); }
+.jadlospis__dzien--misie     { --dzien-tlo: var(--misie-tlo);     --dzien-tekst: var(--misie-tekst);     --dzien-kolor: var(--wp--preset--color--misie); }
+.jadlospis__dzien--wiewiorki { --dzien-tlo: var(--wiewiorki-tlo); --dzien-tekst: var(--wiewiorki-tekst); --dzien-kolor: var(--wp--preset--color--wiewiorki); }
 
+/* Karta zajmuje piec wierszy siatki listy i dzieli je z sasiadami
+   (`subgrid`): naglowek, trzy posilki, fala. Dolny margines to odstep
+   do nastepnego rzedu kart - patrz `.jadlospis__dni`. */
 .jadlospis .jadlospis__dzien {
-	display: flex;
-	flex-direction: column;
-	margin: 0;
+	display: grid;
+	grid-row: span 5;
+	grid-template-rows: subgrid;
+	margin: 0 0 var(--odstep);
 	background: var(--wp--preset--color--surface);
 	border: 1px solid var(--wp--preset--color--border);
 	border-radius: var(--radius-lg);
@@ -2837,6 +2864,8 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 }
 
 .jadlospis .jadlospis__naglowek {
+	position: relative;
+	grid-row: 1;
 	padding: 1rem 1.25rem .9rem;
 	background: var(--dzien-tlo);
 	color: var(--dzien-tekst);
@@ -2858,10 +2887,18 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 /* Plakietka "Dzis". W znacznikach stoi z atrybutem `hidden` - odslania
    ja `widok.js`. Jawna regula `[hidden]`, bo `display` ponizej nadpisalby
    domyslne ukrycie przegladarki i plakietka wisialaby na kazdej karcie.
+   Pozycja bezwzgledna po prawej stronie naglowka: nie podnosi go, wiec
+   naglowki wszystkich kart maja te sama wysokosc. Prawy odstep naglowka
+   rezerwuje jej miejsce, zeby nazwa dnia na nia nie weszla.
    Biel na granacie: 9.24. */
+.jadlospis .jadlospis__dzien--dzis .jadlospis__naglowek { padding-right: 5.5rem; }
 .jadlospis .jadlospis__dzis {
+	position: absolute;
+	top: 50%;
+	right: 1rem;
+	transform: translateY(-50%);
 	display: inline-block;
-	margin: .5rem 0 0;
+	margin: 0;
 	padding: .1rem .65rem;
 	font-size: var(--wp--preset--font-size--small);
 	font-weight: 700;
@@ -2872,14 +2909,19 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 }
 .jadlospis .jadlospis__dzis[hidden] { display: none; }
 
-/* Kolumna flex - "Dzien wolny" staje na srodku wolnego miejsca karty,
-   a karty w rzedzie i tak maja rowna wysokosc z siatki. */
+/* Tresc karty to trzy wiersze siatki karty - kazdy posilek ma swoj
+   wiersz na stale, wiec brak obiadu nie przesuwa podwieczorku w cudzy
+   wiersz. W edytorze miedzy posilkami stoi jeszcze przelacznik dnia
+   wolnego, wiec tam tresc wraca do kolumny flex (`assets/css/editor.css`). */
 .jadlospis .jadlospis__tresc {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	padding: 0 1.25rem 1rem;
+	display: grid;
+	grid-row: 2 / span 3;
+	grid-template-rows: subgrid;
+	padding-inline: 1.25rem;
 }
+.jadlospis .jadlospis__posilek--sniadanie    { grid-row: 1; }
+.jadlospis .jadlospis__posilek--obiad        { grid-row: 2; }
+.jadlospis .jadlospis__posilek--podwieczorek { grid-row: 3; }
 
 .jadlospis .jadlospis__posilek { padding-block: 1rem; }
 .jadlospis .jadlospis__posilek + .jadlospis__posilek {
@@ -2900,7 +2942,7 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 	gap: .45rem;
 	margin: 0 0 .35rem;
 	font-size: var(--wp--preset--font-size--small);
-	font-weight: 600;
+	font-weight: 700;
 	line-height: 1.3;
 	letter-spacing: .04em;
 	text-transform: uppercase;
@@ -2950,12 +2992,14 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 	mask-image: url("assets/img/posilek-podwieczorek.svg");
 }
 
-/* Dzien wolny i dzien bez wpisanych posilkow: napis na srodku wolnego
-   miejsca karty. `--ink-soft` na bieli: 6.80. Pod "Dzien wolny" wejdzie
-   pozniej obrazek z podpisem. */
+/* Dzien wolny i dzien bez wpisanych posilkow: napis na srodku wszystkich
+   trzech wierszy posilkow. `--ink-soft` na bieli: 6.80. Pod "Dzien wolny"
+   wejdzie pozniej obrazek z podpisem. */
 .jadlospis .jadlospis__wolne,
 .jadlospis .jadlospis__pusty {
-	margin: auto 0;
+	grid-row: 1 / -1;
+	align-self: center;
+	margin: 0;
 	padding-block: 2rem;
 	text-align: center;
 	color: var(--wp--preset--color--ink-soft);
@@ -2963,4 +3007,19 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 .jadlospis .jadlospis__wolne {
 	font-size: var(--wp--preset--font-size--large);
 	font-weight: 700;
+}
+
+/* Fala w kolorze grupy dnia zamyka karte u dolu - ta sama co na kartach
+   wpisow (sekcja 15, `--karta-fala`). Pseudoelement jest elementem siatki
+   karty, w piatym wierszu: miejsce na fale ma kazda karta, takze bez
+   podwieczorku, wiec grzbiet nigdy nie wchodzi na tekst. */
+.jadlospis .jadlospis__dzien::after {
+	content: "";
+	grid-row: 5;
+	height: 34px;
+	background: var(--dzien-kolor);
+	transform: scaleY(-1);
+	pointer-events: none;
+	-webkit-mask: var(--karta-fala) no-repeat top / 100% 100%;
+	mask: var(--karta-fala) no-repeat top / 100% 100%;
 }

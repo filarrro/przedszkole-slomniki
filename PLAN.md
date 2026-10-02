@@ -2046,6 +2046,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-10-02 | „Dziś” liczone w przeglądarce, plakietka w znacznikach z `hidden` | strona może wyjść z cache; skrypt nie potrzebuje `wp-i18n` na froncie. Przewija tylko w jednej kolumnie, przy zwykłym wejściu i gdy karta jest poza pierwszym ekranem |
 | 2026-10-02 | Nazwy dni, posiłków i miesiące w dopełniaczu podawane edytorowi z PHP | `@wordpress/date` zna tylko mianownik; jedno źródło zamiast kopii w JS. W JS zostaje reguła zakresu dat, a zgodność z PHP pilnują `tools/test_jadlospis.php` i `tools/test_jadlospis_edytor.js` |
 | 2026-10-02 | Notka o alergenach jako zwykły akapit pod blokiem | edytowalna przez intendenta bez zmian w kodzie; znaczenie pogrubienia podane tekstem (WCAG 1.3.1) |
+| 2026-10-02 | Karty jadłospisu 300–370px, wiersze wyrównane przez `subgrid` | 1 karta, od 660px okna 2, od 1000px 3, od 1550px 5 (~287px, świadomy wyjątek od minimum); niepełny rząd na środku dzięki połówkowym ścieżkom. Karta zajmuje pięć wierszy siatki listy (nagłówek, trzy posiłki, fala), więc posiłki w rzędzie mają wysokość najwyższego sąsiada. W edytorze treść karty zostaje kolumną flex — przełącznik dnia wolnego byłby czwartym elementem na trzy wiersze |
 
 ---
 

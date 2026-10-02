@@ -30,9 +30,12 @@
 	 * - karta zaczyna sie ponizej pierwszego ekranu (w poniedzialek nic sie
 	 *   nie dzieje, tytul zostaje widoczny).
 	 *
-	 * Skok natychmiastowy: `html` ma `scroll-behavior: smooth`, a `auto`
-	 * poszloby za nim. Miejsce pod przypietym naglowkiem zostawia
-	 * `scroll-padding-top` z sekcji 2 `style.css`.
+	 * Przewiniecie plynne, a przy `prefers-reduced-motion: reduce` skok.
+	 * Zachowanie podane jawnie, nie `auto`: `auto` szloby za
+	 * `scroll-behavior` z `html`, ktore sekcja 7 `style.css` przestawia
+	 * przy ograniczonym ruchu - tu wynik nie zalezy od kolejnosci regul.
+	 * Miejsce pod przypietym naglowkiem zostawia `scroll-padding-top`
+	 * z sekcji 2 `style.css`.
 	 */
 	function przewin( karta ) {
 		var nawigacja = window.performance && performance.getEntriesByType
@@ -52,7 +55,9 @@
 			return;
 		}
 
-		karta.scrollIntoView( { block: 'start', behavior: 'instant' } );
+		var bezRuchu = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+		karta.scrollIntoView( { block: 'start', behavior: bezRuchu ? 'instant' : 'smooth' } );
 	}
 
 	var karta = document.querySelector( '.jadlospis__dzien[data-data="' + dzis() + '"]' );
