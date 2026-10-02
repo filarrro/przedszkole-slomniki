@@ -123,7 +123,7 @@ $sprawdz( 'bez daty: bez aria-labelledby', false === strpos( $bez_daty, 'aria-la
 $sprawdz( 'bez daty: bez data-data', false === strpos( $bez_daty, 'data-data' ) );
 $sprawdz( 'bez daty: bez plakietek', false === strpos( $bez_daty, 'jadlospis__dzis' ) );
 
-// --- Skrypty --- (Zadania 5 i 6 dopisują tu swoje sprawdzenia)
+// --- Skrypty ---
 
 $widok = generate_block_asset_handle( 'przedszkole/jadlospis', 'viewScript' );
 $sprawdz( 'skrypt widoku zarejestrowany', wp_script_is( $widok, 'registered' ) );

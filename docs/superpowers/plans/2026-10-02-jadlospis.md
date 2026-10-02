@@ -259,7 +259,7 @@ $sprawdz( 'bez daty: bez aria-labelledby', false === strpos( $bez_daty, 'aria-la
 $sprawdz( 'bez daty: bez data-data', false === strpos( $bez_daty, 'data-data' ) );
 $sprawdz( 'bez daty: bez plakietek', false === strpos( $bez_daty, 'jadlospis__dzis' ) );
 
-// --- Skrypty --- (Zadania 5 i 6 dopisują tu swoje sprawdzenia)
+// --- Skrypty ---
 
 if ( $bledy ) {
 	WP_CLI::error( $bledy . ' sprawdzeń nie przeszło.' );
@@ -1452,6 +1452,7 @@ var path = require( 'path' );
 
 var zarejestrowany = null;
 var efekty = [];
+var oznaczenia = 0;
 var bledy = 0;
 
 function el( typ, wlasciwosci ) {
@@ -1490,11 +1491,21 @@ global.window = {
 				return tekst;
 			},
 		},
+		data: {
+			useDispatch: function () {
+				return {
+					__unstableMarkNextChangeAsNotPersistent: function () {
+						oznaczenia++;
+					},
+				};
+			},
+		},
 		blockEditor: {
 			useBlockProps: function ( p ) {
 				return p;
 			},
 			RichText: 'RichText',
+			store: 'core/block-editor',
 		},
 		components: {
 			Button: 'Button',
@@ -1597,6 +1608,7 @@ efekty.forEach( function ( f ) {
 	f();
 } );
 sprawdz( 'blok z data nic nie zapisuje przy montowaniu', 0 === w.zapisy.length );
+sprawdz( 'blok z data nic nie oznacza jako nietrwale', 0 === oznaczenia );
 
 [
 	[ '2025-09-29', '29 września – 3 października 2025' ],
@@ -1632,9 +1644,11 @@ sprawdz( 'zapis pola nie rusza innych dni', true === w.ostatni().dni[ 1 ].wolny 
 
 w = renderuj( { poczatek: '', dni: pusteDni() } );
 sprawdz( 'bez daty bez naglowka', 0 === wszystkie( w.drzewo, zKlasa( 'jadlospis__zakres' ) ).length );
+oznaczenia = 0;
 efekty.forEach( function ( f ) {
 	f();
 } );
+sprawdz( 'domyslna data poprzedzona oznaczeniem nietrwalym', 1 === oznaczenia && 1 === w.zapisy.length );
 
 var domyslny = w.zapisy[ 0 ] && w.zapisy[ 0 ].poczatek;
 var data = domyslny ? new Date( domyslny + 'T00:00:00' ) : null;
@@ -1655,6 +1669,7 @@ var kalendarz = rozwijane.props.renderContent( {
 } );
 
 sprawdz( 'przycisk "Zmień tydzień"', 'Button' === przycisk.typ && 'Zmień tydzień' === tekst( przycisk ) );
+sprawdz( 'ikona kalendarza to svg, nie dashicon', !! przycisk.props.icon && 'svg' === przycisk.props.icon.typ );
 sprawdz( 'kalendarz pokazuje zapisany tydzien', '2026-06-22T00:00:00' === kalendarz.props.currentDate );
 sprawdz( 'tydzien od poniedzialku', 1 === kalendarz.props.startOfWeek );
 sprawdz( 'poniedzialek klikalny', false === kalendarz.props.isInvalidDate( new Date( 2026, 5, 22 ) ) );
@@ -1703,6 +1718,7 @@ return array(
 		'wp-blocks',
 		'wp-block-editor',
 		'wp-components',
+		'wp-data',
 		'wp-element',
 		'wp-i18n',
 	),
@@ -1744,6 +1760,15 @@ return array(
 	var DatePicker = wp.components.DatePicker;
 	var Dropdown = wp.components.Dropdown;
 	var ToggleControl = wp.components.ToggleControl;
+
+	// Ikona jako SVG, nie nazwa dashicona: edytor stoi w iframe, do ktorego
+	// rdzen nie laduje arkusza dashicons - przycisk zostalby bez ikony.
+	// Ksztalt z ikony kalendarza rdzenia.
+	var IKONA_KALENDARZA = el(
+		'svg',
+		{ xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', width: 24, height: 24, 'aria-hidden': 'true', focusable: 'false' },
+		el( 'path', { d: 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm.5 16c0 .3-.2.5-.5.5H5c-.3 0-.5-.2-.5-.5V7h15v12zM9 10H7v2h2v-2zm0 4H7v2h2v-2zm4-4h-2v2h2v-2zm4 0h-2v2h2v-2zm-4 4h-2v2h2v-2zm4 0h-2v2h2v-2z' } )
+	);
 
 	var PUSTY_DZIEN = { wolny: false, sniadanie: '', obiad: '', podwieczorek: '' };
 
@@ -1841,7 +1866,7 @@ return array(
 					Button,
 					{
 						variant: 'secondary',
-						icon: 'calendar-alt',
+						icon: IKONA_KALENDARZA,
 						onClick: przelacznik.onToggle,
 						'aria-expanded': przelacznik.isOpen,
 					},
@@ -1930,10 +1955,17 @@ return array(
 			// kontener ukladu rdzenia scisnalby blok do kolumny tresci.
 			var blockProps = useBlockProps( { className: 'jadlospis alignfull' } );
 
+			// Hook zawsze wywolany, przed useEffect - stala kolejnosc hookow.
+			var oznaczNietrwala = wp.data.useDispatch( wp.blockEditor.store ).__unstableMarkNextChangeAsNotPersistent;
+
 			// Swiezo wstawiony blok od razu dostaje poniedzialek - stanu
 			// "bez daty" intendent w praktyce nie zobaczy.
 			useEffect( function () {
 				if ( ! a.poczatek ) {
+					// Wstawienie bloku i domyslna data to jeden krok cofania:
+					// bez tego Ctrl+Z po wstawieniu czyscilby sama date,
+					// a efekt (puste zaleznosci) juz by jej nie przywrocil.
+					oznaczNietrwala();
 					props.setAttributes( { poczatek: domyslnyPoniedzialek() } );
 				}
 			}, [] );
@@ -2049,9 +2081,12 @@ add_action( 'enqueue_block_editor_assets', 'przedszkole_jadlospis_dane_edytora' 
 ```css
 /* Jadlospis. Na froncie blok wychodzi poza kolumne tresci regula pod
    `.entry__content` - w edytorze robi to klasa `alignfull`, ktora uklad
-   rdzenia rozciaga na cale plotno, az do krawedzi. Tu tylko odsuniecie
-   kart od tych krawedzi. */
-.editor-styles-wrapper .jadlospis { padding-inline: 1.25rem; }
+   rdzenia rozciaga na cale plotno, az do krawedzi. Tu odsuniecie kart od
+   tych krawedzi, a na szerokim plotnie rosnace, zeby karty nie byly szersze
+   niz na froncie (front: min(1400px, 100vw - 2.5rem)). 100% to szerokosc
+   kontenera glownego; blok jest o 2.5rem szerszy przez ujemne marginesy
+   `alignfull`, stad 100% + 2.5rem. */
+.editor-styles-wrapper .jadlospis { padding-inline: max(1.25rem, calc((100% + 2.5rem - 1400px) / 2)); }
 
 /* Pasek nad kartami: przycisk kalendarza i zakres tygodnia w jednym rzedzie.
    Istnieje wylacznie w edytorze - na froncie stoi sam naglowek. */

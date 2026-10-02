@@ -18,6 +18,7 @@ var path = require( 'path' );
 
 var zarejestrowany = null;
 var efekty = [];
+var oznaczenia = 0;
 var bledy = 0;
 
 function el( typ, wlasciwosci ) {
@@ -56,11 +57,21 @@ global.window = {
 				return tekst;
 			},
 		},
+		data: {
+			useDispatch: function () {
+				return {
+					__unstableMarkNextChangeAsNotPersistent: function () {
+						oznaczenia++;
+					},
+				};
+			},
+		},
 		blockEditor: {
 			useBlockProps: function ( p ) {
 				return p;
 			},
 			RichText: 'RichText',
+			store: 'core/block-editor',
 		},
 		components: {
 			Button: 'Button',
@@ -163,6 +174,7 @@ efekty.forEach( function ( f ) {
 	f();
 } );
 sprawdz( 'blok z data nic nie zapisuje przy montowaniu', 0 === w.zapisy.length );
+sprawdz( 'blok z data nic nie oznacza jako nietrwale', 0 === oznaczenia );
 
 [
 	[ '2025-09-29', '29 września – 3 października 2025' ],
@@ -198,9 +210,11 @@ sprawdz( 'zapis pola nie rusza innych dni', true === w.ostatni().dni[ 1 ].wolny 
 
 w = renderuj( { poczatek: '', dni: pusteDni() } );
 sprawdz( 'bez daty bez naglowka', 0 === wszystkie( w.drzewo, zKlasa( 'jadlospis__zakres' ) ).length );
+oznaczenia = 0;
 efekty.forEach( function ( f ) {
 	f();
 } );
+sprawdz( 'domyslna data poprzedzona oznaczeniem nietrwalym', 1 === oznaczenia && 1 === w.zapisy.length );
 
 var domyslny = w.zapisy[ 0 ] && w.zapisy[ 0 ].poczatek;
 var data = domyslny ? new Date( domyslny + 'T00:00:00' ) : null;
@@ -221,6 +235,7 @@ var kalendarz = rozwijane.props.renderContent( {
 } );
 
 sprawdz( 'przycisk "Zmień tydzień"', 'Button' === przycisk.typ && 'Zmień tydzień' === tekst( przycisk ) );
+sprawdz( 'ikona kalendarza to svg, nie dashicon', !! przycisk.props.icon && 'svg' === przycisk.props.icon.typ );
 sprawdz( 'kalendarz pokazuje zapisany tydzien', '2026-06-22T00:00:00' === kalendarz.props.currentDate );
 sprawdz( 'tydzien od poniedzialku', 1 === kalendarz.props.startOfWeek );
 sprawdz( 'poniedzialek klikalny', false === kalendarz.props.isInvalidDate( new Date( 2026, 5, 22 ) ) );

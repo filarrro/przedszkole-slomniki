@@ -17,6 +17,7 @@ return array(
 		'wp-blocks',
 		'wp-block-editor',
 		'wp-components',
+		'wp-data',
 		'wp-element',
 		'wp-i18n',
 	),
