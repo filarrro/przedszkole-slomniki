@@ -157,6 +157,22 @@ function przedszkole_jadlospis_dzien( $surowy ) {
 }
 
 /**
+ * Ilustracja dnia wolnego — adres i wymiary pliku.
+ *
+ * Jedno miejsce dla frontu i edytora. Wymiary w znacznikach, żeby
+ * przeglądarka zarezerwowała miejsce przed wczytaniem (bez skoku układu).
+ *
+ * @return array{url: string, szerokosc: int, wysokosc: int}
+ */
+function przedszkole_jadlospis_obrazek_wolne() {
+	return array(
+		'url'       => get_theme_file_uri( 'assets/img/dzien-wolny.webp' ),
+		'szerokosc' => 480,
+		'wysokosc'  => 642,
+	);
+}
+
+/**
  * Posiłki, które coś zawierają — puste sekcje karta pomija.
  *
  * „Puste” liczymy po tekście, nie po HTML-u: pole `RichText` po skasowaniu
@@ -203,6 +219,7 @@ function przedszkole_jadlospis_dane_edytora() {
 		'dni'      => przedszkole_jadlospis_dni(),
 		'posilki'  => $posilki,
 		'miesiace' => array_values( $wp_locale->month_genitive ),
+		'wolne'    => przedszkole_jadlospis_obrazek_wolne(),
 	);
 
 	wp_add_inline_script(

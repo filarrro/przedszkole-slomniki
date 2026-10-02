@@ -22,6 +22,7 @@ $poczatek   = przedszkole_jadlospis_poczatek( $attributes['poczatek'] ?? '' );
 $dni        = is_array( $attributes['dni'] ?? null ) ? $attributes['dni'] : array();
 $posilki    = przedszkole_jadlospis_posilki();
 $id_zakresu = wp_unique_id( 'jadlospis-zakres-' );
+$obrazek    = przedszkole_jadlospis_obrazek_wolne();
 
 $dodatkowe = array( 'class' => 'jadlospis alignfull' );
 
@@ -61,7 +62,16 @@ $atrybuty = get_block_wrapper_attributes( $dodatkowe );
 				</header>
 				<div class="jadlospis__tresc">
 					<?php if ( $dzien['wolny'] ) : ?>
-						<p class="jadlospis__wolne"><?php esc_html_e( 'Dzień wolny', 'przedszkole' ); ?></p>
+						<?php
+						/*
+						 * Pusty `alt`: ilustracja stoi tuż nad napisem „Dzień wolny”
+						 * i nie niesie nic ponad niego.
+						 */
+						?>
+						<div class="jadlospis__wolne">
+							<img class="jadlospis__wolne-obrazek" src="<?php echo esc_url( $obrazek['url'] ); ?>" alt="" width="<?php echo (int) $obrazek['szerokosc']; ?>" height="<?php echo (int) $obrazek['wysokosc']; ?>" loading="lazy" decoding="async" />
+							<p class="jadlospis__wolne-napis"><?php esc_html_e( 'Dzień wolny', 'przedszkole' ); ?></p>
+						</div>
 					<?php elseif ( ! $wpisane ) : ?>
 						<p class="jadlospis__pusty"><?php esc_html_e( 'Jadłospis w przygotowaniu', 'przedszkole' ); ?></p>
 					<?php else : ?>

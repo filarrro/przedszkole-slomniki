@@ -215,7 +215,18 @@
 					__nextHasNoMarginBottom: true,
 				} ),
 				biezacy.wolny
-					? el( 'p', { className: 'jadlospis__wolne' }, __( 'Dzień wolny', 'przedszkole' ) )
+					? el(
+						'div',
+						{ className: 'jadlospis__wolne' },
+						el( 'img', {
+							className: 'jadlospis__wolne-obrazek',
+							src: dane.wolne.url,
+							alt: '',
+							width: dane.wolne.szerokosc,
+							height: dane.wolne.wysokosc,
+						} ),
+						el( 'p', { className: 'jadlospis__wolne-napis' }, __( 'Dzień wolny', 'przedszkole' ) )
+					)
 					: dane.posilki.map( function ( opisPosilku ) {
 						return posilek( props, indeks, opisPosilku, biezacy[ opisPosilku.klucz ] );
 					} )

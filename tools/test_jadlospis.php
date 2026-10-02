@@ -112,6 +112,8 @@ $sprawdz( 'pogrubienie zostaje', false !== strpos( $html, '<strong>mleko</strong
 $sprawdz( 'skrypt wycięty', false === strpos( $html, '<script' ) );
 $sprawdz( 'pusty obiad bez sekcji', false === strpos( $html, 'jadlospis__posilek--obiad' ) );
 $sprawdz( 'dzień wolny', 1 === substr_count( $html, 'class="jadlospis__wolne"' ) );
+$sprawdz( 'ilustracja dnia wolnego z pustym alt i wymiarami', 1 === preg_match( '#<img class="jadlospis__wolne-obrazek" src="[^"]*/assets/img/dzien-wolny\.webp" alt="" width="480" height="642"#', $html ) );
+$sprawdz( 'plik ilustracji istnieje', file_exists( get_theme_file_path( 'assets/img/dzien-wolny.webp' ) ) );
 $sprawdz( 'treść dnia wolnego ukryta', false === strpos( $html, 'UKRYTY OBIAD' ) );
 $sprawdz( 'trzy dni w przygotowaniu', 3 === substr_count( $html, 'class="jadlospis__pusty"' ) );
 $sprawdz( 'plakietki „Dziś” ukryte', 5 === substr_count( $html, 'class="jadlospis__dzis" hidden' ) );

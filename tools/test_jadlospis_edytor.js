@@ -43,6 +43,7 @@ global.window = {
 			{ klucz: 'obiad', etykieta: 'Obiad' },
 			{ klucz: 'podwieczorek', etykieta: 'Podwieczorek' },
 		],
+		wolne: { url: 'https://example.test/dzien-wolny.webp', szerokosc: 480, wysokosc: 642 },
 		miesiace: [ 'stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia' ],
 	},
 	wp: {
@@ -211,6 +212,8 @@ w = renderuj( { poczatek: '2026-06-22', dni: dni } );
 
 sprawdz( 'dzien wolny chowa pola', 12 === wszystkie( w.drzewo, typu( 'RichText' ) ).length );
 sprawdz( 'dzien wolny pokazuje napis', 1 === wszystkie( w.drzewo, zKlasa( 'jadlospis__wolne' ) ).length );
+var obrazki = wszystkie( w.drzewo, zKlasa( 'jadlospis__wolne-obrazek' ) );
+sprawdz( 'dzien wolny ma ilustracje z danych PHP', 1 === obrazki.length && 'https://example.test/dzien-wolny.webp' === obrazki[ 0 ].props.src && '' === obrazki[ 0 ].props.alt );
 
 wszystkie( w.drzewo, typu( 'ToggleControl' ) )[ 1 ].props.onChange( false );
 sprawdz( 'odznaczenie zapisuje piec dni', 5 === w.ostatni().dni.length );

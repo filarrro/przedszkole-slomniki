@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 1.1.1
+Version: 1.1.2
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -2721,6 +2721,9 @@ html[data-kontrast="wysoki"] .entry__content :is( img, video ) {
 	border: 1px solid var(--wp--preset--color--border);
 }
 
+/* `multiply` na czarnym tle zaczernilby caly rysunek jadlospisu. */
+html[data-kontrast="wysoki"] .jadlospis__wolne-obrazek { mix-blend-mode: normal; }
+
 /* Stopka zostaje czarna zamiast zoltej - pelna szerokosc zolci meczy wzrok,
    a to sam dol strony, nie element do klikniecia. */
 html[data-kontrast="wysoki"] .site-footer {
@@ -2956,6 +2959,8 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 .jadlospis .jadlospis__etykieta::before {
 	content: "";
 	flex: none;
+	position: relative;
+	top: -3px;
 	width: 1.4em;
 	height: 1.4em;
 	background-color: var(--posilek-ikona);
@@ -2993,8 +2998,7 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 }
 
 /* Dzien wolny i dzien bez wpisanych posilkow: napis na srodku wszystkich
-   trzech wierszy posilkow. `--ink-soft` na bieli: 6.80. Pod "Dzien wolny"
-   wejdzie pozniej obrazek z podpisem. */
+   trzech wierszy posilkow. `--ink-soft` na bieli: 6.80. */
 .jadlospis .jadlospis__wolne,
 .jadlospis .jadlospis__pusty {
 	grid-row: 1 / -1;
@@ -3007,6 +3011,19 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 .jadlospis .jadlospis__wolne {
 	font-size: var(--wp--preset--font-size--large);
 	font-weight: 700;
+}
+.jadlospis .jadlospis__wolne-napis { margin: 0; }
+
+/* Ilustracja nad napisem "Dzien wolny". Plik ma 480px szerokosci - ostry
+   przy 2x dla 15rem. `multiply` zlewa papierowe tlo rysunku z biala karta,
+   zeby nie odcinalo sie prostokatem. */
+.jadlospis .jadlospis__wolne-obrazek {
+	display: block;
+	width: 100%;
+	max-width: 15rem;
+	height: auto;
+	margin: 0 auto 1rem;
+	mix-blend-mode: multiply;
 }
 
 /* Fala w kolorze grupy dnia zamyka karte u dolu - ta sama co na kartach
