@@ -2721,7 +2721,7 @@ html[data-kontrast="wysoki"] .entry__content :is( img, video ) {
 	border: 1px solid var(--wp--preset--color--border);
 }
 
-/* `multiply` na czarnym tle zaczernilby caly rysunek jadlospisu. */
+/* Mieszanie z czarnym tlem zaczernialoby rysunek jadlospisu. */
 html[data-kontrast="wysoki"] .jadlospis__wolne-obrazek { mix-blend-mode: normal; }
 
 /* Stopka zostaje czarna zamiast zoltej - pelna szerokosc zolci meczy wzrok,
@@ -3015,15 +3015,15 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 .jadlospis .jadlospis__wolne-napis { margin: 0; }
 
 /* Ilustracja nad napisem "Dzien wolny". Plik ma 480px szerokosci - ostry
-   przy 2x dla 15rem. `multiply` zlewa papierowe tlo rysunku z biala karta,
-   zeby nie odcinalo sie prostokatem. */
+   przy 2x dla 15rem. `hard-light` zlewa papierowe tlo rysunku z biala
+   karta, zeby nie odcinalo sie prostokatem. */
 .jadlospis .jadlospis__wolne-obrazek {
 	display: block;
 	width: 100%;
 	max-width: 15rem;
 	height: auto;
 	margin: 0 auto 1rem;
-	mix-blend-mode: multiply;
+	mix-blend-mode: hard-light;
 }
 
 /* Fala w kolorze grupy dnia zamyka karte u dolu - ta sama co na kartach
