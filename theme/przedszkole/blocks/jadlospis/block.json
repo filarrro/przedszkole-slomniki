@@ -1,0 +1,43 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "przedszkole/jadlospis",
+	"title": "Jadłospis",
+	"category": "przedszkole",
+	"icon": "food",
+	"description": "Jadłospis na tydzień: pięć kart od poniedziałku do piątku, z dniem wolnym i wyróżnieniem dzisiejszego dnia.",
+	"keywords": [ "jadłospis", "menu", "posiłki", "obiad" ],
+	"textdomain": "przedszkole",
+	"attributes": {
+		"poczatek": { "type": "string", "default": "" },
+		"dni": {
+			"type": "array",
+			"default": [
+				{ "wolny": false, "sniadanie": "", "obiad": "", "podwieczorek": "" },
+				{ "wolny": false, "sniadanie": "", "obiad": "", "podwieczorek": "" },
+				{ "wolny": false, "sniadanie": "", "obiad": "", "podwieczorek": "" },
+				{ "wolny": false, "sniadanie": "", "obiad": "", "podwieczorek": "" },
+				{ "wolny": false, "sniadanie": "", "obiad": "", "podwieczorek": "" }
+			]
+		}
+	},
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"reusable": false
+	},
+	"example": {
+		"attributes": {
+			"poczatek": "2026-06-22",
+			"dni": [
+				{
+					"wolny": false,
+					"sniadanie": "Pieczywo pszenno-żytnie z masłem /<strong>mąka pszenna, masło</strong>/, herbata z <strong>cytryną</strong>",
+					"obiad": "Zupa brokułowa z ryżem /<strong>śmietana</strong>/, kompot wieloowocowy",
+					"podwieczorek": "Jogurt do picia, wafle /<strong>mąka pszenna, mleko</strong>/"
+				}
+			]
+		}
+	},
+	"render": "file:./render.php"
+}

@@ -18,6 +18,16 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Rejestracja bloku z katalogu `blocks/jadlospis` (metadane w `block.json`).
+ *
+ * Kategoria „Przedszkole” jest już zarejestrowana w `inc/blok-osoba.php`.
+ */
+function przedszkole_rejestruj_jadlospis() {
+	register_block_type( get_theme_file_path( 'blocks/jadlospis' ) );
+}
+add_action( 'init', 'przedszkole_rejestruj_jadlospis' );
+
+/**
  * Dni tygodnia z kolorami grup.
  *
  * Kolor dnia to para `--{grupa}-tlo` / `--{grupa}-tekst` ze `style.css` —
