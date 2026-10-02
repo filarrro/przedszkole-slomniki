@@ -115,9 +115,9 @@ i pozycja menu pod „Dla rodziców", za „Kącikiem logopedy". Pozycja menu
 **przed** publikacją dałaby odwiedzającemu 404.
 
 **Jadłospis — przepisany na blok 2026-10-02.** Strona pokazuje tydzień
-22–26.06.2026, przeniesiony z dawnej tabeli jako przykład wyglądu. Stary
-jadłospis nie znika sam: przed startem albo pierwszego dnia intendent wpisuje
-bieżący tydzień (kalendarz w bloku, potem pola posiłków).
+22–26.06.2026, przeniesiony z dawnej tabeli jako przykład wyglądu. Przykładowy
+tydzień zostaje na stronie, dopóki intendent nie wpisze bieżącego: przed startem
+albo pierwszego dnia (kalendarz w bloku, potem pola posiłków).
 
 **Reszta długu (nie blokuje startu, do ustalenia z przedszkolem):**
 - 7 wpisów, które na starej stronie były zajawką dla PDF-a, i 11 bez dokumentu

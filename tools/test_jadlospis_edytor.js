@@ -184,6 +184,21 @@ sprawdz( 'blok z data nic nie oznacza jako nietrwale', 0 === oznaczenia );
 	sprawdz( 'zakres od ' + przypadek[ 0 ], undefined !== naglowek && przypadek[ 1 ] === tekst( naglowek ) );
 } );
 
+// Data, ktorej front by nie przyjal (PHP: przedszkole_jadlospis_poczatek):
+// nie poniedzialek albo przepelniona. Niepusty atrybut zostaje nietkniety.
+[
+	[ '2026-06-24', 'dzien inny niz poniedzialek' ],
+	[ '2026-02-31', 'przepelniona data' ],
+].forEach( function ( przypadek ) {
+	var odrzucony = renderuj( { poczatek: przypadek[ 0 ], dni: pusteDni() } );
+
+	efekty.forEach( function ( f ) {
+		f();
+	} );
+	sprawdz( przypadek[ 1 ] + ' bez naglowka i dat', 0 === wszystkie( odrzucony.drzewo, zKlasa( 'jadlospis__zakres' ) ).length && 0 === wszystkie( odrzucony.drzewo, zKlasa( 'jadlospis__data' ) ).length );
+	sprawdz( przypadek[ 1 ] + ' - atrybut nienadpisany', 0 === odrzucony.zapisy.length );
+} );
+
 w = renderuj( { poczatek: '2026-06-22', dni: [ { sniadanie: 'x' } ] } );
 sprawdz( 'niepelny atrybut dni daje piec kart', 5 === wszystkie( w.drzewo, zKlasa( 'jadlospis__dzien' ) ).length );
 

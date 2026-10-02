@@ -48,10 +48,18 @@
 		return ( liczba < 10 ? '0' : '' ) + liczba;
 	}
 
+	// Ta sama regula co w PHP (przedszkole_jadlospis_poczatek): inaczej
+	// edytor pokazalby daty, ktorych front nie wyswietli.
 	function zTekstu( tekst ) {
 		var czesci = /^(\d{4})-(\d{2})-(\d{2})$/.exec( tekst || '' );
 
-		return czesci ? new Date( +czesci[ 1 ], czesci[ 2 ] - 1, +czesci[ 3 ] ) : null;
+		if ( ! czesci ) {
+			return null;
+		}
+
+		var data = new Date( +czesci[ 1 ], czesci[ 2 ] - 1, +czesci[ 3 ] );
+
+		return naTekst( data ) === tekst && 1 === data.getDay() ? data : null;
 	}
 
 	function naTekst( data ) {

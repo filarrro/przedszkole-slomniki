@@ -197,6 +197,7 @@ $sprawdz( 'przepełniona data odrzucona', null === przedszkole_jadlospis_poczate
 $sprawdz( 'śmieci odrzucone', null === przedszkole_jadlospis_poczatek( 'jutro' ) );
 $sprawdz( 'pusta data odrzucona', null === przedszkole_jadlospis_poczatek( '' ) );
 $sprawdz( 'nie-tekst odrzucony', null === przedszkole_jadlospis_poczatek( array() ) );
+$sprawdz( 'dzień inny niż poniedziałek odrzucony', null === przedszkole_jadlospis_poczatek( '2026-06-24' ) );
 
 // --- Dni i posiłki ---
 
@@ -357,6 +358,9 @@ function przedszkole_jadlospis_posilki() {
  * porównujemy z wejściem — przepełniona data odpada razem ze śmieciami.
  * Strefa czasowa strony, nie serwera: inaczej `wp_date()` przesunęłoby
  * północ na poprzedni dzień.
+ * Dzień inny niż poniedziałek też odpada — karty podpisałyby środę „Poniedziałek”.
+ * Kalendarz w edytorze przepuszcza tylko poniedziałki, ale atrybut można
+ * poprawić ręcznie w edytorze kodu.
  *
  * @param mixed $tekst Data `RRRR-MM-DD`.
  * @return DateTimeImmutable|null
@@ -368,7 +372,7 @@ function przedszkole_jadlospis_poczatek( $tekst ) {
 
 	$data = DateTimeImmutable::createFromFormat( '!Y-m-d', $tekst, wp_timezone() );
 
-	if ( ! $data || $data->format( 'Y-m-d' ) !== $tekst ) {
+	if ( ! $data || $data->format( 'Y-m-d' ) !== $tekst || '1' !== $data->format( 'N' ) ) {
 		return null;
 	}
 
@@ -1618,6 +1622,21 @@ sprawdz( 'blok z data nic nie oznacza jako nietrwale', 0 === oznaczenia );
 	sprawdz( 'zakres od ' + przypadek[ 0 ], undefined !== naglowek && przypadek[ 1 ] === tekst( naglowek ) );
 } );
 
+// Data, ktorej front by nie przyjal (PHP: przedszkole_jadlospis_poczatek):
+// nie poniedzialek albo przepelniona. Niepusty atrybut zostaje nietkniety.
+[
+	[ '2026-06-24', 'dzien inny niz poniedzialek' ],
+	[ '2026-02-31', 'przepelniona data' ],
+].forEach( function ( przypadek ) {
+	var odrzucony = renderuj( { poczatek: przypadek[ 0 ], dni: pusteDni() } );
+
+	efekty.forEach( function ( f ) {
+		f();
+	} );
+	sprawdz( przypadek[ 1 ] + ' bez naglowka i dat', 0 === wszystkie( odrzucony.drzewo, zKlasa( 'jadlospis__zakres' ) ).length && 0 === wszystkie( odrzucony.drzewo, zKlasa( 'jadlospis__data' ) ).length );
+	sprawdz( przypadek[ 1 ] + ' - atrybut nienadpisany', 0 === odrzucony.zapisy.length );
+} );
+
 w = renderuj( { poczatek: '2026-06-22', dni: [ { sniadanie: 'x' } ] } );
 sprawdz( 'niepelny atrybut dni daje piec kart', 5 === wszystkie( w.drzewo, zKlasa( 'jadlospis__dzien' ) ).length );
 
@@ -1779,10 +1798,18 @@ return array(
 		return ( liczba < 10 ? '0' : '' ) + liczba;
 	}
 
+	// Ta sama regula co w PHP (przedszkole_jadlospis_poczatek): inaczej
+	// edytor pokazalby daty, ktorych front nie wyswietli.
 	function zTekstu( tekst ) {
 		var czesci = /^(\d{4})-(\d{2})-(\d{2})$/.exec( tekst || '' );
 
-		return czesci ? new Date( +czesci[ 1 ], czesci[ 2 ] - 1, +czesci[ 3 ] ) : null;
+		if ( ! czesci ) {
+			return null;
+		}
+
+		var data = new Date( +czesci[ 1 ], czesci[ 2 ] - 1, +czesci[ 3 ] );
+
+		return naTekst( data ) === tekst && 1 === data.getDay() ? data : null;
 	}
 
 	function naTekst( data ) {

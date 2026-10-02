@@ -222,11 +222,13 @@ front renderowany przez `render_block()` na sztucznych atrybutach (treści
 strony nie dotyka) i rejestracja skryptów.
 
 ```bash
-ddev exec wp --path=wp eval-file tools/test_jadlospis.php
+ddev exec wp --path=wp eval-file tools/test_jadlospis.php 2>&1 | grep -v '^Deprecated:'
 ```
 
 Wypisuje `OK` / `BŁĄD` przy każdym sprawdzeniu, kończy się kodem 1, jeśli
-coś nie przeszło.
+coś nie przeszło. `grep` odsiewa własne ostrzeżenia `Deprecated:` wp-cli —
+nigdy `2>/dev/null`, bo razem z szumem znikają prawdziwe błędy (pułapka 4
+w CLAUDE.md).
 
 ## `test_jadlospis_edytor.js`
 
