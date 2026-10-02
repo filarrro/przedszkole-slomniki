@@ -40,3 +40,23 @@
 	gap: .25rem;
 	margin-top: .75rem;
 }
+
+/* Jadlospis. Na froncie blok wychodzi poza kolumne tresci regula pod
+   `.entry__content` - w edytorze robi to klasa `alignfull`, ktora uklad
+   rdzenia rozciaga na cale plotno, az do krawedzi. Tu tylko odsuniecie
+   kart od tych krawedzi. */
+.editor-styles-wrapper .jadlospis { padding-inline: 1.25rem; }
+
+/* Pasek nad kartami: przycisk kalendarza i zakres tygodnia w jednym rzedzie.
+   Istnieje wylacznie w edytorze - na froncie stoi sam naglowek. */
+.jadlospis__tydzien {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .75rem 1.25rem;
+	margin-bottom: 1.25rem;
+}
+.editor-styles-wrapper .jadlospis__tydzien .jadlospis__zakres { margin: 0; }
+
+/* Przelacznik dnia wolnego nad polami posilkow. */
+.jadlospis__przelacznik { margin-block: 1rem .25rem; }

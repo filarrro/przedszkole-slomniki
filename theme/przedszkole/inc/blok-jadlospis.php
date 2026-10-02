@@ -178,3 +178,37 @@ function przedszkole_jadlospis_wpisane( array $dzien ) {
 
 	return $wpisane;
 }
+
+/**
+ * Dane dla edytora: dni, posiłki i miesiące w dopełniaczu.
+ *
+ * Pakiet `@wordpress/date` zna tylko mianownik („czerwiec”), więc
+ * „22 czerwca” w podglądzie wymaga odmiany z PHP (`$wp_locale->month_genitive`).
+ * Przy okazji dni i posiłki też idą stąd — nazwy i kolory stoją w jednym
+ * miejscu, a `edytor.js` ich nie powtarza.
+ */
+function przedszkole_jadlospis_dane_edytora() {
+	global $wp_locale;
+
+	$posilki = array();
+
+	foreach ( przedszkole_jadlospis_posilki() as $klucz => $etykieta ) {
+		$posilki[] = array(
+			'klucz'    => $klucz,
+			'etykieta' => $etykieta,
+		);
+	}
+
+	$dane = array(
+		'dni'      => przedszkole_jadlospis_dni(),
+		'posilki'  => $posilki,
+		'miesiace' => array_values( $wp_locale->month_genitive ),
+	);
+
+	wp_add_inline_script(
+		generate_block_asset_handle( 'przedszkole/jadlospis', 'editorScript' ),
+		'window.przedszkoleJadlospis = ' . wp_json_encode( $dane ) . ';',
+		'before'
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'przedszkole_jadlospis_dane_edytora' );

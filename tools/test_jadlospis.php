@@ -131,6 +131,17 @@ $sprawdz( 'skrypt widoku odroczony', 'defer' === wp_scripts()->get_data( $widok,
 $sprawdz( 'skrypt widoku bez zależności', wp_script_is( $widok, 'registered' ) && array() === wp_scripts()->registered[ $widok ]->deps );
 $sprawdz( 'skrypt widoku w wersji motywu', wp_script_is( $widok, 'registered' ) && PRZEDSZKOLE_VERSION === wp_scripts()->registered[ $widok ]->ver );
 
+$edytor = generate_block_asset_handle( 'przedszkole/jadlospis', 'editorScript' );
+$sprawdz( 'skrypt edytora zarejestrowany', wp_script_is( $edytor, 'registered' ) );
+$sprawdz( 'skrypt edytora ma kalendarz (wp-components)', wp_script_is( $edytor, 'registered' ) && in_array( 'wp-components', wp_scripts()->registered[ $edytor ]->deps, true ) );
+
+if ( function_exists( 'przedszkole_jadlospis_dane_edytora' ) ) {
+	przedszkole_jadlospis_dane_edytora();
+}
+$przed = implode( "\n", (array) wp_scripts()->get_data( $edytor, 'before' ) );
+$sprawdz( 'dane edytora wstrzyknięte', false !== strpos( $przed, 'window.przedszkoleJadlospis' ) );
+$sprawdz( 'miesiące w dopełniaczu', false !== strpos( $przed, 'czerwca' ) );
+
 if ( $bledy ) {
 	WP_CLI::error( $bledy . ' sprawdzeń nie przeszło.' );
 }
