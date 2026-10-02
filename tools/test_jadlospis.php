@@ -60,6 +60,7 @@ $sprawdz( 'przepełniona data odrzucona', null === przedszkole_jadlospis_poczate
 $sprawdz( 'śmieci odrzucone', null === przedszkole_jadlospis_poczatek( 'jutro' ) );
 $sprawdz( 'pusta data odrzucona', null === przedszkole_jadlospis_poczatek( '' ) );
 $sprawdz( 'nie-tekst odrzucony', null === przedszkole_jadlospis_poczatek( array() ) );
+$sprawdz( 'dzień inny niż poniedziałek odrzucony', null === przedszkole_jadlospis_poczatek( '2026-06-24' ) );
 
 // --- Dni i posiłki ---
 

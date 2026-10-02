@@ -33,7 +33,7 @@ if ( $poczatek ) {
 
 $atrybuty = get_block_wrapper_attributes( $dodatkowe );
 ?>
-<section <?php echo $atrybuty; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped — get_block_wrapper_attributes escapuje samo. ?>>
+<section <?php echo $atrybuty; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes escapuje samo. ?>>
 	<?php if ( $poczatek ) : ?>
 		<h2 class="jadlospis__zakres" id="<?php echo esc_attr( $id_zakresu ); ?>"><?php echo esc_html( przedszkole_jadlospis_zakres( $poczatek ) ); ?></h2>
 	<?php endif; ?>

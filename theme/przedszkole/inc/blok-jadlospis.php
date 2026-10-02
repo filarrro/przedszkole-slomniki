@@ -86,6 +86,9 @@ function przedszkole_jadlospis_posilki() {
  * porównujemy z wejściem — przepełniona data odpada razem ze śmieciami.
  * Strefa czasowa strony, nie serwera: inaczej `wp_date()` przesunęłoby
  * północ na poprzedni dzień.
+ * Dzień inny niż poniedziałek też odpada — karty podpisałyby środę „Poniedziałek”.
+ * Kalendarz w edytorze przepuszcza tylko poniedziałki, ale atrybut można
+ * poprawić ręcznie w edytorze kodu.
  *
  * @param mixed $tekst Data `RRRR-MM-DD`.
  * @return DateTimeImmutable|null
@@ -97,7 +100,7 @@ function przedszkole_jadlospis_poczatek( $tekst ) {
 
 	$data = DateTimeImmutable::createFromFormat( '!Y-m-d', $tekst, wp_timezone() );
 
-	if ( ! $data || $data->format( 'Y-m-d' ) !== $tekst ) {
+	if ( ! $data || $data->format( 'Y-m-d' ) !== $tekst || '1' !== $data->format( 'N' ) ) {
 		return null;
 	}
 
