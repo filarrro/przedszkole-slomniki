@@ -16,6 +16,7 @@ require_once get_theme_file_path( 'inc/bezpieczenstwo.php' );
 require_once get_theme_file_path( 'inc/role.php' );
 require_once get_theme_file_path( 'inc/rok-szkolny.php' );
 require_once get_theme_file_path( 'inc/blok-osoba.php' );
+require_once get_theme_file_path( 'inc/blok-jadlospis.php' );
 
 /**
  * Deklaracja możliwości motywu.
