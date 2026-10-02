@@ -154,7 +154,7 @@ ddev exec wp --path=wp <komenda>
    Stronę odkładaną „na potem" trzymaj poza menu, nie licz na WordPressa.
 
 10. **`wp_update_post()` odcina ukośniki.** JSON atrybutów bloku ma ich pełno
-    (`<strong>`), więc treść z blokami zapisywana ze skryptu idzie
+    (`\u003cstrong\u003e`), więc treść z blokami zapisywana ze skryptu idzie
     przez `wp_slash()`. Bez tego pogrubienia zamieniają się w `u003cstrongu003e`:
     ```php
     wp_update_post( wp_slash( array( 'ID' => $id, 'post_content' => $tresc ) ) );
