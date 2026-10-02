@@ -14,6 +14,14 @@ python3 tools/podglad.py /aktualnosci/ a.html # lista wpisów   -> a.html
 Pliki `podglad.html` i `*.podglad.html` są w `.gitignore`.
 Do normalnej pracy używaj po prostu http://przedszkole.ddev.site w swojej przeglądarce.
 
+Adres lokalnego WordPressa można nadpisać zmienną `PODGLAD_BAZA` — potrzebne,
+gdy ddev stoi na innych portach niż 80/443. Certyfikat ddev pochodzi z `mkcert`,
+więc dla `https` trzeba też wskazać jego CA:
+
+```bash
+PODGLAD_BAZA=https://przedszkole.ddev.site:33001 SSL_CERT_FILE="$(mkcert -CAROOT)/rootCA.pem" python3 tools/podglad.py /dla-rodzicow/jadlospis/ j.podglad.html
+```
+
 ## `struktura.sh`
 
 Odtwarza szkielet treści z Etapu 4: strony (z zagnieżdżeniem), menu główne,
@@ -206,3 +214,30 @@ Pomija świadomie artykuł 32 (godziny pracy z 2015, sprzeczne z treścią stron
 i całą kategorię 64 („Archiwum Logopedy" — seria covidowa, na starej stronie
 niepublikowana). Bilans importu (27 artykułów w kategorii, 25 finalnie
 w WordPressie) jest w [MIGRACJA.md](../MIGRACJA.md).
+
+## `test_jadlospis.php`
+
+Sprawdzenie bloku „Jadłospis” bez PHPUnit: funkcje dat i dni, rejestracja,
+front renderowany przez `render_block()` na sztucznych atrybutach (treści
+strony nie dotyka) i rejestracja skryptów.
+
+```bash
+ddev exec wp --path=wp eval-file tools/test_jadlospis.php
+```
+
+Wypisuje `OK` / `BŁĄD` przy każdym sprawdzeniu, kończy się kodem 1, jeśli
+coś nie przeszło.
+
+## `test_jadlospis_edytor.js`
+
+Widok edytora bloku „Jadłospis” bez przeglądarki i bez logowania: podstawia
+minimalne `window.wp`, renderuje `edit` i sprawdza drzewo oraz zapisy
+atrybutów — kalendarz, dzień wolny, pola posiłków, zakres dat.
+
+```bash
+node tools/test_jadlospis_edytor.js
+```
+
+Wymaga samego `node`, bez npm i bez zależności — to nie jest krok budowania.
+Zakresy dat są te same co w `test_jadlospis.php`: reguła stoi w PHP i w JS,
+oba testy pilnują, żeby mówiły to samo. Wyglądu nie sprawdza.

@@ -35,6 +35,11 @@ Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
 - Zmienne własne tylko na to, czego `theme.json` nie obsługuje
 - Sekcje numerowane komentarzem, żeby dało się nawigować po pliku
 - Zero frameworków, zero resetów z zewnątrz
+- Blok szerszy niż kolumna treści: w edytorze kontener układu rdzenia wymusza
+  na każdym bloku poza `.alignfull` szerokość treści i `margin: auto !important`.
+  Taki blok dostaje klasę `alignfull`, a jego siatka — `@container` zamiast
+  `@media`, bo w płótnie edytora okno ma inną szerokość niż blok
+  (wzór: sekcja 29 `style.css`)
 
 ## Czego nie robimy
 
@@ -47,12 +52,16 @@ Przed napisaniem funkcji sprawdź, czy WordPress jej nie ma.
 - Własnego systemu logowania
 - Własnych bloków Gutenberga bez wyraźnej potrzeby — zwykle wystarczają
   wzorce z `patterns/` i warianty stylów (`register_block_style`).
-  Jeden wyjątek: `przedszkole/osoba` (`blocks/osoba/`) — kafelek kadry
-  powtarzany kilkanaście razy na jednej stronie. Wzorzec trzymał układ
-  w treści, więc każda poprawka wyglądu szła przez wszystkie kopie,
-  a jedno nieostrożne kliknięcie zostawiało pół kafelka. Próg dla drugiego
-  bloku jest ten sam: układ powtarzany wielokrotnie i psujący się w rękach
-  pracownika, nie „byłoby wygodniej".
+  Dwa wyjątki, oba z tego samego powodu — układ siedział w treści, więc
+  każda poprawka wyglądu szła przez wszystkie kopie, a jedno nieostrożne
+  kliknięcie rozsypywało całość:
+  - `przedszkole/osoba` (`blocks/osoba/`) — kafelek kadry powtarzany
+    kilkanaście razy na jednej stronie,
+  - `przedszkole/jadlospis` (`blocks/jadlospis/`) — tydzień jako pięć kart,
+    przepisywany co tydzień; wcześniej w zakładkach, potem w tabeli.
+
+  Próg dla trzeciego bloku jest ten sam: układ powtarzany wielokrotnie
+  i psujący się w rękach pracownika, nie „byłoby wygodniej".
 - Edycji plików w `wp/` — to nie nasz kod
 
 ## Role i uprawnienia
@@ -114,7 +123,9 @@ ddev exec wp --path=wp <komenda>
    ddev exec wp --path=wp post list --fields=ID,post_title --format=csv
    ```
    Nie tłum tego przez `2>/dev/null` w skryptach z `set -e` — razem z szumem
-   znikają prawdziwe błędy i skrypt pada bez śladu.
+   znikają prawdziwe błędy i skrypt pada bez śladu. `wp eval-file` nie ma
+   `--format`, więc jego wynik dostaje ten sam szum `Deprecated` — filtruj go
+   przez `| grep -v '^Deprecated:'`, nigdy przez `2>/dev/null`.
 
 5. Slug menu wylicza WP z nazwy, a nie ty. „Menu w stopce" → `menu-w-stopce`.
    Sprawdź `wp menu list`, zanim odwołasz się do sluga w skrypcie.
@@ -142,6 +153,13 @@ ddev exec wp --path=wp <komenda>
    pozycje wskazujące na kosz, ale szkic zostaje i daje odwiedzającemu 404.
    Stronę odkładaną „na potem" trzymaj poza menu, nie licz na WordPressa.
 
+10. **`wp_update_post()` odcina ukośniki.** JSON atrybutów bloku ma ich pełno
+    (`<strong>`), więc treść z blokami zapisywana ze skryptu idzie
+    przez `wp_slash()`. Bez tego pogrubienia zamieniają się w `u003cstrongu003e`:
+    ```php
+    wp_update_post( wp_slash( array( 'ID' => $id, 'post_content' => $tresc ) ) );
+    ```
+
 ## Podgląd wizualny
 
 Panel podglądu w aplikacji blokuje pliki podrzędne z `*.ddev.site`
@@ -149,6 +167,13 @@ Panel podglądu w aplikacji blokuje pliki podrzędne z `*.ddev.site`
 
 ```bash
 python3 tools/podglad.py / podglad.html    # sklejona strona do zrzutów
+```
+
+Gdy porty 80/443 zajmuje inny proces, ddev przenosi router (np. na 33001) —
+adres i certyfikat trzeba wtedy podać jawnie:
+
+```bash
+PODGLAD_BAZA=https://przedszkole.ddev.site:33001 SSL_CERT_FILE="$(mkcert -CAROOT)/rootCA.pem" python3 tools/podglad.py /dla-rodzicow/jadlospis/ j.podglad.html
 ```
 
 Do zwykłej pracy wystarczy http://przedszkole.ddev.site w przeglądarce.

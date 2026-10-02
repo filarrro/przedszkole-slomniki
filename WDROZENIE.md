@@ -114,6 +114,11 @@ Do zrobienia dopiero po akceptacji treści: zmiana statusu na `publish`
 i pozycja menu pod „Dla rodziców", za „Kącikiem logopedy". Pozycja menu
 **przed** publikacją dałaby odwiedzającemu 404.
 
+**Jadłospis — przepisany na blok 2026-10-02.** Strona pokazuje tydzień
+22–26.06.2026, przeniesiony z dawnej tabeli jako przykład wyglądu. Stary
+jadłospis nie znika sam: przed startem albo pierwszego dnia intendent wpisuje
+bieżący tydzień (kalendarz w bloku, potem pola posiłków).
+
 **Reszta długu (nie blokuje startu, do ustalenia z przedszkolem):**
 - 7 wpisów, które na starej stronie były zajawką dla PDF-a, i 11 bez dokumentu
   — listy w [MIGRACJA.md](MIGRACJA.md)
@@ -194,6 +199,9 @@ wygląda tak samo jak dobry:
 
 Do powtórzenia, jeśli treść zmieni się przed wdrożeniem — zrzut jest fotografią
 bazy, nie dokumentem.
+
+**Nieaktualny od 2026-10-02** — strona „Jadłospis” przepisana na blok. Zrzut
+z 2026-09-21 do powtórzenia razem z próbnym importem.
 
 **W zrzucie siedzą dane osobowe** (adresy e-mail, hashe haseł) i konto `dev`.
 `*.sql.gz` jest w `.gitignore`, ale plik nie ma prawa pojechać nigdzie poza
@@ -414,6 +422,9 @@ Funkcjonalne:
 - [ ] Aktualności: lista, pojedynczy wpis, przełącznik roczników
 - [ ] Kategorie grup, „Kącik logopedy" (kąciki **nie** tną się do bieżącego roku szkolnego)
 - [ ] Strony grup, Kadra (kafelki z inicjałami), Jadłospis, Kontakt z mapą
+- [ ] Jadłospis: pięć kart na desktopie, dwie w rzędzie na tablecie (piątek
+      na środku), jedna na telefonie; w bieżącym tygodniu karta „Dziś”;
+      konto `intendent` zmienia tydzień i zapisuje stronę
 - [ ] Wyszukiwarka, strona 404, kanał RSS (`/feed/`)
 - [ ] Obrazy się ładują — logo, ikona strony, mapa
 - [ ] Polskie znaki wszędzie, także w tytułach i menu
