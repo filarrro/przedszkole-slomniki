@@ -2952,9 +2952,10 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 	color: var(--posilek-tekst);
 }
 
-/* Ikona przez maske: plik SVG daje ksztalt, kolor nadaje `background-color`.
-   Jeden plik na front i edytor, bez kopii SVG w PHP i JS. Ikona jest
-   ozdobna - znaczenie niesie napis obok. Adres pliku przy klasie posilku,
+/* Ikona przez maske: plik SVG daje ksztalt, kolor nadaje `background-color`
+   - ten sam co napis obok (`currentColor`), wiec w wysokim kontrascie
+   przechodzi razem z nim. Jeden plik na front i edytor, bez kopii SVG
+   w PHP i JS. Ikona jest ozdobna - znaczenie niesie napis obok. Adres pliku przy klasie posilku,
    nie w zmiennej: `url()` w zmiennej przegladarki rozwiazuja roznie. */
 .jadlospis .jadlospis__etykieta::before {
 	content: "";
@@ -2963,7 +2964,7 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 	top: -3px;
 	width: 1.4em;
 	height: 1.4em;
-	background-color: var(--posilek-ikona);
+	background-color: currentColor;
 	-webkit-mask-position: center;
 	mask-position: center;
 	-webkit-mask-size: contain;
@@ -2974,15 +2975,12 @@ html[data-kontrast="wysoki"] :is( .wp-block-button__link, .wp-element-button ):i
 
 .jadlospis__posilek--sniadanie {
 	--posilek-tekst: var(--zabki-tekst);
-	--posilek-ikona: var(--wp--preset--color--zabki);
 }
 .jadlospis__posilek--obiad {
 	--posilek-tekst: var(--wiewiorki-tekst);
-	--posilek-ikona: var(--wp--preset--color--wiewiorki);
 }
 .jadlospis__posilek--podwieczorek {
 	--posilek-tekst: var(--zajaczki-tekst);
-	--posilek-ikona: var(--wp--preset--color--zajaczki);
 }
 .jadlospis__posilek--sniadanie .jadlospis__etykieta::before {
 	-webkit-mask-image: url("assets/img/posilek-sniadanie.svg");
