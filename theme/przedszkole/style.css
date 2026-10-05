@@ -3,7 +3,7 @@ Theme Name: Przedszkole
 Theme URI: https://przedszkoleslomniki.pl/
 Author: —
 Description: Lekki motyw dla Przedszkola Samorządowego w Słomnikach. Bez frameworków, bez jQuery, bez zewnętrznych zależności.
-Version: 1.1.2
+Version: 1.2.0
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -1005,6 +1005,15 @@ a.pill:hover { filter: brightness(.93); }
 /* Odstep nalezy do zawartosci, nie do sekcji - inaczej dolny padding
    tworzy szczeline miedzy fala a nastepna sekcja. */
 .section--miekka > .wrap { padding-block: clamp(2rem, 5vw, 3.5rem); }
+/* Ogloszenie i aktualnosci na jednym tle - miedzy nimi jeden odstep, nie dwa. */
+.section--miekka > .wrap + .wrap { padding-top: 0; }
+
+/* --- Ogloszenie tymczasowe nad aktualnosciami ---
+   Tresc strony glownej z Gutenberga, bez ramki - prosto na tle sekcji, pod
+   naglowkiem w stylu "Aktualnosci". Wlasny naglowek w tresci stoi zaraz pod
+   naglowkiem sekcji - bez zerowania odstep z `.entry__content h2` rozsuwalby je. */
+.ogloszenie__tresc > :first-child { margin-top: 0; }
+.ogloszenie__tresc > :last-child { margin-bottom: 0; }
 
 /* Delikatny gradient na kartach — mniej plasko, bez krzykliwosci. */
 .card__body { background: linear-gradient(180deg, var(--wp--preset--color--surface) 0%, #FDFBF7 100%); }

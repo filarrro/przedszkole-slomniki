@@ -61,3 +61,34 @@ function przedszkole_pasek_admina( $pasek ) {
 	$pasek->remove_node( 'comments' );
 }
 add_action( 'admin_bar_menu', 'przedszkole_pasek_admina', 999 );
+
+/**
+ * Podpowiedź nad treścią strony głównej.
+ *
+ * Treść tej strony to ogłoszenie tymczasowe nad aktualnościami, a pusta
+ * ukrywa sekcję ({@see front-page.php}). Z samego edytora tego nie widać —
+ * redaktor zobaczyłby zwykłą stronę i albo bał się ją wyczyścić, albo wpisał
+ * tam powitanie, które i tak stoi już w motywie.
+ *
+ * Komunikat rdzenia (`core/notices`), nie własny panel: wygląda jak każda inna
+ * informacja w edytorze i nie wymaga kodu bloku. Bez przycisku zamknięcia —
+ * ma być widoczny przy każdej edycji, nie tylko przy pierwszej.
+ */
+function przedszkole_podpowiedz_strony_glownej() {
+	$strona = get_post();
+
+	if ( ! $strona || (int) get_option( 'page_on_front' ) !== $strona->ID ) {
+		return;
+	}
+
+	$tekst = __( 'Treść tej strony wyświetla się na stronie głównej jako ogłoszenie „Ważne informacje”, nad aktualnościami. Gdy treść jest pusta, sekcja się nie pokazuje. Powitanie u góry strony jest stałe i nie zależy od tej treści.', 'przedszkole' );
+
+	wp_add_inline_script(
+		'wp-notices',
+		sprintf(
+			'wp.data.dispatch("core/notices").createNotice("info",%s,{id:"przedszkole-strona-glowna",isDismissible:false});',
+			wp_json_encode( $tekst )
+		)
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'przedszkole_podpowiedz_strony_glownej' );

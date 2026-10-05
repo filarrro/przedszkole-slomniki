@@ -2,17 +2,17 @@
 /**
  * Strona główna.
  *
- * Treść w sekcji powitalnej pochodzi ze zwykłej strony WordPressa edytowanej
- * w Gutenbergu — pracownicy przedszkola mogą ją zmieniać sami. Grafika,
- * fale i sekcja aktualności są dokładane przez motyw.
+ * Powitanie ma stałe teksty z motywu ({@see przedszkole_powitanie()}).
+ * Treść strony ustawionej jako główna, pisana w Gutenbergu, to ogłoszenie
+ * tymczasowe: dyrekcja wpisuje je sama, a gdy je skasuje, sekcja znika.
  *
- * Kolejność: powitanie → aktualności → „Na skróty" → „Dlaczego my" → hasło
- * ze zdjęciem.
+ * Kolejność: powitanie → ogłoszenie → aktualności → „Na skróty" → „Dlaczego
+ * my" → hasło ze zdjęciem.
  *
  * Fala należy do sekcji, która ją poprzedza, ale ma kolor tej, która po niej
- * następuje. Dlatego zapytanie o wpisy leci przed hero, a kolory liczymy z góry:
- * przy pustej stronie (bez wpisów, bez menu skrótów) fala pod hero prowadziłaby
- * do nieistniejącego tła.
+ * następuje. Dlatego zapytanie o wpisy i ogłoszenie lecą przed hero, a kolory
+ * liczymy z góry: przy pustej stronie (bez ogłoszenia, wpisów i menu skrótów)
+ * fala pod hero prowadziłaby do nieistniejącego tła.
  *
  * @package Przedszkole
  */
@@ -33,15 +33,30 @@ $przedszkole_aktualnosci = new WP_Query(
 	)
 );
 
-$przedszkole_sa_wpisy  = $przedszkole_aktualnosci->have_posts();
-$przedszkole_sa_skroty = has_nav_menu( 'skroty' );
+/*
+ * Ogłoszenie renderujemy z góry, a nie w miejscu wypisania: o tym, czy sekcja
+ * w ogóle powstanie, decyduje wynik po filtrach, nie surowe pole w bazie.
+ */
+$przedszkole_ogloszenie = '';
+while ( have_posts() ) {
+	the_post();
+	ob_start();
+	the_content();
+	$przedszkole_ogloszenie = (string) ob_get_clean();
+}
+
+$przedszkole_jest_ogloszenie = przedszkole_tresc_niepusta( $przedszkole_ogloszenie );
+$przedszkole_sa_wpisy        = $przedszkole_aktualnosci->have_posts();
+$przedszkole_sa_skroty       = has_nav_menu( 'skroty' );
+$przedszkole_powitanie       = przedszkole_powitanie();
 
 $przedszkole_zolty = '#F9E229';   // Tło sekcji „Na skróty”.
 $przedszkole_mieta = '#F3F8F2';   // Górny koniec gradientu pod aktualnościami.
 $przedszkole_tlo   = 'var(--wp--preset--color--base)';
 
 // Kolor fali pod hero to tło pierwszej sekcji, która faktycznie się pojawi.
-if ( $przedszkole_sa_wpisy ) {
+// Ogłoszenie i aktualności dzielą jedno miękkie tło.
+if ( $przedszkole_jest_ogloszenie || $przedszkole_sa_wpisy ) {
 	$przedszkole_kolor_pod_hero = $przedszkole_mieta;
 } elseif ( $przedszkole_sa_skroty ) {
 	$przedszkole_kolor_pod_hero = $przedszkole_zolty;
@@ -54,14 +69,15 @@ if ( $przedszkole_sa_wpisy ) {
 	<div class="wrap hero__inner">
 
 		<div class="hero__text">
-			<?php
-			if ( have_posts() ) :
-				while ( have_posts() ) :
-					the_post();
-					the_content();
-				endwhile;
-			endif;
-			?>
+			<h1><?php echo esc_html( $przedszkole_powitanie['tytul'] ); ?></h1>
+			<p><?php echo esc_html( $przedszkole_powitanie['opis'] ); ?></p>
+			<div class="wp-block-buttons">
+				<div class="wp-block-button">
+					<a class="wp-block-button__link wp-element-button" href="<?php echo esc_url( $przedszkole_powitanie['adres'] ); ?>">
+						<?php echo esc_html( $przedszkole_powitanie['przycisk'] ); ?>
+					</a>
+				</div>
+			</div>
 		</div>
 
 		<figure class="hero__art">
@@ -94,9 +110,32 @@ if ( $przedszkole_sa_wpisy ) {
 	?>
 </section>
 
-<?php if ( $przedszkole_sa_wpisy ) : ?>
-	<section class="section--miekka">
-		<div class="wrap">
+<?php if ( $przedszkole_jest_ogloszenie || $przedszkole_sa_wpisy ) : ?>
+	<div class="section--miekka">
+
+		<?php if ( $przedszkole_jest_ogloszenie ) : ?>
+			<?php
+			/*
+			 * Nagłówek stały, bo treść bywa jednym akapitem bez tytułu, a sekcja
+			 * bez nazwy to dla czytnika ekranu anonimowy region.
+			 *
+			 * Treść wypisana bez `wp_kses_post()`: to wynik `the_content()`,
+			 * a przepuszczenie go jeszcze raz przez kses zdjęłoby osadzenia
+			 * (mapa, film), które rdzeń wstawia sam.
+			 */
+			?>
+			<section class="wrap ogloszenie" aria-labelledby="ogloszenie-tytul">
+				<div class="section__head">
+					<h2 id="ogloszenie-tytul"><?php esc_html_e( 'Ważne informacje', 'przedszkole' ); ?></h2>
+				</div>
+				<div class="entry__content ogloszenie__tresc">
+					<?php echo $przedszkole_ogloszenie; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</div>
+			</section>
+		<?php endif; ?>
+
+		<?php if ( $przedszkole_sa_wpisy ) : ?>
+		<section class="wrap">
 			<div class="section__head">
 				<h2><?php esc_html_e( 'Aktualności', 'przedszkole' ); ?></h2>
 				<?php
@@ -120,7 +159,8 @@ if ( $przedszkole_sa_wpisy ) {
 				wp_reset_postdata();
 				?>
 			</div>
-		</div>
+		</section>
+		<?php endif; ?>
 
 		<?php
 		if ( $przedszkole_sa_skroty ) {
@@ -136,7 +176,7 @@ if ( $przedszkole_sa_wpisy ) {
 			get_template_part( 'template-parts/chmurki' );
 		}
 		?>
-	</section>
+	</div>
 <?php endif; ?>
 
 <?php get_template_part( 'template-parts/skroty' ); ?>

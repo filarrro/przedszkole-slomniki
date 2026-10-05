@@ -393,7 +393,7 @@ theme/przedszkole/
 ├── functions.php          wsparcie motywu, menu, widgety, sprzątanie WP
 ├── inc/helpers.php        funkcje pomocnicze (etykiety grup)
 ├── header.php  footer.php
-├── front-page.php         strona główna: treść z Gutenberga + auto aktualności
+├── front-page.php         strona główna: stałe powitanie, ogłoszenie z Gutenberga, auto aktualności
 ├── page.php  single.php
 ├── index.php              listy wpisów: aktualności, kategorie, archiwa
 ├── search.php  404.php
@@ -807,13 +807,27 @@ bez dostępu do wpisów.
 **Cel:** działające, wyglądające widoki na realnych treściach.
 
 ### 7.1 Strona główna
-- [x] Sekcja powitalna — treść z Gutenberga, ilustracja i chmurki z motywu
+- [x] Sekcja powitalna — stałe teksty z motywu (`przedszkole_powitanie()`), ilustracja i chmurki
+- [x] Ogłoszenie tymczasowe „Ważne informacje" — treść strony „Strona główna" z Gutenberga,
+      pusta treść ukrywa sekcję
 - [x] Najnowsze aktualności (3 wpisy z miniaturkami)
 - [x] Skróty do kluczowych sekcji — kafelki z menu „Na skróty"
 - [x] Kontakt / godziny otwarcia — w stopce, na każdej podstronie
 
-Kolejność sekcji: powitanie → aktualności → „Na skróty" → „Dlaczego my" → hasło
-ze zdjęciem. Kafelki „Na skróty" biorą się z osobnego menu (`tools/skroty.sh`),
+Kolejność sekcji: powitanie → ogłoszenie → aktualności → „Na skróty" → „Dlaczego
+my" → hasło ze zdjęciem.
+
+**Ogłoszenie zamiast edytowalnego powitania (2026-10-05).** Do wersji 1.1.2
+treść strony „Strona główna" wchodziła w hero. Personel potrzebował miejsca na
+komunikaty typu „przedszkole nieczynne w piątek", a jedynym edytowalnym polem
+na głównej było powitanie — razem z komunikatem znikałby jedyny `<h1>` strony
+i opis meta. Teraz powitanie jest stałe w motywie, a treść strony głównej to
+ogłoszenie nad aktualnościami — bez ramki, prosto na tym samym miękkim tle. O tym, czy
+sekcja powstaje, decyduje treść po renderowaniu (`przedszkole_tresc_niepusta()`):
+pusty akapit czy twarda spacja zostawione po skasowaniu tekstu też ją ukrywają.
+Opis meta strony głównej idzie z powitania, nie z ogłoszenia — termin sprzed
+miesiąca nie powinien wisieć w wynikach wyszukiwania. Nad treścią w edytorze
+wisi stały komunikat, co ta treść robi i że pusta znika. Kafelki „Na skróty" biorą się z osobnego menu (`tools/skroty.sh`),
 więc dyrekcja zmienia ich zestaw, tytuły i opisy w Wyglądzie → Menu. Bez menu
 sekcja po prostu nie powstaje.
 
@@ -1852,7 +1866,8 @@ Nie może trafić na produkcję.
       decyzja 2026-09-15: to treść bieżąca, którą personel aktualizuje sam
       po wdrożeniu. Nie blokuje startu
 - [x] ~~Treść zastępcza na stronie głównej („Witamy w naszym przedszkolu…")~~ —
-      potwierdzona 2026-09-15 jako docelowa
+      potwierdzona 2026-09-15 jako docelowa; od 2026-10-05 tekst siedzi
+      w motywie, a treść strony głównej jest pusta (to pole ogłoszenia)
 - [x] ~~„Kącik pedagoga" (1322) i wpis „Adaptacja w przedszkolu — jak pomóc
       dziecku i sobie" (1325)~~ — **rozstrzygnięte 2026-09-21: jadą na
       produkcję jako szkice.** Treść jest wygenerowana 2026-09-16, nie
@@ -2047,6 +2062,7 @@ bez treści testowej i bez konta `dev`.
 | 2026-10-02 | Nazwy dni, posiłków i miesiące w dopełniaczu podawane edytorowi z PHP | `@wordpress/date` zna tylko mianownik; jedno źródło zamiast kopii w JS. W JS zostaje reguła zakresu dat, a zgodność z PHP pilnują `tools/test_jadlospis.php` i `tools/test_jadlospis_edytor.js` |
 | 2026-10-02 | Notka o alergenach jako zwykły akapit pod blokiem | edytowalna przez intendenta bez zmian w kodzie; znaczenie pogrubienia podane tekstem (WCAG 1.3.1) |
 | 2026-10-02 | Karty jadłospisu 300–370px, wiersze wyrównane przez `subgrid` | 1 karta, od 660px okna 2, od 1000px 3, od 1550px 5 (~287px, świadomy wyjątek od minimum); niepełny rząd na środku dzięki połówkowym ścieżkom. Karta zajmuje pięć wierszy siatki listy (nagłówek, trzy posiłki, fala), więc posiłki w rzędzie mają wysokość najwyższego sąsiada. W edytorze treść karty zostaje kolumną flex — przełącznik dnia wolnego byłby czwartym elementem na trzy wiersze |
+| 2026-10-05 | Powitanie na stronie głównej stałe w motywie, treść strony głównej jako ogłoszenie tymczasowe | personel zmieniał powitanie pod bieżące komunikaty; osobna sekcja chroni `<h1>` i opis meta, a pusta treść ukrywa ją bez dodatkowego przełącznika. Natywna treść strony zamiast wtyczki czy pola w Customizerze — ten sam edytor, którego personel już używa |
 
 ---
 

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Przedszkole 1.1.2\n"
+"Project-Id-Version: Przedszkole 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/theme/przedszkole\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-02T20:33:12+02:00\n"
+"POT-Creation-Date: 2026-10-05T10:46:38+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: przedszkole\n"
@@ -84,15 +84,19 @@ msgstr ""
 msgid "Godziny otwarcia"
 msgstr ""
 
-#: front-page.php:79
+#: front-page.php:95
 msgid "Dzieci w kręgu, każde z pluszakiem: misiem, zajączkiem, żabką, kotkiem, jeżykiem i wiewiórką"
 msgstr ""
 
-#: front-page.php:101
+#: front-page.php:129
+msgid "Ważne informacje"
+msgstr ""
+
+#: front-page.php:140
 msgid "Aktualności"
 msgstr ""
 
-#: front-page.php:109
+#: front-page.php:148
 msgid "Zobacz wszystkie"
 msgstr ""
 
@@ -222,6 +226,22 @@ msgstr ""
 msgid "Artykuły pedagoga"
 msgstr ""
 
+#: inc/helpers.php:171
+msgid "Witamy w naszym przedszkolu"
+msgstr ""
+
+#: inc/helpers.php:172
+msgid "Jesteśmy miejscem, w którym dzieci uczą się przez zabawę, poznają świat i zdobywają pierwszych przyjaciół. Zapraszamy do zapoznania się z naszą ofertą."
+msgstr ""
+
+#: inc/helpers.php:173
+msgid "Poznaj przedszkole"
+msgstr ""
+
+#: inc/panel.php:84
+msgid "Treść tej strony wyświetla się na stronie głównej jako ogłoszenie „Ważne informacje”, nad aktualnościami. Gdy treść jest pusta, sekcja się nie pokazuje. Powitanie u góry strony jest stałe i nie zależy od tej treści."
+msgstr ""
+
 #: inc/role.php:99
 msgid "Intendent"
 msgstr ""
@@ -231,12 +251,12 @@ msgid "Pedagog"
 msgstr ""
 
 #. translators: %1$s: nazwa kategorii, %2$s: nazwa witryny.
-#: inc/seo.php:57
+#: inc/seo.php:64
 #, php-format
 msgid "Aktualności z kategorii %1$s — %2$s."
 msgstr ""
 
-#: inc/seo.php:99
+#: inc/seo.php:106
 msgid "Dzieci w kręgu, każde z pluszakiem"
 msgstr ""
 

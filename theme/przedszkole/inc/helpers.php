@@ -152,3 +152,46 @@ function przedszkole_skroc_opis( $tekst, $limit = 160 ) {
 	 */
 	return preg_replace( '/[\s,.;:–—-]+$/u', '', $uciety ) . '…';
 }
+
+/**
+ * Teksty sekcji powitalnej na stronie głównej.
+ *
+ * Stałe, w kodzie motywu. Wcześniej powitanie składało się z treści strony
+ * „Strona główna” — ale tę treść personel zmieniał co chwilę pod bieżące
+ * komunikaty, a razem z nimi znikał jedyny `<h1>` strony i opis, który
+ * wyszukiwarka pokazuje w wynikach. Treść strony obsługuje dziś sekcję
+ * ogłoszeń (`front-page.php`), a powitanie się nie rusza.
+ *
+ * W jednej funkcji, bo z opisu korzysta też `inc/seo.php`.
+ *
+ * @return array{tytul: string, opis: string, przycisk: string, adres: string}
+ */
+function przedszkole_powitanie() {
+	return array(
+		'tytul'    => __( 'Witamy w naszym przedszkolu', 'przedszkole' ),
+		'opis'     => __( 'Jesteśmy miejscem, w którym dzieci uczą się przez zabawę, poznają świat i zdobywają pierwszych przyjaciół. Zapraszamy do zapoznania się z naszą ofertą.', 'przedszkole' ),
+		'przycisk' => __( 'Poznaj przedszkole', 'przedszkole' ),
+		'adres'    => home_url( '/grupy/' ),
+	);
+}
+
+/**
+ * Czy wyrenderowana treść ma cokolwiek do pokazania.
+ *
+ * Pusty edytor nie znaczy pustego pola w bazie: po skasowaniu tekstu zostaje
+ * pusty akapit `<p></p>`, czasem twarda spacja. Sprawdzamy więc wynik po
+ * renderowaniu — bez znaczników i białych znaków — a osobno obrazki
+ * i osadzenia, które tekstu nie mają, a treścią są.
+ *
+ * @param string $html Treść po filtrze `the_content`.
+ * @return bool
+ */
+function przedszkole_tresc_niepusta( $html ) {
+	if ( preg_match( '/<(img|iframe|video|svg)\b/i', $html ) ) {
+		return true;
+	}
+
+	$tekst = html_entity_decode( wp_strip_all_tags( $html ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+	return '' !== preg_replace( '/[\s\x{00A0}\x{200B}]+/u', '', $tekst );
+}

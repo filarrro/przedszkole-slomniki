@@ -29,13 +29,20 @@ defined( 'ABSPATH' ) || exit;
  * opis witryny. Wynik zawsze przechodzi przez skracanie, bo pracownik może
  * wpisać we „Fragmencie” akapit.
  *
+ * Strona główna ma własne źródło: stały opis z powitania. Jej treść to
+ * ogłoszenie tymczasowe — „Przedszkole nieczynne 2 maja” nie jest opisem
+ * placówki, a wyszukiwarka trzymałaby go w wynikach długo po terminie.
+ *
  * Używamy `get_queried_object()`, a nie globalnego `$post` — w `wp_head`
- * pętla jeszcze się nie zaczęła, a na stronie głównej motyw uruchamia ją
- * dopiero w sekcji powitalnej.
+ * pętla jeszcze się nie zaczęła.
  *
  * @return string Opis albo pusty łańcuch, gdy nie ma czego opisać.
  */
 function przedszkole_opis_strony() {
+	if ( is_front_page() ) {
+		return przedszkole_skroc_opis( przedszkole_powitanie()['opis'] );
+	}
+
 	$obiekt = get_queried_object();
 
 	if ( $obiekt instanceof WP_Post ) {
